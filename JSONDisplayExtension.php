@@ -43,21 +43,21 @@ class JSONFeedExtension extends DataExtension{
 			if($item['venues']) {
 				$venues->setValue($item['venues'][0]['name']);
 			}else{
-				$venues->setValue('No venues listed.');
+				//$venues->setValue('No venues listed.');
 			}
 			
 			$sponsors = new Text('Sponsors');
 			if($item['sponsors']) {
 				$sponsors->setValue($item['sponsors'][0]['name']);
 			}else{
-				$sponsors->setValue('No sponsors listed.');
+				//$sponsors->setValue('No sponsors listed.');
 			}
 			
 			$event_types = new Text('Event Types');
 			if($item['event_types']) {
 				$event_types->setValue($item['event_types'][0]['name']);					
 			}else{
-				$event_types->setValue('No event types listed.');	
+				//$event_types->setValue('No event types listed.');	
 			}
 							
 			$outfeed->push(new ArrayData(array(
@@ -72,13 +72,13 @@ class JSONFeedExtension extends DataExtension{
 		    'Venues' => $venues,
 		    'Sponsors' => $sponsors,
 		    'EventTypes' => $event_types
-		   
-		    
+		   	    
 		    )));
 		    
 		    //print_r($outfeed);		    
-		}	
+		}		
 		
-		return $outfeed;    
+		return $outfeed; 
+		   
 	}
 }
