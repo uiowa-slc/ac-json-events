@@ -1,17 +1,11 @@
 <?php
-class JSONFeedExtension extends DataExtension{
+class JSONDisplayExtension extends DataExtension{
 
-	public function JSONRSSDisplay($numItems = 30, $feedURL="http://afterclass.uiowa.edu/events/feed/json") {
+	public function AfterClassFeed($feedURL="http://afterclass.uiowa.edu/events/feed/json") {
 		
 		$outfeed = new ArrayList();
-		
 		$JSON_string = file_get_contents($feedURL);
 		$feed_array = json_decode($JSON_string, TRUE);
-		
-		//print_r($feed_array);
-		
-		//$dump = var_dump($feed_array);	
-		//echo $dump;
 		 
 		foreach($feed_array['events'] as $item) {
 					 	
@@ -20,6 +14,9 @@ class JSONFeedExtension extends DataExtension{
 		 	
 		 	$name = new Text('name');
 		 	$name->setValue($item['name']);
+
+		 	$link = new Text('Link');
+		 	$link->setValue($item['link']);
 		 	
 		 	$more_info_link = new Text('more_info_link');
 		 	$more_info_link->setValue($item['more_info_link']);
@@ -30,55 +27,49 @@ class JSONFeedExtension extends DataExtension{
 			$cancel_note = new Text('cancel_note');
 			$cancel_note->setValue($item['cancel_note']);
 		 	
-			$dates = new Date('Dates');
-			$dates->setValue($item['dates'][0]);
+			$nextDateTime = new SS_Datetime('NextDateTime');
+			$nextDateTime->setValue(strtotime($item['dates'][0]['start_date'].' '.$item['dates'][0]['start_time']));
 			
+			$dateTimeCount = new Int('DateTimeCount');
+			$dateTimeCount->setValue(count($item['dates']));
+
 			$cost = new Text('Cost');
 			$cost->setValue($item['price']);
 				
 			$location = new Text('Location');
 			$location->setValue($item['location']);
 	
-			$venues = new Text('Venues');
+			$venue = new Text('Venue');
 			if($item['venues']) {
-				$venues->setValue($item['venues'][0]['name']);
-			}else{
-				//$venues->setValue('No venues listed.');
+				$venue->setValue($item['venues'][0]['name']);
 			}
-			
+
 			$sponsors = new Text('Sponsors');
 			if($item['sponsors']) {
 				$sponsors->setValue($item['sponsors'][0]['name']);
-			}else{
-				//$sponsors->setValue('No sponsors listed.');
 			}
-			
+
 			$event_types = new Text('Event Types');
 			if($item['event_types']) {
 				$event_types->setValue($item['event_types'][0]['name']);					
-			}else{
-				//$event_types->setValue('No event types listed.');	
 			}
-							
+		
 			$outfeed->push(new ArrayData(array(
 			'ID'			=> $id,
 		    'Title'         => $name,
+		    'Link' => $link,
 		    'MoreInfoLink' => $more_info_link,
 		    'ImageURL' => $imageURL,
 		    'CancelNote' => $cancel_note,
-		    'Dates'		=> $dates,
+		    'NextDateTime'		=> $nextDateTime,
+		    'DateTimeCount' => $dateTimeCount,
 		    'Cost'		=> $cost,
 		    'Location'	=> $location,
-		    'Venues' => $venues,
+		    'Venue' => $venue,
 		    'Sponsors' => $sponsors,
 		    'EventTypes' => $event_types
-		   	    
 		    )));
-		    
-		    //print_r($outfeed);		    
 		}		
-		
-		return $outfeed; 
-		   
+		return $outfeed;   
 	}
 }

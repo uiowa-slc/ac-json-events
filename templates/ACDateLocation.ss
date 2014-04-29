@@ -1,0 +1,1 @@
+$NextDateTime.Format("l, F n") $NextDateTime.Time <% if $Location %>at $Location<% end_if %><% if $Venue %>, $Venue<% end_if %>  

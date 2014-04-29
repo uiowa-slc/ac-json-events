@@ -1,5 +1,5 @@
 <?php
 
-Object::add_extension('Page_Controller', 'JSONFeedExtension');
+Object::add_extension('Page_Controller', 'JSONDisplayExtension');
 
 ?>
