@@ -14,7 +14,10 @@ class JSONDisplayExtension extends DataExtension{
 	 	
 	 	$more_info_link = new Text('more_info_link');
 	 	$more_info_link->setValue($rawEvent['more_info_link']);
-	 	
+
+	 	$facebook_event_link = new Text('facebook_event_link');
+	 	$facebook_event_link->setValue($rawEvent['facebook_event_link']);
+
 	 	$imageURL = new Text('ImageURL');
 		$imageURL->setValue($rawEvent['image']);	
 
@@ -49,19 +52,20 @@ class JSONDisplayExtension extends DataExtension{
 		}
 
 		$parsedEvent = new ArrayData(array(
-		'ID'			=> $id,
-	    'Title'         => $name,
-	    'Link' => $link,
-	    'MoreInfoLink' => $more_info_link,
-	    'ImageURL' => $imageURL,
-	    'CancelNote' => $cancel_note,
-	    'NextDateTime'		=> $nextDateTime,
-	    'DateTimeCount' => $dateTimeCount,
-	    'Cost'		=> $cost,
-	    'Location'	=> $location,
-	    'Venue' => $venue,
-	    'Sponsors' => $sponsors,
-	    'EventTypes' => $event_types
+			'ID'			=> $id,
+		    'Title'         => $name,
+		    'Link' => $link,
+		    'FacebookEventLink' => $facebook_event_link,
+		    'MoreInfoLink' => $more_info_link,
+		    'ImageURL' => $imageURL,
+		    'CancelNote' => $cancel_note,
+		    'NextDateTime'		=> $nextDateTime,
+		    'DateTimeCount' => $dateTimeCount,
+		    'Cost'		=> $cost,
+		    'Location'	=> $location,
+		    'Venue' => $venue,
+		    'Sponsors' => $sponsors,
+		    'EventTypes' => $event_types
 	    ));
 		return $parsedEvent;
 	}
