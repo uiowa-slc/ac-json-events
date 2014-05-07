@@ -46,9 +46,11 @@ class JSONDisplayExtension extends DataExtension{
 			$sponsors->setValue($rawEvent['sponsors'][0]['name']);
 		}
 
-		$event_types = new Text('Event Types');
+		$eventTypes = new Text('Event Types');
 		if($rawEvent['event_types']) {
-			$event_types->setValue($rawEvent['event_types'][0]['name']);					
+			$eventTypeNames = array_map(function($item) { return $item['name']; }, $rawEvent['event_types']);
+			//$eventTypeNames = array_column($rawEvent['event_types'], 'name');
+			$eventTypes->setValue(implode(', ', $eventTypeNames));
 		}
 
 		$parsedEvent = new ArrayData(array(
@@ -65,7 +67,7 @@ class JSONDisplayExtension extends DataExtension{
 		    'Location'	=> $location,
 		    'Venue' => $venue,
 		    'Sponsors' => $sponsors,
-		    'EventTypes' => $event_types
+		    'EventTypes' => $eventTypes
 	    ));
 		return $parsedEvent;
 	}
