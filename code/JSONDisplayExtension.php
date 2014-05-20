@@ -80,7 +80,7 @@ class JSONDisplayExtension extends DataExtension{
 
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		
-		if(isset($eventsDecoded)){
+		if(isset($eventsDecoded['events'])){
 			foreach($eventsDecoded['events'] as $event) {
 				if($event['id'] == $id){
 					return $this->parseEvent($event);
@@ -95,10 +95,12 @@ class JSONDisplayExtension extends DataExtension{
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
-		 
-		foreach($eventsDecoded['events'] as $event) {
-			$eventsList->push($this->parseEvent($event));
-		}		
-		return $eventsList;   
+
+		if(isset($eventsDecoded['events'])){
+			foreach($eventsDecoded['events'] as $event) {
+				$eventsList->push($this->parseEvent($event));
+			}		
+			return $eventsList;   
+		}
 	}
 }
