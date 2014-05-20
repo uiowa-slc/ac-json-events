@@ -79,10 +79,12 @@ class JSONDisplayExtension extends DataExtension{
 		$rawFeed = file_get_contents($feedURL);
 
 		$eventsDecoded = json_decode($rawFeed, TRUE);
-		 
-		foreach($eventsDecoded['events'] as $event) {
-			if($event['id'] == $id){
-				return $this->parseEvent($event);
+		
+		if(isset($eventsDecoded)){
+			foreach($eventsDecoded['events'] as $event) {
+				if($event['id'] == $id){
+					return $this->parseEvent($event);
+				}
 			}
 		}
 		return false;
