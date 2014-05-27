@@ -1,7 +1,7 @@
 <?php
 
 class AfterClassEventPickerField extends DropdownField {
-	private $feedBase = 'http://afterclass.uiowa.edu';
+	private $feedBase = 'http://afterclass.uiowa.edu/events/';
 	//private $feedBase = 'http://baltar.imu.uiowa.edu:8888/after-class';
 
 	private static $default_category = 0;
@@ -11,12 +11,13 @@ class AfterClassEventPickerField extends DropdownField {
 
 	public function __construct($name, $title = null, $source = null, $value = "", $form=null, $category = 0) {
 
-		//If this page has a display category, limit picker to events from that category only. Otherwise all events are in the picker.
-		if($category != 0){
-			$feedURL = $this->feedBase.'/events/categories/'.$category.'/feed/json';
+		$eventsPage = AfterClassEventsPage::get()->First();
+
+		if($eventsPage){
+			$feedURL = $this->feedBase."categories/".$eventsPage->DisplayCategory.'/feed/json';
 		}else{
-			$feedURL = $this->feedBase.'/events/feed/';
-		}
+			$feedURL = $this->feedBase."feed/json";
+		}		
 
 		$rawFeed = file_get_contents($feedURL);
 		$eventsArray = json_decode($rawFeed, TRUE);
