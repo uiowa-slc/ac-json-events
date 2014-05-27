@@ -8,15 +8,15 @@ class AfterClassEventsPage extends Page {
 	private static $has_one = array(
 
 	);
-	
+	private static $icon = "ac-json-events/images/calendar";	
 	private static $allowed_children = array('HomePageSlider');
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Main", new AfterClassCategoryDropdownField('DisplayCategory', 'Display the following category of AC events on this page'));
+		$fields->addFieldToTab("Root.Main", new AfterClassCategoryDropdownField('DisplayCategory', 'Display the following category of AC events on this page'), "Content");
 		return $fields;
-		
 	}
+
 }
 class AfterClassEventsPage_Controller extends Page_Controller {
 

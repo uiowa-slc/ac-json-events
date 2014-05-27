@@ -90,9 +90,19 @@ class JSONDisplayExtension extends DataExtension{
 		return false;
 	}
 
-	public function AfterClassEvents($feedURL="http://afterclass.uiowa.edu/events/feed/json") {
+	public function AfterClassEvents($category = 0) {
 		
+		$feedBase = "http://afterclass.uiowa.edu/events/";
 		$eventsList = new ArrayList();
+
+		$eventsPage = AfterClassEventsPage::get()->First();
+
+		if($eventsPage){
+			$feedURL = $feedBase."categories/".$eventsPage->DisplayCategory.'/feed/json';
+		}else{
+			$feedURL = $feedBase."feed/json";
+		}
+
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 
