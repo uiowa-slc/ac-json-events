@@ -1,6 +1,17 @@
 <?php
 class JSONDisplayExtension extends DataExtension{
 
+	private $feedBaseURL = 'http://events.wtmd.org/api/2/';
+
+	private function getVenue($venueID){
+		$feedURL = $this->feedBaseURL.'places/'.$venueID;
+		$rawFeed = file_get_contents($feedURL);
+
+		$venue['places'] = json_decode($rawFeed, TRUE); 
+		return $venue['places'];
+
+	}
+
 	private function parseEvent($rawEvent){
 
 	 	$id = new Text('ID');
@@ -21,6 +32,8 @@ class JSONDisplayExtension extends DataExtension{
 	 	$imageURL = new Text('ImageURL');
 		$imageURL->setValue($rawEvent['photo_url']);	
 
+	 	/*$thumbnailURL = new Text('ImageURL');
+		$thumbnailURL->setValue($rawEvent['thumbnail_url']);*/
 		/*
 		//no field for a cancel_note in Localist api. Perhaps use a custom field?
 		$cancel_note = new Text('cancel_note');
@@ -71,10 +84,17 @@ class JSONDisplayExtension extends DataExtension{
 		} else {
 			$location->setValue($rawEvent['location']);
 		}
+
+		$venue = $this->getVenue($rawEvent['venue_id']);
 		
-		$venue = new Text('Venue');
+		$venueTitle = new Text('VenueTitle');
 		if($rawEvent['venue_id']) {
-			$venue->setValue($rawEvent['venue_id']);
+			$venueTitle->setValue($venue['place']['name']);
+		}
+
+		$venueLink = new Text('VenueLink');
+		if($rawEvent['venue_url']) {
+			$venueLink->setValue($rawEvent['venue_url']);
 		}
 		/*
 		// Localist provides a 'sponsored' key, but it's a boolean. so...not what we're looking for here
@@ -93,8 +113,8 @@ class JSONDisplayExtension extends DataExtension{
 
 		$parsedEvent = new ArrayData(array(
 			'ID'				=> $id,
-		    'Title'           => $title,
-		    'Link' 			=> $link,
+		    'Title'           	=> $title,
+		    'Link' 				=> $link,
 		    'FacebookEventLink' => $facebook_event_link,
 		    'MoreInfoLink' 		=> $more_info_link,
 		    'ImageURL'			=> $imageURL,
@@ -103,15 +123,17 @@ class JSONDisplayExtension extends DataExtension{
 		    //'DateTimeCount'	=> $dateTimeCount,
 		    'Cost'				=> $cost,
 		    'Location'			=> $location,
-		    'Venue' 			=> $venue,
+		    'VenueTitle' 		=> $venueTitle,
+		    'VenueLink' 		=> $venueLink,
 		    //'Sponsors' 		=> $sponsors,
 		    'EventTypes' 		=> $eventTypes
 	    ));
 		return $parsedEvent;
 	}
 		
-	public function AfterClassEvents($feedURL="http://localhost:8888/localist-api-examples/events.json") {
+	public function AfterClassEvents($feedURL = "events/?days=200&pp=50") {
 		
+		$feedURL = $this->feedBaseURL.$feedURL;
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
