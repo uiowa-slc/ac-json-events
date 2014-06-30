@@ -3,6 +3,14 @@ class JSONDisplayExtension extends DataExtension{
 
 	private $feedBaseURL = 'http://events.wtmd.org/api/2/';
 
+	private function getEventInstance($eventID){
+
+	}
+
+	private function getNextDate($eventID){
+		
+	}
+
 	private function getVenue($venueID){
 		$feedURL = $this->feedBaseURL.'places/'.$venueID;
 		$rawFeed = file_get_contents($feedURL);
@@ -132,7 +140,7 @@ class JSONDisplayExtension extends DataExtension{
 	}
 		
 	public function AfterClassEvents($feedURL = "events/?days=200&pp=50") {
-		
+
 		$feedURL = $this->feedBaseURL.$feedURL;
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
