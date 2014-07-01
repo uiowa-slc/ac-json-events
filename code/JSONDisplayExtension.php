@@ -171,12 +171,9 @@ class JSONDisplayExtension extends DataExtension{
 	}
 		
 	public function AfterClassEvents($feedURL = "events/?days=200&pp=50") {
-		$tempfeedurl = "http://localhost:8888/localist-api-examples/events.json";
 		$feedURL = $this->feedBaseURL.$feedURL;
 		$eventsList = new ArrayList();
-
-		$rawFeed = file_get_contents($tempfeedurl);
-
+		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
 		foreach($eventsArray as $event) {
