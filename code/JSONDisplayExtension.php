@@ -1,16 +1,32 @@
 <?php
 class JSONDisplayExtension extends DataExtension{
 
+	private $BaseURL = 'http://events.wtmd.org/';
 	private $feedBaseURL = 'http://events.wtmd.org/api/2/';
-
+	
+	/*
 	private function getEventInstance($eventID){
-
+	
 	}
-
-	private function getNextDate($eventID){
+	*/
+	
+	private function getNextDateTime($rawEvent){
+		$event_instances = $rawEvent['event_instances'];
+		return(strtotime($event_instances[0]['event_instance']['start']));
 		
 	}
 
+	private function getDateLink($NextDateTimeVar){	
+		$datestring = date("Y/n/j", $NextDateTimeVar);
+		$urlparts = array(
+			$this->BaseURL,
+			"calendar/day/",
+			$datestring
+			);
+		//print_r(implode($urlparts));
+		return (implode($urlparts));
+	}
+	
 	private function getVenue($venueID){
 		$feedURL = $this->feedBaseURL.'places/'.$venueID;
 		$rawFeed = file_get_contents($feedURL);
@@ -47,8 +63,6 @@ class JSONDisplayExtension extends DataExtension{
 		$cancel_note = new Text('cancel_note');
 		$cancel_note->setValue($rawEvent['cancel_note']);
 	 	*/
-	 	
-	 	
 	 	/*
 	 	
 	 	// Currently no NextDateTime Field. Could use function to return something from event_instances
@@ -60,24 +74,33 @@ class JSONDisplayExtension extends DataExtension{
 		//foreach($rawEvent['event_instances'] as $instance {
 		//	if (strtotime(substr($instance['event_instance']['start'], 0, )))
 		//}
-		
-		$time = time();
-		foreach($rawEvent['event_instances'] as $eventInstance) {
-			//print_r (strtotime(substr($eventInstance['event_instance']['start'], 0, 10)));
-			if (strtotime(substr($eventInstance['event_instance']['start'], 0, 10)) >= $time) {
-				$nextDateTime->setValue($eventInstance['event_instance']['start']);
-				break;
-			} else {
-				print_r ('nothing found');
-			}		
-		};
-		
 		*/
+
+		$nextDateTime = new SS_Datetime('NextDateTime');
+		$time = time();
+		$getNextDateTime = $this->getNextDateTime($rawEvent);
+		$nextDateTime->setValue($getNextDateTime);
 		
+		/*
+		foreach($event_instances as $instance) {
+				foreach($instance as $stance) {
+					//print_r (strtotime(substr($eventInstance['event_instance']['start'], 0, 10)));
+					//if (strtotime(substr($stance['event_instance']['start'], 0, 10)) >= $time) {
+						$nextDateTime->setValue($stance['event_instance']['start']);
+					//	break;
+					//} else {
+					//	print_r ('nothing found');
+				}	
+		}
+		*/
 		
 		//$dateTimeCount = new Int('DateTimeCount');
 		//$dateTimeCount->setValue(count($rawEvent['dates']));
-
+		
+		$dateLink = new Text('DateLink');
+		$getDateLink = $this->getDateLink($getNextDateTime);
+		$dateLink->setValue($getDateLink);
+		
 		$cost = new Text('Cost');
 		if ($rawEvent['free']) {
 			$cost->setValue('Free');
@@ -126,8 +149,9 @@ class JSONDisplayExtension extends DataExtension{
 		    'FacebookEventLink' => $facebook_event_link,
 		    'MoreInfoLink' 		=> $more_info_link,
 		    'ImageURL'			=> $imageURL,
+		    'DateLink'			=> $dateLink,
 		    //'CancelNote' 		=> $cancel_note,
-		    //'NextDateTime'		=> $nextDateTime,
+		    'NextDateTime'		=> $nextDateTime,
 		    //'DateTimeCount'	=> $dateTimeCount,
 		    'Cost'				=> $cost,
 		    'Location'			=> $location,
