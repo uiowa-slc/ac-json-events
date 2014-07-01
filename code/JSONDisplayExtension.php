@@ -94,8 +94,14 @@ class JSONDisplayExtension extends DataExtension{
 		}
 		*/
 		
-		//$dateTimeCount = new Int('DateTimeCount');
-		//$dateTimeCount->setValue(count($rawEvent['dates']));
+		$moreDateTime = new Int('DateTimeCount');
+		$event_instances = $rawEvent['event_instances'];
+		$upcomingDateCount = 0;
+		foreach ($event_instances as $upcoming_dates) {
+			$upcomingDateCount++;
+		}
+		$upcomingDateCount--;
+		$moreDateTime->setValue($upcomingDateCount);
 		
 		$dateLink = new Text('DateLink');
 		$getDateLink = $this->getDateLink($getNextDateTime);
@@ -152,7 +158,7 @@ class JSONDisplayExtension extends DataExtension{
 		    'DateLink'			=> $dateLink,
 		    //'CancelNote' 		=> $cancel_note,
 		    'NextDateTime'		=> $nextDateTime,
-		    //'DateTimeCount'	=> $dateTimeCount,
+		    'MoreDateTime' 	    => $moreDateTime,
 		    'Cost'				=> $cost,
 		    'Location'			=> $location,
 		    'VenueTitle' 		=> $venueTitle,
@@ -160,14 +166,17 @@ class JSONDisplayExtension extends DataExtension{
 		    //'Sponsors' 		=> $sponsors,
 		    'EventTypes' 		=> $eventTypes
 	    ));
+
 		return $parsedEvent;
 	}
 		
 	public function AfterClassEvents($feedURL = "events/?days=200&pp=50") {
-
+		$tempfeedurl = "http://localhost:8888/localist-api-examples/events.json";
 		$feedURL = $this->feedBaseURL.$feedURL;
 		$eventsList = new ArrayList();
-		$rawFeed = file_get_contents($feedURL);
+
+		$rawFeed = file_get_contents($tempfeedurl);
+
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
 		foreach($eventsArray as $event) {
