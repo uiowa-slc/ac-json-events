@@ -28,14 +28,7 @@ class JSONDisplayExtension extends DataExtension{
 	}
 
 	private function getDateLink($NextDateTimeVar){	
-		$datestring = date("Y/n/j", strtotime($NextDateTimeVar));
-		$urlparts = array(
-			LOCALIST_BASE,
-			"calendar/day/",
-			$datestring
-			);
-		//print_r(implode($urlparts));
-		return (implode($urlparts));
+		/* moved to LocalistDateTime.php */
 	}
 	
 	private function getVenue($venueID){
@@ -90,11 +83,11 @@ class JSONDisplayExtension extends DataExtension{
 		$dates = new ArrayList();
 		$dates = $this->getDates($rawEvent);
 
-		$nextDateTime = new SS_Datetime('NextDateTime');
+		/*$nextDateTime = new SS_Datetime('NextDateTime');
 		$time = time();
 		$getNextDateTime = $dates[0];
 		print_r($getNextDateTime);
-		$nextDateTime->setValue($getNextDateTime);
+		$nextDateTime->setValue($getNextDateTime);*/
 		
 		/*
 		foreach($event_instances as $instance) {
@@ -108,7 +101,7 @@ class JSONDisplayExtension extends DataExtension{
 				}	
 		}
 		*/
-		
+		/*
 		$moreDateTime = new Int('DateTimeCount');
 		$event_instances = $rawEvent['event_instances'];
 		$upcomingDateCount = 0;
@@ -120,7 +113,7 @@ class JSONDisplayExtension extends DataExtension{
 		
 		$dateLink = new Text('DateLink');
 		$getDateLink = $this->getDateLink($getNextDateTime);
-		$dateLink->setValue($getDateLink);
+		$dateLink->setValue($getDateLink);*/
 		
 		$cost = new Text('Cost');
 		if ($rawEvent['free']) {
@@ -171,10 +164,7 @@ class JSONDisplayExtension extends DataExtension{
 		    'MoreInfoLink' 		=> $more_info_link,
 		    'ImageURL'			=> $imageURL,
 		    'Dates' 			=> $dates,
-		    'DateLink'			=> $dateLink,
 		    //'CancelNote' 		=> $cancel_note,
-		    'NextDateTime'		=> $nextDateTime,
-		    'MoreDateTime' 	    => $moreDateTime,
 		    'Cost'				=> $cost,
 		    'Location'			=> $location,
 		    'VenueTitle' 		=> $venueTitle,
@@ -182,6 +172,8 @@ class JSONDisplayExtension extends DataExtension{
 		    //'Sponsors' 		=> $sponsors,
 		    'EventTypes' 		=> $eventTypes
 	    ));
+
+	    print_r($dates);
 
 		return $parsedEvent;
 	}
