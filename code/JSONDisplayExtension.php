@@ -60,60 +60,8 @@ class JSONDisplayExtension extends DataExtension{
 	 	$imageURL = new Text('ImageURL');
 		$imageURL->setValue($rawEvent['photo_url']);	
 
-	 	/*$thumbnailURL = new Text('ImageURL');
-		$thumbnailURL->setValue($rawEvent['thumbnail_url']);*/
-		/*
-		//no field for a cancel_note in Localist api. Perhaps use a custom field?
-		$cancel_note = new Text('cancel_note');
-		$cancel_note->setValue($rawEvent['cancel_note']);
-	 	*/
-	 	/*
-	 	
-	 	// Currently no NextDateTime Field. Could use function to return something from event_instances
-		$nextDateTime = new SS_Datetime('NextDateTime');
-		$nextDateTime->setValue(strtotime($rawEvent['event_instances'][0]['start']));
-		$nextDateTime->setValue(strtotime($rawEvent['dates'][0]['start_date'].' '.$rawEvent['dates'][0]['start_time']));
-		
-		//wip -jonathan
-		//foreach($rawEvent['event_instances'] as $instance {
-		//	if (strtotime(substr($instance['event_instance']['start'], 0, )))
-		//}
-		*/
-
 		$dates = new ArrayList();
 		$dates = $this->getDates($rawEvent);
-
-		/*$nextDateTime = new SS_Datetime('NextDateTime');
-		$time = time();
-		$getNextDateTime = $dates[0];
-		print_r($getNextDateTime);
-		$nextDateTime->setValue($getNextDateTime);*/
-		
-		/*
-		foreach($event_instances as $instance) {
-				foreach($instance as $stance) {
-					//print_r (strtotime(substr($eventInstance['event_instance']['start'], 0, 10)));
-					//if (strtotime(substr($stance['event_instance']['start'], 0, 10)) >= $time) {
-						$nextDateTime->setValue($stance['event_instance']['start']);
-					//	break;
-					//} else {
-					//	print_r ('nothing found');
-				}	
-		}
-		*/
-		/*
-		$moreDateTime = new Int('DateTimeCount');
-		$event_instances = $rawEvent['event_instances'];
-		$upcomingDateCount = 0;
-		foreach ($event_instances as $upcoming_dates) {
-			$upcomingDateCount++;
-		}
-		$upcomingDateCount--;
-		$moreDateTime->setValue($upcomingDateCount);
-		
-		$dateLink = new Text('DateLink');
-		$getDateLink = $this->getDateLink($getNextDateTime);
-		$dateLink->setValue($getDateLink);*/
 		
 		$cost = new Text('Cost');
 		if ($rawEvent['free']) {
@@ -172,8 +120,6 @@ class JSONDisplayExtension extends DataExtension{
 		    //'Sponsors' 		=> $sponsors,
 		    'EventTypes' 		=> $eventTypes
 	    ));
-
-	    print_r($dates);
 
 		return $parsedEvent;
 	}
