@@ -185,6 +185,10 @@ class JSONDisplayExtension extends DataExtension{
 
 		return $parsedEvent;
 	}
+	
+	public function ActiveVenues() {
+		
+	}
 		
 	public function AfterClassEvents($feedURL = "events/?days=200&pp=50&distinct=true") {
 		$feedURL = LOCALIST_FEED_URL.$feedURL;
