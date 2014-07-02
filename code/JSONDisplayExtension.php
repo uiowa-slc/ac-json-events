@@ -1,15 +1,26 @@
 <?php
 class JSONDisplayExtension extends DataExtension{
-
-	private $BaseURL = 'http://events.wtmd.org/';
-	private $feedBaseURL = 'http://events.wtmd.org/api/2/';
 	
 	/*
 	private function getEventInstance($eventID){
 	
 	}
 	*/
-	
+	private function getDates($rawEvent){
+		$eventInstances = $rawEvent['event_instances'];
+		$eventInstancesArray = new ArrayList();
+
+		foreach($eventInstances as $i => $eventInstance){
+
+			$dateTime = new LocalistDatetime();
+			$dateTime->setValue($eventInstances[$i]['event_instance']['start']);
+
+			$eventInstancesArray->push($dateTime);
+		}
+
+		return $eventInstancesArray;
+		
+	}	
 	private function getNextDateTime($rawEvent){
 		$event_instances = $rawEvent['event_instances'];
 		return(strtotime($event_instances[0]['event_instance']['start']));
@@ -17,9 +28,9 @@ class JSONDisplayExtension extends DataExtension{
 	}
 
 	private function getDateLink($NextDateTimeVar){	
-		$datestring = date("Y/n/j", $NextDateTimeVar);
+		$datestring = date("Y/n/j", strtotime($NextDateTimeVar));
 		$urlparts = array(
-			$this->BaseURL,
+			LOCALIST_BASE,
 			"calendar/day/",
 			$datestring
 			);
@@ -28,7 +39,7 @@ class JSONDisplayExtension extends DataExtension{
 	}
 	
 	private function getVenue($venueID){
-		$feedURL = $this->feedBaseURL.'places/'.$venueID;
+		$feedURL = LOCALIST_FEED_URL.'places/'.$venueID;
 		$rawFeed = file_get_contents($feedURL);
 
 		$venue['places'] = json_decode($rawFeed, TRUE); 
@@ -76,9 +87,13 @@ class JSONDisplayExtension extends DataExtension{
 		//}
 		*/
 
+		$dates = new ArrayList();
+		$dates = $this->getDates($rawEvent);
+
 		$nextDateTime = new SS_Datetime('NextDateTime');
 		$time = time();
-		$getNextDateTime = $this->getNextDateTime($rawEvent);
+		$getNextDateTime = $dates[0];
+		print_r($getNextDateTime);
 		$nextDateTime->setValue($getNextDateTime);
 		
 		/*
@@ -155,6 +170,7 @@ class JSONDisplayExtension extends DataExtension{
 		    'FacebookEventLink' => $facebook_event_link,
 		    'MoreInfoLink' 		=> $more_info_link,
 		    'ImageURL'			=> $imageURL,
+		    'Dates' 			=> $dates,
 		    'DateLink'			=> $dateLink,
 		    //'CancelNote' 		=> $cancel_note,
 		    'NextDateTime'		=> $nextDateTime,
@@ -170,8 +186,8 @@ class JSONDisplayExtension extends DataExtension{
 		return $parsedEvent;
 	}
 		
-	public function AfterClassEvents($feedURL = "events/?days=200&pp=50") {
-		$feedURL = $this->feedBaseURL.$feedURL;
+	public function AfterClassEvents($feedURL = "events/?days=200&pp=50&distinct=true") {
+		$feedURL = LOCALIST_FEED_URL.$feedURL;
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
