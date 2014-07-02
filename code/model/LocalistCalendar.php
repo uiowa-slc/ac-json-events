@@ -1,24 +1,25 @@
 <?php
-class AfterClassEventsPage extends Page {
+class LocalistCalendar extends Page {
 
 	private static $db = array(
-		"DisplayCategory" => "Int"
+		
 	);
 
 	private static $has_one = array(
 
 	);
 	
-	private static $allowed_children = array('HomePageSlider');
+	private static $allowed_children = array('');
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Main", new AfterClassCategoryDropdownField('DisplayCategory', 'Display the following category of AC events on this page'));
+		//$fields->addFieldToTab("Root.Main", new AfterClassCategoryDropdownField('DisplayCategory', 'Display the following category of AC events on this page'));
 		return $fields;
-		
 	}
+
+
 }
-class AfterClassEventsPage_Controller extends Page_Controller {
+class LocalistCalendar_Controller extends Page_Controller {
 
 	/**
 	 * An array of actions that can be accessed via a request. Each array element should be an action name, and the
@@ -36,7 +37,22 @@ class AfterClassEventsPage_Controller extends Page_Controller {
 	 * @var array
 	 */
 	private static $allowed_actions = array (
+		'event',
+		'date'
 	);
+
+	private static $url_handlers = array(
+		'event/$eventID' => 'event',
+		'date/$startDate/$endDate' => "date",
+	);
+
+	public function event($request){
+		$eventID =  addslashes($this->urlParams['eventID']);
+		$event = $this->AfterClassEvent($eventID);
+		return $event->renderWith(array('LocalistEvent', 'Page'));
+	}
+
+
 
 }
 ?>
