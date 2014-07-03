@@ -13,24 +13,27 @@ class LocalistCalendar extends Page {
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		//$fields->addFieldToTab("Root.Main", new AfterClassCategoryDropdownField('DisplayCategory', 'Display the following category of AC events on this page'));
 		return $fields;
 	}
 
-	public function getEventList(){
-		$feedURL = LOCALIST_FEED_URL.$feedURL;
+	public function EventList(){
+		$feedParams = "events/?days=200&pp=50&distinct=true";
+		$feedURL = LOCALIST_FEED_URL.$feedParams;
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
+
 		foreach($eventsArray as $event) {
-			$eventsList->push($this->parseEvent($event['event']));
-		}		
+			$localistEvent = new LocalistEvent();
+			$eventsList->push($localistEvent->parseEvent($event['event']));
+		}
+
 		return $eventsList;  		
 
 	}
 
-	public function singleEvent($id){
+	public function SingleEvent($id){
 		$feedParams = "events/".$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 		$feed = new ArrayList();
@@ -39,7 +42,8 @@ class LocalistCalendar extends Page {
 
 		$event = $eventsDecoded['event'];
 		if(isset($event)){
-			return $this->parseEvent($event);	
+			$localistEvent = new LocalistEvent();
+			return $localistEvent->parseEvent($event);	
 		}
 		return false;
 	}
@@ -75,7 +79,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 	public function event($request){
 		$eventID =  addslashes($this->urlParams['eventID']);
-		$event = $this->AfterClassEvent($eventID);
+		$event = $this->SingleEvent($eventID);
 		return $event->renderWith(array('LocalistEvent', 'Page'));
 	}
 
