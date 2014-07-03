@@ -17,6 +17,33 @@ class LocalistCalendar extends Page {
 		return $fields;
 	}
 
+	public function getEventList(){
+		$feedURL = LOCALIST_FEED_URL.$feedURL;
+		$eventsList = new ArrayList();
+		$rawFeed = file_get_contents($feedURL);
+		$eventsDecoded = json_decode($rawFeed, TRUE);
+		$eventsArray = $eventsDecoded['events'];
+		foreach($eventsArray as $event) {
+			$eventsList->push($this->parseEvent($event['event']));
+		}		
+		return $eventsList;  		
+
+	}
+
+	public function singleEvent($id){
+		$feedParams = "events/".$id;
+		$feedURL = LOCALIST_FEED_URL.$feedParams;
+		$feed = new ArrayList();
+		$rawFeed = file_get_contents($feedURL);
+		$eventsDecoded = json_decode($rawFeed, TRUE);
+
+		$event = $eventsDecoded['event'];
+		if(isset($event)){
+			return $this->parseEvent($event);	
+		}
+		return false;
+	}
+
 
 }
 class LocalistCalendar_Controller extends Page_Controller {
