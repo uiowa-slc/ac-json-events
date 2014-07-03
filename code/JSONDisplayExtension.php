@@ -20,13 +20,15 @@ class JSONDisplayExtension extends DataExtension{
 
 		return $eventInstancesArray;
 		
-	}	
+	}
+		
+	/*
 	private function getNextDateTime($rawEvent){
 		$event_instances = $rawEvent['event_instances'];
 		return(strtotime($event_instances[0]['event_instance']['start']));
-		
 	}
-
+	*/
+	
 	private function getDateLink($NextDateTimeVar){	
 		/* moved to LocalistDateTime.php */
 	}
@@ -34,10 +36,8 @@ class JSONDisplayExtension extends DataExtension{
 	private function getVenue($venueID){
 		$feedURL = LOCALIST_FEED_URL.'places/'.$venueID;
 		$rawFeed = file_get_contents($feedURL);
-
 		$venue['places'] = json_decode($rawFeed, TRUE); 
 		return $venue['places'];
-
 	}
 
 	private function parseEvent($rawEvent){
@@ -96,6 +96,15 @@ class JSONDisplayExtension extends DataExtension{
 			$sponsors->setValue($rawEvent['sponsors'][0]['name']);
 		}
 		*/
+		
+		$latitude = new Text('Latitude');
+		$latitude->setValue($rawEvent['geo']['latitude']);
+		
+		$longitude = new Text('Longitude');
+		$longitude->setValue($rawEvent['geo']['longitude']);
+		
+		$address = new Text('Address');
+		$address->setValue($rawEvent['address']);
 
 		$eventTypes = new Text('Event Types');
 		if($rawEvent['filters']['event_types']) {
@@ -118,16 +127,75 @@ class JSONDisplayExtension extends DataExtension{
 		    'VenueTitle' 		=> $venueTitle,
 		    'VenueLink' 		=> $venueLink,
 		    //'Sponsors' 		=> $sponsors,
-		    'EventTypes' 		=> $eventTypes
+		    'EventTypes' 		=> $eventTypes,
+		    'Latitude'			=> $latitude,
+		    'Longitude'			=> $longitude,
+		    'Address'			=> $address
 	    ));
 
+		
 		return $parsedEvent;
 	}
 	
-	public function ActiveVenues() {
+	public function ACActiveVenues($feedURL = "events/?days=200&pp=50&distinct=true") {
+	
+		$activeEvents = $this->AfterClassEvents();
+		$venues = new ArrayList();
 		
+		foreach($events as $key => $event){
+			$venue = new LocalistVenue();
+			$venue->ID = $event->venueID; //venueID needs to be in parse event
+			$venues->push($venue);
+		}
+		
+		$venues->removeDuplicates();
+		
+		
+		return $venues;
+		//loop through events in /events/
+		$feedURL = LOCALIST_FEED_URL.$feedURL;
+		$activeVenues = new ArrayList();
+		$rawFeed = file_get_contents($feedURL);
+		$eventsDecoded = json_decode($rawFeed, TRUE);
+		$eventsArray = $eventsDecoded['events'];
+		
+		//if the venue id is new/unique
+			//add venue_id into ass.array as key
+			//place event id in it's value as list
+		//else if the venue is not unique 
+			//then place event id into its value
+		// 
+
+		foreach($eventsArray as $event) {
+			$activeVenues->push($this->parseEvent($event['event']));
+		}		
+		return $activeVenues;   
+
 	}
-		
+	
+		public function ACActiveVenueEvents($id){
+
+		$feedURL = 'http://localhost:8888/localist-api-examples/events.json';
+		$feed = new ArrayList();
+		$rawFeed = file_get_contents($feedURL);
+		$eventsDecoded = json_decode($rawFeed, TRUE);
+		$eventsList = $eventsDecoded['events'];
+		if(isset($eventsList)){
+			//echo('hello, world');
+			//print_r ($eventsList);
+			foreach($eventsList as $event) {
+				//print_r ($event);
+				if($event['event']['id'] == $id){
+					return $this->parseEvent($event);
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	//	
+	
 	public function AfterClassEvents($feedURL = "events/?days=200&pp=50&distinct=true") {
 		$feedURL = LOCALIST_FEED_URL.$feedURL;
 		$eventsList = new ArrayList();
