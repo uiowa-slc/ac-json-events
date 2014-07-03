@@ -15,7 +15,9 @@ class JSONDisplayExtension extends DataExtension{
 			$dateTime = new LocalistDatetime();
 			$dateTime->setValue($eventInstances[$i]['event_instance']['start']);
 
-			$eventInstancesArray->push($dateTime);
+			if(!$dateTime->InPast()){
+				$eventInstancesArray->push($dateTime);
+			}
 		}
 
 		return $eventInstancesArray;
@@ -47,6 +49,9 @@ class JSONDisplayExtension extends DataExtension{
 	 	
 	 	$title = new Text('Title');
 	 	$title->setValue($rawEvent['title']);
+
+	 	$description_text = new HTMLText('Content');
+	 	$description_text->setValue($rawEvent['description_text']);
 
 	 	$link = new Text('Localist_url');
 	 	$link->setValue($rawEvent['localist_url']);
@@ -116,6 +121,7 @@ class JSONDisplayExtension extends DataExtension{
 		$parsedEvent = new ArrayData(array(
 			'ID'				=> $id,
 		    'Title'           	=> $title,
+		    'Content'			=> $description_text,
 		    'Link' 				=> $link,
 		    'FacebookEventLink' => $facebook_event_link,
 		    'MoreInfoLink' 		=> $more_info_link,
@@ -209,21 +215,15 @@ class JSONDisplayExtension extends DataExtension{
 	}
 	
 	public function AfterClassEvent($id){
-
-		$feedURL = 'http://localhost:8888/localist-api-examples/events.json';
+		$feedParams = "events/".$id;
+		$feedURL = LOCALIST_FEED_URL.$feedParams;
 		$feed = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
-		$eventsList = $eventsDecoded['events'];
-		if(isset($eventsList)){
-			//echo('hello, world');
-			//print_r ($eventsList);
-			foreach($eventsList as $event) {
-				//print_r ($event);
-				if($event['event']['id'] == $id){
-					return $this->parseEvent($event);
-				}
-			}
+
+		$event = $eventsDecoded['event'];
+		if(isset($event)){
+			return $this->parseEvent($event);	
 		}
 		return false;
 	}

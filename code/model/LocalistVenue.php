@@ -1,27 +1,37 @@
 <?php
-class LocalistVenue extends DataObject{
+class LocalistVenue extends DataObject {
 
+	private static $db = array(
+		"Title" => "Varchar(255)",
+		"Content" => "HTMLText",
+		"ImageURL" => "Text",
+		"LocalistLink" => "Text",
+		"WebsiteLink" => "Text",
+		
+	);
 
-	public function Events(){
-		
-		
-		
+	public function parseVenue($venueDecoded){
+		if(isset($venueDecoded['place'])){
+			$venueDecoded = $venueDecoded['place'];
+			$this->ID = $venueDecoded['id'];
+			$this->Title = $venueDecoded['name'];
+			$this->Content = $venueDecoded['description_text'];
+			$this->ImageURL = $venueDecoded['photo_url'];
+			$this->LocalistLink = $venueDecoded['localist_url'];
+			$this->WebsiteLink = $venueDecoded['url'];
+
+			return $this;
+		}
+
 	}
 
+	public function EventList(){
 
-	/* Link function might change to an internal link eventually, currently links to the
-	localist caliendar filter */
-
+	}
 	/*public function Link(){
-		$datestring = date("Y/n/j", strtotime($this->value));
-		$urlparts = array(
-			LOCALIST_BASE,
-			"calendar/day/",
-			$datestring
-			);
-		//print_r(implode($urlparts));
-		return (implode($urlparts));
-
+		$calendar = LocalistCalendar::get()->First();
+		$link = $calendar->Link().'event/'.$this->ID;
+		return $link;
 	}*/
 
 }
