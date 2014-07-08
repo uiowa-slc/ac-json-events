@@ -15,6 +15,24 @@ class LocalistCalendar extends Page {
 		$fields = parent::getCMSFields();
 		return $fields;
 	}
+	public function CalendarWidget() {
+	 	$calendar = CalendarWidget::create($this);
+	 	$controller = Controller::curr();
+	 	if($controller->class == "Calendar_Controller" || is_subclass_of($controller, "Calendar_Controller")) {
+	 		if($controller->getView() != "default") {	 			
+				if($startDate = $controller->getStartDate()) {
+					$calendar->setOption('start', $startDate->format('Y-m-d'));
+				}
+				if($endDate = $controller->getEndDate()) {
+					$calendar->setOption('end', $endDate->format('Y-m-d'));
+				}
+			}
+		}
+		return $calendar;
+	}
+	public function EventList($days = "200", $startDate, $endDate){
+		$feedParams = "?";
+
 
 	public function VenueList() {
 		$activeEvents = $this->EventList();
@@ -53,11 +71,25 @@ class LocalistCalendar extends Page {
 
 	}
 
-	public function EventList() {
-		$feedParams = "events/?days=200&pp=50&distinct=true";
-		$feedURL = LOCALIST_FEED_URL.$feedParams;
+	public function EventList($days = "200", $startDate, $endDate){
+
+		if(isset($days)){
+			$feedParams .= "days=".$days;
+		}
+		if(isset($startDate)){
+			$feedParams .= "startDate=".$startDate;
+		}
+		if(isset($endDate)){
+			$feedParams .= "endDate=".$endDate;
+		}
+		$feedParams .= "&distinct=true";
+
+		$cache = new SimpleCache();
+		$feedURL = LOCALIST_FEED_URL.'events/'.$feedParams;
+
 		$eventsList = new ArrayList();
-		$rawFeed = file_get_contents($feedURL);
+
+		$rawFeed = $cache->get_data("EventList-".$feedParams, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
 
@@ -70,11 +102,14 @@ class LocalistCalendar extends Page {
 
 	}
 
-	public function SingleEvent($id) {
+	public function SingleEvent($id){
+
+		$cache = new SimpleCache();
+
 		$feedParams = "events/".$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
-		$feed = new ArrayList();
-		$rawFeed = file_get_contents($feedURL);
+
+		$rawFeed = $cache->get_data("SingleEvent-".$id, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 
 		$event = $eventsDecoded['event'];
@@ -106,12 +141,14 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 */
 	private static $allowed_actions = array (
 		'event',
-		'date'
+		'show',
+		'monthjson'
 	);
 
 	private static $url_handlers = array(
 		'event/$eventID' => 'event',
-		'date/$startDate/$endDate' => "date",
+		'show/$startDate/$endDate' => 'show',
+		'monthjson/$ID' => 'monthjson'
 	);
 
 	public function event($request) {
@@ -120,7 +157,50 @@ class LocalistCalendar_Controller extends Page_Controller {
 		return $event->renderWith(array('LocalistEvent', 'Page'));
 	}
 
+	public function show($request){
+		$startDate = new SS_Datetime();
+		$startDate->setValue(addslashes($this->urlParams['startDate']));
 
+		$endDate = new SS_Datetime();
+		$endDate->setValue(addslashes($this->urlParams['endDate']));
+
+		$events = $this->EventList(null, $startDate, $endDate);
+
+		$Data = array (
+			"EventList" => $events,
+			"StartDate" => $startDate,
+			"EndDate" => $endDate
+		);
+		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+
+
+	}
+
+	public function monthjson($r) {
+		if(!$r->param('ID')) return false;
+		$this->startDate = sfDate::getInstance(CalendarUtil::get_date_from_string($r->param('ID')));
+		$this->endDate = sfDate::getInstance($this->startDate)->finalDayOfMonth();
+		
+		$json = array ();
+		$counter = clone $this->startDate;		
+		while($counter->get() <= $this->endDate->get()) {
+			$d = $counter->format('Y-m-d');
+			$json[$d] = array (
+				'events' => array ()
+			);
+			$counter->tomorrow();
+		}		
+		$list = $this->EventList();
+		foreach($list as $e) {
+			//print_r($e->Dates);
+			foreach($e->Dates as $date) {
+				if(isset($json[$date->Format('Y-m-d')])) {
+					$json[$date->Format('Y-m-d')]['events'][] = $e->getTitle();
+				}
+			}
+		}
+		return Convert::array2json($json);
+	}
 
 }
 ?>
