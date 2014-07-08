@@ -15,10 +15,23 @@ class LocalistCalendar extends Page {
 		$fields = parent::getCMSFields();
 		return $fields;
 	}
-
-	public function EventList(){
-		$feedParams = "events/?days=200&pp=50&distinct=true";
-		$feedURL = LOCALIST_FEED_URL.$feedParams;
+	public function CalendarWidget() {
+	 	$calendar = CalendarWidget::create($this);
+	 	$controller = Controller::curr();
+	 	if($controller->class == "Calendar_Controller" || is_subclass_of($controller, "Calendar_Controller")) {
+	 		if($controller->getView() != "default") {	 			
+				if($startDate = $controller->getStartDate()) {
+					$calendar->setOption('start', $startDate->format('Y-m-d'));
+				}
+				if($endDate = $controller->getEndDate()) {
+					$calendar->setOption('end', $endDate->format('Y-m-d'));
+				}
+			}
+		}
+		return $calendar;
+	}
+	public function EventList($feedParams = "?days=200&pp=50&distinct=true"){
+		$feedURL = LOCALIST_FEED_URL.'events/'.$feedParams;
 		$eventsList = new ArrayList();
 		$rawFeed = file_get_contents($feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
@@ -69,18 +82,38 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 */
 	private static $allowed_actions = array (
 		'event',
-		'date'
+		'show',
+		'monthjson'
 	);
 
 	private static $url_handlers = array(
 		'event/$eventID' => 'event',
-		'date/$startDate/$endDate' => "date",
+		'show/$startDate/$endDate' => 'show',
+		'monthjson' => 'monthjson'
 	);
 
 	public function event($request){
 		$eventID =  addslashes($this->urlParams['eventID']);
 		$event = $this->SingleEvent($eventID);
 		return $event->renderWith(array('LocalistEvent', 'Page'));
+	}
+
+	public function show($request){
+		$startDate = addslashes($this->urlParams['startDate']);
+		$endDate = addslashes($this->urlParams['endDate']);
+
+		$dateRange = "date range will be here";
+
+
+		$events = $this->EventList('?start='.$startDate.'&end='.$endDate.'&pp=50&distinct=true');
+
+		$Data = array (
+			"EventList" => $events,
+			"DateRange" => $dateRange,
+		);
+		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+
+
 	}
 
 
