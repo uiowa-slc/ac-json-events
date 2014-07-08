@@ -38,7 +38,7 @@ class LocalistEvent extends DataObject {
 		$feedURL = LOCALIST_FEED_URL.'places/'.$venueID;
 		$cache = new SimpleCache();
 
-		$rawVenue = $cache->get_data("venue", $feedURL);
+		$rawVenue = $cache->get_data("Venue-".$venueID, $feedURL);
 		$venueDecoded = json_decode($rawVenue, TRUE);
 
 		$venue = new LocalistVenue();

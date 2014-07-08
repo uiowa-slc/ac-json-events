@@ -7,10 +7,9 @@ class LocalistDatetime extends SS_Datetime {
 	localist caliendar filter */
 
 	public function Link(){
-		$datestring = date("Y/n/j", strtotime($this->value));
+		$datestring = date("Y-m-d", strtotime($this->value));
 		$urlparts = array(
-			LOCALIST_BASE,
-			"calendar/day/",
+			"events/show/",
 			$datestring
 			);
 		//print_r(implode($urlparts));

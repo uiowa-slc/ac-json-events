@@ -30,13 +30,25 @@ class LocalistCalendar extends Page {
 		}
 		return $calendar;
 	}
-	public function EventList($feedParams = "?days=200&pp=50&distinct=true"){
+	public function EventList($days = "200", $startDate, $endDate){
+		$feedParams = "?";
+
+		if(isset($days)){
+			$feedParams .= "days=".$days;
+		}
+		if(isset($startDate)){
+			$feedParams .= "startDate=".$startDate;
+		}
+		if(isset($endDate)){
+			$feedParams .= "endDate=".$endDate;
+		}
+		$feedParams .= "&distinct=true";
 
 		$cache = new SimpleCache();
 		$feedURL = LOCALIST_FEED_URL.'events/'.$feedParams;
 		$eventsList = new ArrayList();
 
-		$rawFeed = $cache->get_data("event", $feedURL);
+		$rawFeed = $cache->get_data("EventList-".$feedParams, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
 
@@ -55,7 +67,7 @@ class LocalistCalendar extends Page {
 		$feedParams = "events/".$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 
-		$rawFeed = $cache->get_data("single-".$id, $feedURL);
+		$rawFeed = $cache->get_data("SingleEvent-".$id, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 
 		$event = $eventsDecoded['event'];
@@ -110,7 +122,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		$endDate = new SS_Datetime();
 		$endDate->setValue(addslashes($this->urlParams['endDate']));
 
-		$events = $this->EventList('?start='.$startDate.'&end='.$endDate.'&pp=50&distinct=true');
+		$events = $this->EventList(null, $startDate, $endDate);
 
 		$Data = array (
 			"EventList" => $events,
