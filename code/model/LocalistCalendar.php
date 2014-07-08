@@ -70,13 +70,19 @@ class LocalistCalendar extends Page {
 
 	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null){
 		$feedParams = "?";
-		$feedParams .= "days=".$days.'&';
+		$feedParams .= "days=".$days;
+
+		$startDateSS = new SS_Datetime();
+		$endDateSS = new SS_Datetime();
+
 	
 		if(isset($startDate)){
-			$feedParams .= "startDate=".$startDate;
+			$startDateSS->setValue($startDate);
+			$feedParams .= "&start=".$startDate->format('Y-m-d');
 		}
 		if(isset($endDate)){
-			$feedParams .= "endDate=".$endDate;
+			$endDateSS->setValue($endDate);
+			$feedParams .= "&end=".$endDate->format('Y-m-d');
 		}
 
 		if(isset($venue)){
