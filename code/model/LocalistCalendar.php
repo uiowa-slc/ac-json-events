@@ -162,9 +162,22 @@ class LocalistCalendar_Controller extends Page_Controller {
 	);
 
 	public function event($request) {
-		$eventID =  addslashes($this->urlParams['eventID']);
-		$event = $this->SingleEvent($eventID);
-		return $event->renderWith(array('LocalistEvent', 'Page'));
+		$eventID = addslashes($this->urlParams['eventID']);
+
+		/* If we're using an event ID as a key. */
+		if(is_numeric($eventID)){
+			$event = $this->SingleEvent($eventID);
+			return $event->renderWith(array('LocalistEvent', 'Page'));
+		}else{
+			/* Getting an event based on the url slug **EXPERIMENTAL ** */
+			$events = $this->EventList();
+			foreach($events as $key => $e){
+				if($e->URLSegment == $eventID){
+					return $e->renderWith(array('LocalistEvent', 'Page'));;
+				}
+			}
+		}
+		
 	}
 
 	public function show($request){

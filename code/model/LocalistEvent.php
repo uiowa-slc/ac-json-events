@@ -5,6 +5,7 @@ class LocalistEvent extends DataObject {
 	private static $db = array(
 		"Title" => "Varchar(255)",
 		"Content" => "HTMLText",
+		"URLSegment" => "Varchar(255)",
 		"LocalistLink" => "Text",
 		"MoreInfoLink" => "Text",
 		"FacebookEventLink" => "Text",
@@ -52,6 +53,7 @@ class LocalistEvent extends DataObject {
 
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
+		$this->URLSegment = $rawEvent['urlname'];
 		$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $rawEvent['room_number'];
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
@@ -72,7 +74,7 @@ class LocalistEvent extends DataObject {
 
 	public function Link(){
 		$calendar = LocalistCalendar::get()->First();
-		$link = $calendar->Link().'event/'.$this->ID;
+		$link = $calendar->Link().'event/'.$this->URLSegment;
 		return $link;
 	}
 
