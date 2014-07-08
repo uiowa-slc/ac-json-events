@@ -30,9 +30,6 @@ class LocalistCalendar extends Page {
 		}
 		return $calendar;
 	}
-	public function EventList($days = "200", $startDate, $endDate){
-		$feedParams = "?";
-
 
 	public function VenueList() {
 		$activeEvents = $this->EventList();
@@ -72,6 +69,7 @@ class LocalistCalendar extends Page {
 	}
 
 	public function EventList($days = "200", $startDate, $endDate){
+				feedParams = "?";
 
 		if(isset($days)){
 			$feedParams .= "days=".$days;
