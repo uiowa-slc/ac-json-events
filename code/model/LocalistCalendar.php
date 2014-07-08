@@ -68,22 +68,26 @@ class LocalistCalendar extends Page {
 
 	}
 
-	public function EventList($days = "200", $startDate, $endDate){
-				feedParams = "?";
-
-		if(isset($days)){
-			$feedParams .= "days=".$days;
-		}
+	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null){
+		$feedParams = "?";
+		$feedParams .= "days=".$days.'&';
+	
 		if(isset($startDate)){
 			$feedParams .= "startDate=".$startDate;
 		}
 		if(isset($endDate)){
 			$feedParams .= "endDate=".$endDate;
 		}
-		$feedParams .= "&distinct=true";
+
+		if(isset($venue)){
+			$feedParams .= "venue_id=".$venue;
+		}
+		$feedParams .= "&pp=50&distinct=true";
 
 		$cache = new SimpleCache();
-		$feedURL = LOCALIST_FEED_URL.'events/'.$feedParams;
+		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
+
+		//print_r($feedURL.'<br />');
 
 		$eventsList = new ArrayList();
 
@@ -92,8 +96,10 @@ class LocalistCalendar extends Page {
 		$eventsArray = $eventsDecoded['events'];
 
 		foreach($eventsArray as $event) {
-			$localistEvent = new LocalistEvent();
-			$eventsList->push($localistEvent->parseEvent($event['event']));
+			if(isset($event)){
+				$localistEvent = new LocalistEvent();
+				$eventsList->push($localistEvent->parseEvent($event['event']));
+			}
 		}
 
 		return $eventsList;  		

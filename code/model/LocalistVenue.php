@@ -35,7 +35,7 @@ class LocalistVenue extends DataObject {
 	
 public function Events() {
 		$calendar = LocalistCalendar::get()->First();
-		$events = $calendar->EventList("events/?days=200&pp=50&distinct=true&venue_id=".$this->ID);
+		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
 		$eventsAtPlaceList = new ArrayList();
 
 		foreach($events as $event) {
