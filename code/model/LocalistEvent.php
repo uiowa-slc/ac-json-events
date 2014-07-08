@@ -13,10 +13,12 @@ class LocalistEvent extends DataObject {
 		"Location" => "Text",
 		"VenueID" => "Int",
 		"VenueTitle" => "Varchar(255)",
-		"VenueLink" => "Text"
+		"VenueLink" => "Text",
+
 	);
 
 	public function getUpcomingDatesFromRaw($rawEvent){
+
 		$eventInstances = $rawEvent['event_instances'];
 		$eventInstancesArray = new ArrayList();
 
