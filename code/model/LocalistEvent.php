@@ -36,7 +36,9 @@ class LocalistEvent extends DataObject {
 
 	public function getVenueFromID($venueID){
 		$feedURL = LOCALIST_FEED_URL.'places/'.$venueID;
-		$rawVenue = file_get_contents($feedURL);
+		$cache = new SimpleCache();
+
+		$rawVenue = $cache->get_data("venue", $feedURL);
 		$venueDecoded = json_decode($rawVenue, TRUE);
 
 		$venue = new LocalistVenue();
@@ -65,6 +67,7 @@ class LocalistEvent extends DataObject {
 		return $this;
 
 	}
+
 	public function Link(){
 		$calendar = LocalistCalendar::get()->First();
 		$link = $calendar->Link().'event/'.$this->ID;
