@@ -42,7 +42,7 @@ class JSONDisplayExtension extends DataExtension{
 		return $venue['places'];
 	}
 
-	private function parseEvent($rawEvent){
+	public function parseEvent($rawEvent){
 
 	 	$id = new Text('ID');
 	 	$id->setValue($rawEvent['id']);
@@ -138,11 +138,52 @@ class JSONDisplayExtension extends DataExtension{
 		    'Longitude'			=> $longitude,
 		    'Address'			=> $address
 	    ));
-
 		
 		return $parsedEvent;
 	}
-	
+
+	public function parsePlace($rawPlace) {
+
+	 	$id = new Text('ID'); $id->setValue($rawPlace['id']);
+	 	
+	 	$title = new Text('Title');	$title->setValue($rawPlace['name']);
+
+	 	$description_text = new HTMLText('Content'); $description_text->setValue($rawPlace['description_text']);
+
+	 	$link = new Text('Localist_url'); $link->setValue($rawPlace['localist_url']);
+
+	 	$imageURL = new Text('ImageURL'); $imageURL->setValue($rawPlace['photo_url']);	
+				
+		/*
+		// Localist provides a 'sponsored' key, but it's a boolean. so...not what we're looking for here
+		$sponsors = new Text('Sponsors');
+		if($rawPlace['sponsors']) {
+			$sponsors->setValue($rawPlace['sponsors'][0]['name']);
+		}
+		*/
+		
+		$latitude = new Text('Latitude');$latitude->setValue($rawPlace['geo']['latitude']);
+		
+		$longitude = new Text('Longitude');$longitude->setValue($rawPlace['geo']['longitude']);
+		
+		$address = new Text('Address');$address->setValue($rawPlace['address']);
+
+		$parsedPlace= new ArrayData(array(
+			'ID'				=> $id,
+		    'Title'           	=> $title,
+		    'Content'			=> $description_text,
+		    'Link' 				=> $link,
+		    'ImageURL'			=> $imageURL,
+		    'Latitude'			=> $latitude,
+		    'Longitude'			=> $longitude,
+		    'Address'			=> $address
+	    ));
+		
+		return $parsedPlace;
+	}
+
+
+	/*
 	public function ACActiveVenues($feedURL = "events/?days=200&pp=50&distinct=true") {
 	
 		$activeEvents = $this->AfterClassEvents();
@@ -198,7 +239,7 @@ class JSONDisplayExtension extends DataExtension{
 		}
 		return false;
 	}
-	
+	*/
 	
 	//	
 	

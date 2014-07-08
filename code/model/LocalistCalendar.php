@@ -16,7 +16,44 @@ class LocalistCalendar extends Page {
 		return $fields;
 	}
 
-	public function EventList(){
+	public function VenueList() {
+		$activeEvents = $this->EventList();
+		$venuesList = new ArrayList();
+
+		foreach($activeEvents as $key => $parsedEvent){
+			//print_r($parsedEvent);
+			//$assVenue = new LocalistVenue();
+			//$assVenue->ID = $parsedEvent->VenueID;
+			//$assVenue = $parsedEvent->VenueID;
+			//$activeVenues->push($assVenue);
+			$venuesList->push($parsedEvent->Venue);
+		}	
+		return $venuesList;
+		//print_r($venuesList);
+		//print_r($activeVenues);
+		//$venuesList->removeDuplicates();
+		//print_r($activeVenues);
+
+		/*
+		foreach($venuesList as $key => $uniqueVenue){
+			print_r($uniqueVenue);
+			$venueID = $uniqueVenue->ID;
+			//print_r($venueID);
+			//$venueURL = LOCALIST_FEED_URL.'places/'.$venueID;
+			//print_r($venueURL);
+			//$rawVenue = file_get_contents($venueURL);
+			//$venueDecoded = json_decode($rawVenue, TRUE);
+			//$localistVenue = new LocalistVenue();
+			//print_r($venueDecoded);
+			$venuesList->push($uniqueVenue);
+		
+
+		}			
+*/	
+
+	}
+
+	public function EventList() {
 		$feedParams = "events/?days=200&pp=50&distinct=true";
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 		$eventsList = new ArrayList();
@@ -33,7 +70,7 @@ class LocalistCalendar extends Page {
 
 	}
 
-	public function SingleEvent($id){
+	public function SingleEvent($id) {
 		$feedParams = "events/".$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 		$feed = new ArrayList();
@@ -77,7 +114,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'date/$startDate/$endDate' => "date",
 	);
 
-	public function event($request){
+	public function event($request) {
 		$eventID =  addslashes($this->urlParams['eventID']);
 		$event = $this->SingleEvent($eventID);
 		return $event->renderWith(array('LocalistEvent', 'Page'));
