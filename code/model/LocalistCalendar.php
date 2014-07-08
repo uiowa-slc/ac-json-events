@@ -86,7 +86,7 @@ class LocalistCalendar extends Page {
 		}
 
 		if(isset($venue)){
-			$feedParams .= "venue_id=".$venue;
+			$feedParams .= "&venue_id=".$venue;
 		}
 		$feedParams .= "&pp=50&distinct=true";
 
