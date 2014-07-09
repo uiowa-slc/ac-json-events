@@ -18,7 +18,7 @@ class LocalistEvent extends DataObject {
 
 	);
 
-	public function getUpcomingDatesFromRaw($rawEvent){
+	private function getUpcomingDatesFromRaw($rawEvent){
 
 		$eventInstances = $rawEvent['event_instances'];
 		$eventInstancesArray = new ArrayList();
@@ -35,6 +35,22 @@ class LocalistEvent extends DataObject {
 
 		return $eventInstancesArray;
 		
+	}
+
+	private function getTagsFromRaw($rawEvent){
+		$tagsRaw = $rawEvent['keywords'];
+		$tagsRaw = array_merge($tagsRaw, $rawEvent['tags']);
+
+		$tags = new ArrayList();
+
+		foreach($tagsRaw as $tagRaw){
+			$tag = new LocalistTag();
+			$tag->Title = $tagRaw;
+
+			$tags->push($tag);
+		}
+
+		return $tags;
 	}
 
 	public function getVenueFromID($venueID){
@@ -59,6 +75,7 @@ class LocalistEvent extends DataObject {
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 		$this->Venue = $this->getVenueFromID($rawEvent['venue_id']);
 		$this->Content = $rawEvent['description_text'];
+		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->ImageURL = $rawEvent['photo_url'];
 		$this->LocalistLink = $rawEvent['localist_url'];
 		$this->MoreInfoLink = $rawEvent['url'];

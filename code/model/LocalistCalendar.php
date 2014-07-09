@@ -31,40 +31,44 @@ class LocalistCalendar extends Page {
 		return $calendar;
 	}
 
+	public function TrendingTags(){
+		$events = $this->EventList();
+		$tags = array();
+		$localistTags = new ArrayList();
+	
+		foreach($events as $event){
+
+			foreach($event->Tags as $eventTag){
+				if(isset($tags[$eventTag->Title])){
+					$tags[$eventTag->Title] = $tags[$eventTag->Title] + 1;
+				}else{
+					$tags[$eventTag->Title] = 0;
+				}
+			}
+
+
+		}
+
+		arsort($tags);
+
+		foreach($tags as $key => $tag){
+			$localistTag = new LocalistTag();
+			$localistTag->Title = $key;
+			$localistTags->push($localistTag);
+
+		}
+
+		return $localistTags;
+	}
+
 	public function VenueList() {
 		$activeEvents = $this->EventList();
 		$venuesList = new ArrayList();
 
 		foreach($activeEvents as $key => $parsedEvent){
-			//print_r($parsedEvent);
-			//$assVenue = new LocalistVenue();
-			//$assVenue->ID = $parsedEvent->VenueID;
-			//$assVenue = $parsedEvent->VenueID;
-			//$activeVenues->push($assVenue);
 			$venuesList->push($parsedEvent->Venue);
 		}	
 		return $venuesList;
-		//print_r($venuesList);
-		//print_r($activeVenues);
-		//$venuesList->removeDuplicates();
-		//print_r($activeVenues);
-
-		/*
-		foreach($venuesList as $key => $uniqueVenue){
-			print_r($uniqueVenue);
-			$venueID = $uniqueVenue->ID;
-			//print_r($venueID);
-			//$venueURL = LOCALIST_FEED_URL.'places/'.$venueID;
-			//print_r($venueURL);
-			//$rawVenue = file_get_contents($venueURL);
-			//$venueDecoded = json_decode($rawVenue, TRUE);
-			//$localistVenue = new LocalistVenue();
-			//print_r($venueDecoded);
-			$venuesList->push($uniqueVenue);
-		
-
-		}			
-*/	
 
 	}
 	public function getTodayEvents(){
@@ -89,13 +93,12 @@ class LocalistCalendar extends Page {
 		return $events;
 	}
 
-	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null){
+	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null,$keyword = null){
 		$feedParams = "?";
 		$feedParams .= "days=".$days;
 
 		$startDateSS = new SS_Datetime();
 		$endDateSS = new SS_Datetime();
-
 	
 		if(isset($startDate)){
 			$startDateSS->setValue($startDate);
@@ -108,6 +111,10 @@ class LocalistCalendar extends Page {
 
 		if(isset($venue)){
 			$feedParams .= "&venue_id=".$venue;
+		}
+
+		if(isset($keyword)){
+			$feedParams .= "&keyword=".$keyword;
 		}
 		$feedParams .= "&pp=50&distinct=true";
 
@@ -173,13 +180,15 @@ class LocalistCalendar_Controller extends Page_Controller {
 	private static $allowed_actions = array (
 		'event',
 		'show',
-		'monthjson'
+		'monthjson',
+		'tag'
 	);
 
 	private static $url_handlers = array(
 		'event/$eventID' => 'event',
 		'show/$startDate/$endDate' => 'show',
-		'monthjson/$ID' => 'monthjson'
+		'monthjson/$ID' => 'monthjson',
+		'tag/$tag' => 'tag'
 	);
 
 	public function event($request) {
@@ -203,34 +212,32 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 	public function show($request){
 
-		$dateFilter =  addslashes($this->urlParams['startDate']);
+		$dateFilter = addslashes($this->urlParams['startDate']);
 
 		switch($dateFilter) {
 			case "weekend":
 				$events = $this->getWeekendEvents();
-				$dateHeader = "this weekend";
+				$filterHeader = "Events happening this weekend";
 				break;
 			case "today":
 				$events = $this->getTodayEvents();
-				$dateHeader = "today";
+				$filterHeader = "Events happening today";
 				break;
 			case "month":
-				echo "case month reached";
 				$events = $this->getMonthEvents();
-				$dateHeader = "this month";
+				$filterHeader = "Events happening this month";
 				break;
 			default:
-				echo "default case reached";
 				$startDate = new SS_Datetime();
 				$startDate->setValue(addslashes($this->urlParams['startDate']));
 
 				$endDate = new SS_Datetime();
 				$endDate->setValue(addslashes($this->urlParams['endDate']));
-
-				$dateHeader = $startDate->format('l, F j');
+				$filterHeader = "Events happening on ";
+				$filterHeader .= $startDate->format('l, F j');
 
 				if($endDate->getValue()){
-					$dateHeader .= " to ".$endDate->format('l, F j');
+					$filterHeader .= " to ".$endDate->format('l, F j');
 				}
 
 
@@ -240,11 +247,23 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 		$Data = array (
 			"EventList" => $events,
-			"DateHeader" => $dateHeader,
+			"FilterHeader" => $filterHeader,
 		);
 		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
 
+	}
 
+	public function tag($request){
+		$tagName = addslashes($this->urlParams['tag']);
+		$events = $this->EventList(200,null,null,null, $tagName);
+		$filterHeader = "Events tagged as '".$tagName."'"; 
+
+		$Data = array (
+			"EventList" => $events,
+			"FilterHeader" => $filterHeader,
+		);
+
+		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
 	}
 
 	public function monthjson($r) {
