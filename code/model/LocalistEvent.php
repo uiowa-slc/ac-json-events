@@ -53,11 +53,33 @@ class LocalistEvent extends DataObject {
 		return $tags;
 	}
 
+	private function getTypesFromRaw($rawEvent){
+		$typesRaw = $rawEvent['filters']['event_types'];
+
+		if(isset($typesRaw)){
+			$types = new ArrayList();
+
+			foreach($typesRaw as $typeRaw){
+				$type = new LocalistEventType();
+				$type->ID = $typeRaw['id'];
+				$type->Title = $typeRaw['name'];
+
+				$types->push($type);
+
+			}
+			return $types;
+		}
+
+		return false;
+
+
+	}
+
 	public function getVenueFromID($venueID){
 		$feedURL = LOCALIST_FEED_URL.'places/'.$venueID;
 		$cache = new SimpleCache();
 
-		$rawVenue = $cache->get_data("Venue-".$venueID, $feedURL);
+		$rawVenue = $cache->get_data($feedURL, $feedURL);
 		$venueDecoded = json_decode($rawVenue, TRUE);
 
 		$venue = new LocalistVenue();
@@ -76,6 +98,7 @@ class LocalistEvent extends DataObject {
 		$this->Venue = $this->getVenueFromID($rawEvent['venue_id']);
 		$this->Content = $rawEvent['description_text'];
 		$this->Tags = $this->getTagsFromRaw($rawEvent);
+		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->ImageURL = $rawEvent['photo_url'];
 		$this->LocalistLink = $rawEvent['localist_url'];
 		$this->MoreInfoLink = $rawEvent['url'];

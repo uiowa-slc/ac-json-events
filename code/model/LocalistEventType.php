@@ -1,25 +1,17 @@
 <?php
-class LocalistVenue extends DataObject {
+class LocalistEventType extends DataObject {
 
 	private static $db = array(
-		"Title"		=> "Varchar(255)",
-		"Content"	=> "HTMLText",
-		"ImageURL"	=> "Text",
-		"LocalistLink" => "Text",
-		"WebsiteLink" => "Text",
-		"Latitude"	=> "Text",
-		"Longitute"	=> "Text",
-		"Address"	=> "Text"
-		
-		
+		"Title"		=> "Varchar(255)"
 	);
 
-	public function parseVenue($venueDecoded){
+	/*public function parseTag($venueDecoded){
 		if(isset($venueDecoded['place'])){
 			$venueDecoded = $venueDecoded['place'];
 			$this->ID = $venueDecoded['id'];
 			$this->Title = $venueDecoded['name'];
 			$this->Content = $venueDecoded['description_text'];
+			$this->PageList = Page::get();
 			$this->ImageURL = $venueDecoded['photo_url'];
 			$this->LocalistLink = $venueDecoded['localist_url'];
 			$this->WebsiteLink = $venueDecoded['url'];
@@ -29,10 +21,25 @@ class LocalistVenue extends DataObject {
 
 			return $this;
 		}
+	}*/
+
+	public function parseType($rawType){
+		$localistType = new LocalistEventType();
+		$localistType->ID = $rawType['id'];
+		$localistType->Title = $rawType['name'];
+
+		return $localistType;
+
+	}
+	public function Link(){
+		$calendar = LocalistCalendar::get()->First();
+
+		return $calendar->Link().'type/'.$this->ID;
+
 	}
 
 	
-public function Events() {
+/*public function Events() {
 		$calendar = LocalistCalendar::get()->First();
 		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
 		$eventsAtPlaceList = new ArrayList();
@@ -42,11 +49,11 @@ public function Events() {
 		}		
 
 		return $eventsAtPlaceList;   
-	}
-	public function Link(){
+	}*/
+	/*public function Link(){
 		$calendar = LocalistCalendar::get()->First();
-		$link = $calendar->Link().'venue/'.$this->ID;
+		$link = $calendar->Link().'event/'.$this->ID;
 		return $link;
-	}
+	}*/
 
 }

@@ -71,6 +71,54 @@ class LocalistCalendar extends Page {
 		return $venuesList;
 
 	}
+
+	public function TypeList(){
+		$cache = new SimpleCache();
+		$feedURL = LOCALIST_FEED_URL.'events/filters';
+
+		$typesList = new ArrayList();
+
+		$rawFeed = $cache->get_data($feedURL, $feedURL);
+		$typesDecoded = json_decode($rawFeed, TRUE);
+		$typesArray = $typesDecoded['event_types'];
+
+		if(isset($typesArray)){
+			foreach($typesArray as $type) {
+				$localistType = new LocalistEventType();
+				$localistType = $localistType->parseType($type);
+				$typesList->push($localistType);
+			}
+		}
+
+		return $typesList;
+
+	}
+
+	public function getTypeByID($id){
+		$types = $this->TypeList();
+
+		foreach($types as $type){
+			if($type->ID == $id){
+				return $type;
+			}
+		}
+
+		return false;
+	}
+
+	public function getVenueByID($id){
+		$venues = $this->VenueList();
+
+		foreach($venues as $venue){
+			if(isset($venue)){
+				if($venue->ID == $id){
+					return $venue;
+				}
+			}
+		}
+
+		return false;
+	}
 	public function getTodayEvents(){
 		$startDate = sfDate::getInstance()->format('Y-m-d');
 		$endDate = sfDate::getInstance()->format('Y-m-d');
@@ -93,7 +141,7 @@ class LocalistCalendar extends Page {
 		return $events;
 	}
 
-	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null,$keyword = null){
+	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null){
 		$feedParams = "?";
 		$feedParams .= "days=".$days;
 
@@ -116,6 +164,10 @@ class LocalistCalendar extends Page {
 		if(isset($keyword)){
 			$feedParams .= "&keyword=".$keyword;
 		}
+
+		if(isset($type)){
+			$feedParams .= "&type[]=".$type;
+		}
 		$feedParams .= "&pp=50&distinct=true";
 
 		$cache = new SimpleCache();
@@ -125,7 +177,7 @@ class LocalistCalendar extends Page {
 
 		$eventsList = new ArrayList();
 
-		$rawFeed = $cache->get_data("EventList-".$feedParams, $feedURL);
+		$rawFeed = $cache->get_data($feedURL, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 		$eventsArray = $eventsDecoded['events'];
 
@@ -147,7 +199,7 @@ class LocalistCalendar extends Page {
 		$feedParams = "events/".$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 
-		$rawFeed = $cache->get_data("SingleEvent-".$id, $feedURL);
+		$rawFeed = $cache->get_data($feedURL, $feedURL);
 		$eventsDecoded = json_decode($rawFeed, TRUE);
 
 		$event = $eventsDecoded['event'];
@@ -181,14 +233,18 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'event',
 		'show',
 		'monthjson',
-		'tag'
+		'tag',
+		'type',
+		'venue',
 	);
 
 	private static $url_handlers = array(
 		'event/$eventID' => 'event',
 		'show/$startDate/$endDate' => 'show',
 		'monthjson/$ID' => 'monthjson',
-		'tag/$tag' => 'tag'
+		'tag/$tag' => 'tag',
+		'type/$type' => 'type',
+		'venue/$venue' => 'venue'
 	);
 
 	public function event($request) {
@@ -264,6 +320,39 @@ class LocalistCalendar_Controller extends Page_Controller {
 		);
 
 		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+	}
+
+	public function type($request){
+		$typeID = addslashes($this->urlParams['type']);
+		$type = $this->getTypeByID($typeID);
+
+		$events = $this->EventList(200,null,null,null, null, $type->ID);
+
+		$filterHeader = "Events categorized as type '".$type->Title."'"; 
+
+		$Data = array (
+			"EventList" => $events,
+			"FilterHeader" => $filterHeader,
+		);
+
+		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+	}
+
+	public function venue($request){
+		$venueID = addslashes($this->urlParams['venue']);
+		$venue = $this->getVenueByID($venueID);
+
+		$events = $this->EventList(200,null,null,$venue->ID);
+
+		$filterHeader = "Events listed at ".$venue->Title; 
+
+		$Data = array (
+			"Venue" => $venue,
+			"EventList" => $events,
+			"FilterHeader" => $filterHeader,
+		);
+
+		return $this->customise($Data)->renderWith(array('LocalistVenue', 'LocalistCalendar', 'Page'));
 	}
 
 	public function monthjson($r) {
