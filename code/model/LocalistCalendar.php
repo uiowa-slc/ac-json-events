@@ -67,6 +67,27 @@ class LocalistCalendar extends Page {
 */	
 
 	}
+	public function getTodayEvents(){
+		$startDate = sfDate::getInstance()->format('Y-m-d');
+		$endDate = sfDate::getInstance()->format('Y-m-d');
+		$events = $this->EventList(null, $startDate, $endDate);
+		return $events;
+	}
+
+	public function getWeekendEvents(){
+		$startDate = sfDate::getInstance()->firstDayOfWeek()->format('Y-m-d');
+		$endDate = sfDate::getInstance()->finalDayOfWeek()->format('Y-m-d');
+		$events = $this->EventList(null, $startDate, $endDate);
+		return $events;
+	}
+
+	public function getMonthEvents(){
+		$startDate = sfDate::getInstance()->firstDayOfMonth()->format('Y-m-d');
+		$endDate = sfDate::getInstance($this->startDate)->finalDayOfMonth()->format('Y-m-d');
+
+		$events = $this->EventList(200, $startDate, $endDate);
+		return $events;
+	}
 
 	public function EventList($days = "200", $startDate = null, $endDate = null, $venue = null){
 		$feedParams = "?";
@@ -78,11 +99,11 @@ class LocalistCalendar extends Page {
 	
 		if(isset($startDate)){
 			$startDateSS->setValue($startDate);
-			$feedParams .= "&start=".$startDate->format('Y-m-d');
+			$feedParams .= "&start=".$startDateSS->format('Y-m-d');
 		}
 		if(isset($endDate)){
 			$endDateSS->setValue($endDate);
-			$feedParams .= "&end=".$endDate->format('Y-m-d');
+			$feedParams .= "&end=".$endDateSS->format('Y-m-d');
 		}
 
 		if(isset($venue)){
@@ -173,7 +194,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			$events = $this->EventList();
 			foreach($events as $key => $e){
 				if($e->URLSegment == $eventID){
-					return $e->renderWith(array('LocalistEvent', 'Page'));;
+					return $this->customise($e)->renderWith(array('LocalistEvent', 'Page'));;
 				}
 			}
 		}
@@ -181,18 +202,45 @@ class LocalistCalendar_Controller extends Page_Controller {
 	}
 
 	public function show($request){
-		$startDate = new SS_Datetime();
-		$startDate->setValue(addslashes($this->urlParams['startDate']));
 
-		$endDate = new SS_Datetime();
-		$endDate->setValue(addslashes($this->urlParams['endDate']));
+		$dateFilter =  addslashes($this->urlParams['startDate']);
 
-		$events = $this->EventList(null, $startDate, $endDate);
+		switch($dateFilter) {
+			case "weekend":
+				$events = $this->getWeekendEvents();
+				$dateHeader = "this weekend";
+				break;
+			case "today":
+				$events = $this->getTodayEvents();
+				$dateHeader = "today";
+				break;
+			case "month":
+				echo "case month reached";
+				$events = $this->getMonthEvents();
+				$dateHeader = "this month";
+				break;
+			default:
+				echo "default case reached";
+				$startDate = new SS_Datetime();
+				$startDate->setValue(addslashes($this->urlParams['startDate']));
+
+				$endDate = new SS_Datetime();
+				$endDate->setValue(addslashes($this->urlParams['endDate']));
+
+				$dateHeader = $startDate->format('l, F j');
+
+				if($endDate->getValue()){
+					$dateHeader .= " to ".$endDate->format('l, F j');
+				}
+
+
+				$events = $this->EventList(null, $startDate->format('l, F j'), $endDate->format('l, F j'));
+			
+		}
 
 		$Data = array (
 			"EventList" => $events,
-			"StartDate" => $startDate,
-			"EndDate" => $endDate
+			"DateHeader" => $dateHeader,
 		);
 		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
 
