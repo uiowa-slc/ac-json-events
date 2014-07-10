@@ -43,10 +43,15 @@ public function Events() {
 
 		return $eventsAtPlaceList;   
 	}
+
 	public function Link(){
-		$calendar = LocalistCalendar::get()->First();
-		$link = $calendar->Link().'venue/'.$this->ID;
-		return $link;
+		if($this->ID != 0) {
+			$calendar = LocalistCalendar::get()->First();
+			$link = $calendar->Link().'venue/'.$this->ID;
+			return $link;
+		}else{
+			return false;
+		}
 	}
 
 }
