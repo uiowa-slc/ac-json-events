@@ -22,7 +22,7 @@ class LocalistCalendar extends Page {
 		$types = $this->TypeList();
 		$typesArray = $types->map();
 
-		$typeListBoxField = new ListboxField( 'PrimaryFilterTypeID', 'Filter the calendar by this Localist event type:', $typesArray );
+		$typeListBoxField = new DropdownField( 'PrimaryFilterTypeID', 'Filter the calendar by this Localist event type:', $typesArray );
 		$typeListBoxField->setEmptyString( '(No Filter)' );
 
 		$fields->addFieldToTab( 'Root.Main', $typeListBoxField, 'Content' );
@@ -31,19 +31,19 @@ class LocalistCalendar extends Page {
 		$events = $this->EventList();
 		$eventsArray = $events->map();
 
-		$featuredEvent1Field = new ListboxField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
+		$featuredEvent1Field = new DropdownField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
 		$featuredEvent1Field->setEmptyString( '(No Event)' );
 		$fields->addFieldToTab( 'Root.Main', $featuredEvent1Field );
 
-		$featuredEvent2Field = new ListboxField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
+		$featuredEvent2Field = new DropdownField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
 		$featuredEvent2Field->setEmptyString( '(No Event)' );
 		$fields->addFieldToTab( 'Root.Main', $featuredEvent2Field );
 
-		$featuredEvent3Field = new ListboxField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
+		$featuredEvent3Field = new DropdownField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
 		$featuredEvent3Field->setEmptyString( '(No Event)' );
 		$fields->addFieldToTab( 'Root.Main', $featuredEvent3Field );
 
-		$featuredEvent4Field = new ListboxField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
+		$featuredEvent4Field = new DropdownField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
 		$featuredEvent4Field->setEmptyString( '(No Event)' );
 		$fields->addFieldToTab( 'Root.Main', $featuredEvent4Field );
 
