@@ -300,17 +300,19 @@ class LocalistCalendar extends Page {
 		$eventsList = new ArrayList();
 
 		$rawFeed = $cache->get_data( $feedURL, $feedURL );
-		$eventsDecoded = json_decode( $rawFeed, TRUE );
-		$eventsArray = $eventsDecoded['events'];
+		$eventsDecoded = json_decode( $rawFeed, TRUE );	
 
-		foreach ( $eventsArray as $event ) {
-			if ( isset( $event ) ) {
-				$localistEvent = new LocalistEvent();
-				$eventsList->push( $localistEvent->parseEvent( $event['event'] ) );
+		if(isset($eventsDecoded['events'])){
+			$eventsArray = $eventsDecoded['events'];
+			foreach ( $eventsArray as $event ) {
+				if ( isset( $event ) ) {
+					$localistEvent = new LocalistEvent();
+					$eventsList->push( $localistEvent->parseEvent( $event['event'] ) );
+				}
 			}
-		}
 
-		return $eventsList;
+			return $eventsList;
+		}
 
 	}
 

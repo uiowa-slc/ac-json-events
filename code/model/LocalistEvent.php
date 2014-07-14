@@ -120,6 +120,10 @@ class LocalistEvent extends DataObject {
 	 * @return LocalistEvent
 	 */
 	public function parseEvent($rawEvent){
+
+		$image = new LocalistImage();
+		$image = $image->getByID($rawEvent['photo_id']);
+
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
@@ -130,7 +134,7 @@ class LocalistEvent extends DataObject {
 		$this->Content = $rawEvent['description'];
 		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
-		$this->ImageURL = $rawEvent['photo_url'];
+		$this->Image = $image;
 		$this->LocalistLink = $rawEvent['localist_url'];
 		$this->MoreInfoLink = $rawEvent['url'];
 		$this->FacebookEventLink = $rawEvent['facebook_id'];
@@ -149,6 +153,22 @@ class LocalistEvent extends DataObject {
 		$calendar = LocalistCalendar::get()->First();
 		$link = $calendar->Link().'event/'.$this->URLSegment;
 		return $link;
+	}
+	public function RelatedEvents($limit = 6){
+		$calendar = LocalistCalendar::get()->First();
+		$curEventTypes = $this->Types;
+		$randEventType = $curEventTypes[array_rand($curEventTypes->toArray())];
+		//print_r($randEventType->Title);
+		$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
+		
+		return $relatedEvents->Limit($limit);
+	}
+	/**
+	 * Function that helps us inject Google Maps API call in Page.ss at the bottom of the doc.
+	 * @return boolean
+	 */
+	public function UsesGoogleMaps(){
+		return true;
 	}
 
 }
