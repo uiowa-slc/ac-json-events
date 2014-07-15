@@ -2,7 +2,9 @@
 class LocalistCalendar extends Page {
 
 	private static $db = array(
-		'PrimaryFilterTypeID' => 'Int',
+		'EventTypeFilterID' => 'Int',
+		'DepartmentFilterID'=> 'Int',
+		'VenueFilterID' 	=> 'Int',
 		'FeaturedEvent1ID' => 'Int',
 		'FeaturedEvent2ID' => 'Int',
 		'FeaturedEvent3ID' => 'Int',
@@ -22,31 +24,49 @@ class LocalistCalendar extends Page {
 		$types = $this->TypeList();
 		$typesArray = $types->map();
 
-		$typeListBoxField = new DropdownField( 'PrimaryFilterTypeID', 'Filter the calendar by this Localist event type:', $typesArray );
+		$departments = $this->DepartmentList();
+		$departmentsArray = $departments->map();
+
+		$venues = $this->VenuesList();
+		$venuesArray = $venues->map();
+
+		$typeListBoxField = new DropdownField( 'EventTypeFilterID', 'Filter the calendar by this Localist event type:', $typesArray );
 		$typeListBoxField->setEmptyString( '(No Filter)' );
 
+		$departmentDropDownField = new DropdownField( 'DepartmentFilterID', 'Filter the calendar by this Localist department', $departmentsArray );
+		$departmentDropDownField->setEmptyString( '(No Filter)' );
+
+		$venueDropDownField = new DropdownField( 'VenueFilterID', 'Filter the calendar by this Localist Venue', $venuesArray );
+		$venueDropDownField->setEmptyString( '(No Filter)' );
+
 		$fields->addFieldToTab( 'Root.Main', $typeListBoxField, 'Content' );
+		$fields->addFieldToTab(' Root.Main', $departmentDropDownField, 'Content' );
+		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content' );
 		$fields->removeByName( 'Content' );
 
 		$events = $this->EventList();
-		$eventsArray = $events->map();
 
-		$featuredEvent1Field = new DropdownField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
-		$featuredEvent1Field->setEmptyString( '(No Event)' );
-		$fields->addFieldToTab( 'Root.Main', $featuredEvent1Field );
+		if ($events) {
+			$eventsArray = $events->map();
 
-		$featuredEvent2Field = new DropdownField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
-		$featuredEvent2Field->setEmptyString( '(No Event)' );
-		$fields->addFieldToTab( 'Root.Main', $featuredEvent2Field );
 
-		$featuredEvent3Field = new DropdownField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
-		$featuredEvent3Field->setEmptyString( '(No Event)' );
-		$fields->addFieldToTab( 'Root.Main', $featuredEvent3Field );
+			$featuredEvent1Field = new DropdownField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
+			$featuredEvent1Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent1Field );
 
-		$featuredEvent4Field = new DropdownField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
-		$featuredEvent4Field->setEmptyString( '(No Event)' );
-		$fields->addFieldToTab( 'Root.Main', $featuredEvent4Field );
+			$featuredEvent2Field = new DropdownField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
+			$featuredEvent2Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent2Field );
 
+			$featuredEvent3Field = new DropdownField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
+			$featuredEvent3Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent3Field );
+
+			$featuredEvent4Field = new DropdownField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
+			$featuredEvent4Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent4Field );
+
+		}
 
 		return $fields;
 	}
@@ -59,6 +79,9 @@ class LocalistCalendar extends Page {
 	 * @return ArrayList
 	 */
 	public function FeaturedEvents() {
+
+		/*
+
 		$events = new ArrayList();
 
 		if($this->FeaturedEvent1ID != 0){
@@ -75,6 +98,9 @@ class LocalistCalendar extends Page {
 		}
 
 		return $events;
+
+		*/
+
 	}
 
 	/**
@@ -162,6 +188,26 @@ class LocalistCalendar extends Page {
 
 	}
 
+	public function VenuesList() {
+		$cache = new SimpleCache();
+		$feedURL = LOCALIST_FEED_URL.'places';
+		$rawFeed = $cache->get_data( $feedURL, $feedURL );
+		$venuesList = new ArrayList();
+		$venuesDecoded = json_decode( $rawFeed, TRUE );
+		$venuesArray = $venuesDecoded['places'];
+		//print_r($venuesArray);
+
+		if ( isset ( $venuesArray ) ) {
+			foreach ( $venuesArray as $venue ) {
+				$localistVenues = new LocalistVenue();
+				$localistVenue = $localistVenues->parseVenue( $venue );
+				$venuesList->push($localistVenue);
+			}
+		}
+
+		return $venuesList;
+	}
+
 	/**
 	 * Returns an ArrayList of all LocalistEventTypes based on the events coming through EventList()
 	 * @return ArrayList
@@ -185,6 +231,31 @@ class LocalistCalendar extends Page {
 		}
 
 		return $typesList;
+
+	}
+
+	public function DepartmentList() {
+		$cache = new SimpleCache();
+		$feedURL = LOCALIST_FEED_URL.'events/filters/';
+
+		$departmentsList = new ArrayList();
+
+		$rawFeed = $cache->get_data( $feedURL, $feedURL );
+		$departmentsDecoded = json_decode( $rawFeed, TRUE );
+
+		if ( isset($departmentsDecoded['departments'])) {
+			$departmentsArray = $departmentsDecoded['departments'];
+		}
+
+		if ( isset( $departmentsArray ) ) {
+			foreach ( $departmentsArray as $department ) {
+				$localistDepartment = new LocalistEventType();
+				$localistDepartment = $localistDepartment->parseType( $department );
+				$departmentsList->push( $localistDepartment );
+			}
+		}
+
+		return $departmentsList;
 
 	}
 
@@ -256,12 +327,21 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null ) {
-		if ( $this->PrimaryFilterTypeID != 0 ) {
-			$primaryFilterTypeID = $this->PrimaryFilterTypeID;
+		if ( $this->EventTypeFilterID != 0 ) {
+			$primaryFilterTypeID = $this->EventTypeFilterID;
+		} 
+
+		if ( $this->DepartmentFilterID != 0 ) {
+			$departmentFilterID = $this->DepartmentFilterID;
+		}
+
+		if ( $this->VenueFilterID != 0 ) {
+			$venueFilterID = $this->VenueFilterID;
 		}
 
 		$feedParams = '?';
 		$feedParams .= 'days='.$days;
+		
 
 		$startDateSS = new SS_Datetime();
 		$endDateSS = new SS_Datetime();
@@ -290,12 +370,21 @@ class LocalistCalendar extends Page {
 		if ( isset( $primaryFilterTypeID ) ) {
 			$feedParams .= '&type[]='.$primaryFilterTypeID;
 		}
+		
+		if ( isset( $departmentFilterID ) ) {
+			$feedParams .= '&type[]='.$departmentFilterID;
+		}
+		
+		if ( isset( $venueFilterID ) ) {
+			$feedParams .= '&venue_id='.$venueFilterID;
+		}	
+
 		$feedParams .= '&pp=50&distinct=true';
 
 		$cache = new SimpleCache();
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-		//print_r($feedURL.'<br />');
+		//print_r($feedURL);
 
 		$eventsList = new ArrayList();
 
