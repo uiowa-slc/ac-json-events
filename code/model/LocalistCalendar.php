@@ -80,8 +80,6 @@ class LocalistCalendar extends Page {
 	 */
 	public function FeaturedEvents() {
 
-		/*
-
 		$events = new ArrayList();
 
 		if($this->FeaturedEvent1ID != 0){
@@ -99,7 +97,7 @@ class LocalistCalendar extends Page {
 
 		return $events;
 
-		*/
+
 
 	}
 
