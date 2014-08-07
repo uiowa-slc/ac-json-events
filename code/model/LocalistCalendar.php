@@ -95,7 +95,11 @@ class LocalistCalendar extends Page {
 			$events->push( $this->SingleEvent( $this->FeaturedEvent4ID ) );
 		}
 
-		return $events;
+		if($events->First()){
+			return $events;
+		}else{
+			return false;
+		}
 
 
 

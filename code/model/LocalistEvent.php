@@ -64,8 +64,9 @@ class LocalistEvent extends DataObject {
 	 * @return ArrayList
 	 */
 	private function getTypesFromRaw($rawEvent){
-		$typesRaw = $rawEvent['filters']['event_types'];
-		if(isset($typesRaw)){
+		
+		if(isset($rawEvent['filters']['event_types'])){
+			$typesRaw = $rawEvent['filters']['event_types'];
 			$types = new ArrayList();
 			foreach($typesRaw as $typeRaw){
 				$type = new LocalistEventType();
