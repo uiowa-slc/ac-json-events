@@ -124,27 +124,32 @@ class LocalistCalendar extends Page {
 		$tags = array();
 		$localistTags = new ArrayList();
 
-		foreach ( $events as $event ) {
+		if($events->First()){
+			foreach ( $events as $event ) {
 
-			foreach ( $event->Tags as $eventTag ) {
-				if ( isset( $tags[$eventTag->Title] ) ) {
-					$tags[$eventTag->Title] = $tags[$eventTag->Title] + 1;
-				}else {
-					$tags[$eventTag->Title] = 0;
+				foreach ( $event->Tags as $eventTag ) {
+					if ( isset( $tags[$eventTag->Title] ) ) {
+						$tags[$eventTag->Title] = $tags[$eventTag->Title] + 1;
+					}else {
+						$tags[$eventTag->Title] = 0;
+					}
 				}
 			}
 
+			arsort( $tags );
+
+			foreach ( $tags as $key => $tag ) {
+				$localistTag = new LocalistTag();
+				$localistTag->Title = $key;
+				$localistTags->push( $localistTag );
+
+			}
+
+			return $localistTags;
+		}else{
+			return false;
 		}
-		arsort( $tags );
 
-		foreach ( $tags as $key => $tag ) {
-			$localistTag = new LocalistTag();
-			$localistTag->Title = $key;
-			$localistTags->push( $localistTag );
-
-		}
-
-		return $localistTags;
 	}
 
 	/**
@@ -154,25 +159,30 @@ class LocalistCalendar extends Page {
 	public function TrendingTypes(){
 		$events = $this->EventList();
 		$types = array();
-		$localistEventTypes = new ArrayList();
-		foreach ( $events as $event ) {
-			foreach ( $event->Types as $eventType ) {
-				if ( isset( $types[$eventType->Title] ) ) {
-					$types[$eventType->Title] = $types[$eventType->Title] + 1;
-				}else {
-					$types[$eventType->Title] = 0;
-				}
-			}
 
+		if($events->First()){
+			$localistEventTypes = new ArrayList();
+			foreach ( $events as $event ) {
+				foreach ( $event->Types as $eventType ) {
+					if ( isset( $types[$eventType->Title] ) ) {
+						$types[$eventType->Title] = $types[$eventType->Title] + 1;
+					}else {
+						$types[$eventType->Title] = 0;
+					}
+				}
+
+			}
+			arsort( $types );
+			foreach ( $types as $key => $type ) {
+				$localistEventType = new LocalistEventType();
+				$localistEventType->Title = $key;
+				$localistEventTypes->push( $localistEventType );
+			}
+			
+			return $localistEventTypes;
+		}else{
+			return false;
 		}
-		arsort( $types );
-		foreach ( $types as $key => $type ) {
-			$localistEventType = new LocalistEventType();
-			$localistEventType->Title = $key;
-			$localistEventTypes->push( $localistEventType );
-		}
-		
-		return $localistEventTypes;
 	}
 
 	/**
