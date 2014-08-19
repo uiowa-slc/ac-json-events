@@ -3,18 +3,19 @@
 class LocalistEvent extends DataObject {
 
 	private static $db = array(
-		"Title" => "Varchar(255)",
-		"Content" => "HTMLText",
-		"URLSegment" => "Varchar(255)",
-		"LocalistLink" => "Text",
-		"MoreInfoLink" => "Text",
-		"FacebookEventLink" => "Text",
-		"ImageURL" => "Text",
-		"Cost" => "Text",
-		"Location" => "Text",
-		"VenueID" => "Int",
-		"VenueTitle" => "Varchar(255)",
-		"VenueLink" => "Text",
+		'Title' => 'Varchar(255)',
+		'Content' => 'HTMLText',
+		'URLSegment' => 'Varchar(255)',
+		'Featured' => 'Boolean',
+		'LocalistLink' => 'Text',
+		'MoreInfoLink' => 'Text',
+		'FacebookEventLink' => 'Text',
+		'ImageURL' => 'Text',
+		'Cost' => 'Text',
+		'Location' => 'Text',
+		'VenueID' => 'Int',
+		'VenueTitle' => 'Varchar(255)',
+		'VenueLink' => 'Text',
 
 	);
 
@@ -128,6 +129,7 @@ class LocalistEvent extends DataObject {
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
+		$this->Featured = $rawEvent['featured'];
 		$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $rawEvent['room_number'];
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
@@ -163,6 +165,13 @@ class LocalistEvent extends DataObject {
 		$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
 		
 		return $relatedEvents->Limit($limit);
+	}
+
+	public function ParsedFacebookEventLink(){
+		$eventID = $this->FacebookEventLink;
+		$facebookUrlPrefix = 'https://facebook.com/events/';
+		$facebookUrl = $facebookUrlPrefix.$eventID;
+		return $facebookUrl;
 	}
 	/**
 	 * Function that helps us inject Google Maps API call in Page.ss at the bottom of the doc.

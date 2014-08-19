@@ -201,11 +201,11 @@ class LocalistCalendar extends Page {
 	}
 
 	public function VenuesList() {
-		$cache = new SimpleCache();
+
 		$feedURL = LOCALIST_FEED_URL.'places';
-		$rawFeed = $cache->get_data( $feedURL, $feedURL );
 		$venuesList = new ArrayList();
-		$venuesDecoded = json_decode( $rawFeed, TRUE );
+
+		$venuesDecoded = $this->getJson($feedURL);
 		$venuesArray = $venuesDecoded['places'];
 		//print_r($venuesArray);
 
@@ -325,6 +325,19 @@ class LocalistCalendar extends Page {
 		return $events;
 	}
 
+	public function getJson($feedURL){
+		$cache = new SimpleCache();
+		if($rawFeed = $cache->get_data( $feedURL, $feedURL )){
+	    	$eventsDecoded = json_decode( $rawFeed, TRUE );	
+		} else {
+		    $rawFeed = $cache->do_curl($feedURL);
+		    $cache->set_cache($feedURL, $rawFeed);
+			$eventsDecoded = json_decode( $rawFeed, TRUE );
+		}
+
+		return $eventsDecoded;
+	}
+
 	/**
 	 * Produces a list of Events based on a number of factors, used in templates
 	 * and as a helper function in this class and others.
@@ -339,6 +352,7 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null ) {
+
 		if ( $this->EventTypeFilterID != 0 ) {
 			$primaryFilterTypeID = $this->EventTypeFilterID;
 		} 
@@ -400,8 +414,7 @@ class LocalistCalendar extends Page {
 
 		$eventsList = new ArrayList();
 
-		$rawFeed = $cache->get_data( $feedURL, $feedURL );
-		$eventsDecoded = json_decode( $rawFeed, TRUE );	
+		$eventsDecoded = $this->getJson($feedURL);
 
 		if(isset($eventsDecoded['events'])){
 			$eventsArray = $eventsDecoded['events'];
@@ -411,7 +424,6 @@ class LocalistCalendar extends Page {
 					$eventsList->push( $localistEvent->parseEvent( $event['event'] ) );
 				}
 			}
-
 			return $eventsList;
 		}
 
@@ -424,18 +436,13 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function SingleEvent( $id ) {
-
 		if(!isset($id) || $id == 0) return false;
 
-		$cache = new SimpleCache();
 
 		$feedParams = 'events/'.$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 
-		//print_r($feedURL);
-
-		$rawFeed = $cache->get_data( $feedURL, $feedURL );
-		$eventsDecoded = json_decode( $rawFeed, TRUE );
+		$eventsDecoded = $this->getJson($feedURL);
 
 		$event = $eventsDecoded['event'];
 		if ( isset( $event ) ) {
@@ -498,6 +505,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			$event = $this->SingleEvent( $eventID );
 			return $event->renderWith( array( 'LocalistEvent', 'Page' ) );
 		}else {
+
 			/* Getting an event based on the url slug **EXPERIMENTAL ** */
 			$events = $this->EventList();
 			foreach ( $events as $key => $e ) {
@@ -506,6 +514,8 @@ class LocalistCalendar_Controller extends Page_Controller {
 				}
 			}
 		}
+
+		return $this->httpError( 404, 'The requested event can\'t be found in the upcoming events list.');
 
 	}
 
