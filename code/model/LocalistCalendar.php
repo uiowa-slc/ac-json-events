@@ -5,10 +5,6 @@ class LocalistCalendar extends Page {
 		'EventTypeFilterID' => 'Int',
 		'DepartmentFilterID'=> 'Int',
 		'VenueFilterID' 	=> 'Int',
-		'FeaturedEvent1ID' => 'Int',
-		'FeaturedEvent2ID' => 'Int',
-		'FeaturedEvent3ID' => 'Int',
-		'FeaturedEvent4ID' => 'Int',
 	);
 
 	private static $has_one = array(
@@ -80,28 +76,16 @@ class LocalistCalendar extends Page {
 	 */
 	public function FeaturedEvents() {
 
-		$events = new ArrayList();
+		$events = $this->EventList();
+		$featuredEvents = new ArrayList();
 
-		if($this->FeaturedEvent1ID != 0){
-			$events->push( $this->SingleEvent( $this->FeaturedEvent1ID ) );
-		}
-		if($this->FeaturedEvent2ID != 0){
-			$events->push( $this->SingleEvent( $this->FeaturedEvent2ID ) );
-		}
-		if($this->FeaturedEvent3ID != 0){
-			$events->push( $this->SingleEvent( $this->FeaturedEvent3ID ) );
-		}
-		if($this->FeaturedEvent4ID != 0){
-			$events->push( $this->SingleEvent( $this->FeaturedEvent4ID ) );
+		foreach ( $events as $event ) {
+			if($event->Featured == true){
+				$featuredEvents->push($event);
+			}
 		}
 
-		if($events->First()){
-			return $events;
-		}else{
-			return false;
-		}
-
-
+		return $featuredEvents;
 
 	}
 
