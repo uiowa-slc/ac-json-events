@@ -10,8 +10,6 @@ class LocalistVenue extends DataObject {
 		"Latitude"	=> "Text",
 		"Longitute"	=> "Text",
 		"Address"	=> "Text"
-		
-		
 	);
 
 	public function parseVenue($venueDecoded){
@@ -32,7 +30,7 @@ class LocalistVenue extends DataObject {
 	}
 
 	
-public function Events() {
+	public function Events() {
 		$calendar = LocalistCalendar::get()->First();
 		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
 		$eventsAtPlaceList = new ArrayList();
@@ -44,6 +42,10 @@ public function Events() {
 		return $eventsAtPlaceList;   
 	}
 
+	/**
+	 * Returns a link to the venue.
+	 * @return type
+	 */
 	public function Link(){
 		if($this->ID != 0) {
 			$calendar = LocalistCalendar::get()->First();
@@ -54,4 +56,11 @@ public function Events() {
 		}
 	}
 
+	/**
+	 * Returns a formatted link for directions.
+	 * @return type
+	 */
+	public function DirectionsLink(){
+		return "http://maps.apple.com/?q=".$this->Address;
+	}
 }

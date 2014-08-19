@@ -2,23 +2,37 @@
 
 class LocalistEvent extends DataObject {
 
-	private static $db = array(
-		'Title' => 'Varchar(255)',
-		'Content' => 'HTMLText',
-		'URLSegment' => 'Varchar(255)',
-		'Featured' => 'Boolean',
-		'LocalistLink' => 'Text',
-		'MoreInfoLink' => 'Text',
-		'FacebookEventLink' => 'Text',
-		'ImageURL' => 'Text',
-		'Cost' => 'Text',
-		'Location' => 'Text',
-		'VenueID' => 'Int',
-		'VenueTitle' => 'Varchar(255)',
-		'VenueLink' => 'Text',
+	/**
+	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent
+	 * @param array $rawEvent 
+	 * @return LocalistEvent
+	 */
+	public function parseEvent($rawEvent){
+		$image = new LocalistImage();
+		$image = $image->getByID($rawEvent['photo_id']);
 
-	);
+		$this->ID = $rawEvent['id'];
+		$this->Title = $rawEvent['title'];
+		$this->URLSegment = $rawEvent['urlname'];
+		$this->Featured = $rawEvent['featured'];
+		$this->Cost = $rawEvent['ticket_cost'];
+		$this->Location = $rawEvent['room_number'];
+		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
+		$this->Venue = $this->getVenueFromRaw($rawEvent);
+		$this->Content = $rawEvent['description'];
+		$this->Tags = $this->getTagsFromRaw($rawEvent);
+		$this->Types = $this->getTypesFromRaw($rawEvent);
+		$this->Image = $image;
+		$this->LocalistLink = $rawEvent['localist_url'];
+		$this->MoreInfoLink = $rawEvent['url'];
+		$this->FacebookEventLink = $rawEvent['facebook_id'];
 
+		if(isset($venue['place']['name'])){
+			$this->VenueTitle = $venue['place']['name'];
+		}
+		return $this;
+
+	}
 	/**
 	 * Get a list of upcoming dates for a single event by checking an individual event
 	 * for instances from Localist
@@ -116,47 +130,22 @@ class LocalistEvent extends DataObject {
 		return $venue->parseVenue($venueDecoded);
 	}
 
-	/**
-	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent
-	 * @param array $rawEvent 
-	 * @return LocalistEvent
-	 */
-	public function parseEvent($rawEvent){
-
-		$image = new LocalistImage();
-		$image = $image->getByID($rawEvent['photo_id']);
-
-		$this->ID = $rawEvent['id'];
-		$this->Title = $rawEvent['title'];
-		$this->URLSegment = $rawEvent['urlname'];
-		$this->Featured = $rawEvent['featured'];
-		$this->Cost = $rawEvent['ticket_cost'];
-		$this->Location = $rawEvent['room_number'];
-		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
-		$this->Venue = $this->getVenueFromRaw($rawEvent);
-		$this->Content = $rawEvent['description'];
-		$this->Tags = $this->getTagsFromRaw($rawEvent);
-		$this->Types = $this->getTypesFromRaw($rawEvent);
-		$this->Image = $image;
-		$this->LocalistLink = $rawEvent['localist_url'];
-		$this->MoreInfoLink = $rawEvent['url'];
-		$this->FacebookEventLink = $rawEvent['facebook_id'];
-
-		if(isset($venue['place']['name'])){
-			$this->VenueTitle = $venue['place']['name'];
-		}
-		return $this;
-
-	}
+	
 	/**
 	 * Generate a link to the event using the event's URL segment
-	 * @return type
+	 * @return string
 	 */
 	public function Link(){
 		$calendar = LocalistCalendar::get()->First();
 		$link = $calendar->Link().'event/'.$this->URLSegment;
 		return $link;
 	}
+	
+	/**
+	 * Generate a list events similar to the current event. Randomly selects based on tags they have in common.
+	 * @param int $limit 
+	 * @return int
+	 */
 	public function RelatedEvents($limit = 6){
 		$calendar = LocalistCalendar::get()->First();
 		$curEventTypes = $this->Types;
@@ -167,12 +156,17 @@ class LocalistEvent extends DataObject {
 		return $relatedEvents->Limit($limit);
 	}
 
+	/**
+	 * Returns a parsed facebook event link based on the event's Facebook Event ID.
+	 * @return string
+	 */
 	public function ParsedFacebookEventLink(){
 		$eventID = $this->FacebookEventLink;
 		$facebookUrlPrefix = 'https://facebook.com/events/';
 		$facebookUrl = $facebookUrlPrefix.$eventID;
 		return $facebookUrl;
 	}
+
 	/**
 	 * Function that helps us inject Google Maps API call in Page.ss at the bottom of the doc.
 	 * @return boolean
@@ -180,5 +174,7 @@ class LocalistEvent extends DataObject {
 	public function UsesGoogleMaps(){
 		return true;
 	}
+
+
 
 }

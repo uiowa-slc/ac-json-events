@@ -47,5 +47,13 @@ class LocalistImage extends DataObject {
 		return $this;
 	}
 
+	public function getURL(){
+		if(isset($this->URL)){
+			return $this->getField('URL');
+		}else{
+			$themeFolder = 'themes/' . SSViewer::current_theme(); 
+			return $themeFolder.'/images/LocalistEventPlaceholder.jpg';
+		}
+	}
 
 }
