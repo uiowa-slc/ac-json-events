@@ -8,11 +8,20 @@ class LocalistEvent extends DataObject {
 	 * @return LocalistEvent
 	 */
 	public function parseEvent($rawEvent){
-		$image = new LocalistImage();
-		$image = $image->getByID($rawEvent['photo_id']);
 
+		$image = new LocalistImage();
+
+		if(isset($rawEvent['photo_id'])){
+			$image = $image->getByID($rawEvent['photo_id']);
+		}else{
+			$themeDir = $this->ThemeDir();
+			$image = new LocalistImage();
+			$image->URL = $themeDir.'/images/LocalistEventPlaceholder.jpg';
+		}
+		
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
+		$this->EventTitle = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
 		$this->Featured = $rawEvent['featured'];
 		$this->Cost = $rawEvent['ticket_cost'];
@@ -32,6 +41,11 @@ class LocalistEvent extends DataObject {
 		}
 		return $this;
 
+	}
+
+	//Weird hack to get around the default DataObject getTitle
+	public function getTitle(){
+		return $this->EventTitle;
 	}
 	/**
 	 * Get a list of upcoming dates for a single event by checking an individual event

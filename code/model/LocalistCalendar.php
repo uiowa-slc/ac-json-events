@@ -451,7 +451,7 @@ class LocalistCalendar extends Page {
 		$eventsDecoded = $this->getJson($feedURL);
 
 		$event = $eventsDecoded['event'];
-		print_r ("hello");
+		//print_r ("hello");
 		if ( isset( $event ) ) {
 			$localistEvent = new LocalistEvent();
 			return $localistEvent->parseEvent( $event );
@@ -519,7 +519,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			$events = $this->EventList();
 			foreach ( $events as $key => $e ) {
 				if ( $e->URLSegment == $eventID ) {
-					print_r($e);
+					//print_r($e->URLSegment);
 					return $this->customise( $e )->renderWith( array( 'LocalistEvent', 'Page' ) );;
 				}
 			}
