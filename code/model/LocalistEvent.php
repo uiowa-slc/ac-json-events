@@ -148,12 +148,17 @@ class LocalistEvent extends DataObject {
 	 */
 	public function RelatedEvents($limit = 6){
 		$calendar = LocalistCalendar::get()->First();
-		$curEventTypes = $this->Types;
-		$randEventType = $curEventTypes[array_rand($curEventTypes->toArray())];
-		//print_r($randEventType->Title);
-		$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
-		
-		return $relatedEvents->Limit($limit);
+
+		if($this->Types && $this->Types->First()){
+			$curEventTypes = $this->Types;
+			$randEventType = $curEventTypes[array_rand($curEventTypes->toArray())];
+			//print_r($randEventType->Title);
+			$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
+			
+			return $relatedEvents->Limit($limit);
+		}else{
+			return false;
+		}
 	}
 
 	/**

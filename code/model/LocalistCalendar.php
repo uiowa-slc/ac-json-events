@@ -5,6 +5,7 @@ class LocalistCalendar extends Page {
 		'EventTypeFilterID' => 'Int',
 		'DepartmentFilterID'=> 'Int',
 		'VenueFilterID' 	=> 'Int',
+		'GeneralInterestFilterID' => 'Int'
 	);
 
 	private static $has_one = array(
@@ -26,6 +27,11 @@ class LocalistCalendar extends Page {
 		$venues = $this->VenuesList();
 		$venuesArray = $venues->map();
 
+		$genInterests = $this->GeneralInterestList();
+		$genInterestsArray = $genInterests->map();
+
+		//print_r($genInterestsArray);
+
 		$typeListBoxField = new DropdownField( 'EventTypeFilterID', 'Filter the calendar by this Localist event type:', $typesArray );
 		$typeListBoxField->setEmptyString( '(No Filter)' );
 
@@ -35,34 +41,14 @@ class LocalistCalendar extends Page {
 		$venueDropDownField = new DropdownField( 'VenueFilterID', 'Filter the calendar by this Localist Venue', $venuesArray );
 		$venueDropDownField->setEmptyString( '(No Filter)' );
 
+		$genInterestDropDownField = new DropdownField( 'GeneralInterestFilterID', 'Filter the calendar by this Localist General Interest', $genInterestsArray);
+		$genInterestDropDownField->setEmptyString( '(No Filter)' );
+
 		$fields->addFieldToTab( 'Root.Main', $typeListBoxField, 'Content' );
 		$fields->addFieldToTab(' Root.Main', $departmentDropDownField, 'Content' );
 		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content' );
+		$fields->addFieldToTab(' Root.Main', $genInterestDropDownField, 'Content' );
 		$fields->removeByName( 'Content' );
-
-		$events = $this->EventList();
-
-		if ($events) {
-			$eventsArray = $events->map();
-
-
-			$featuredEvent1Field = new DropdownField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
-			$featuredEvent1Field->setEmptyString( '(No Event)' );
-			$fields->addFieldToTab( 'Root.Main', $featuredEvent1Field );
-
-			$featuredEvent2Field = new DropdownField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
-			$featuredEvent2Field->setEmptyString( '(No Event)' );
-			$fields->addFieldToTab( 'Root.Main', $featuredEvent2Field );
-
-			$featuredEvent3Field = new DropdownField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
-			$featuredEvent3Field->setEmptyString( '(No Event)' );
-			$fields->addFieldToTab( 'Root.Main', $featuredEvent3Field );
-
-			$featuredEvent4Field = new DropdownField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
-			$featuredEvent4Field->setEmptyString( '(No Event)' );
-			$fields->addFieldToTab( 'Root.Main', $featuredEvent4Field );
-
-		}
 
 		return $fields;
 	}
@@ -147,15 +133,17 @@ class LocalistCalendar extends Page {
 		if($events->First()){
 			$localistEventTypes = new ArrayList();
 			foreach ( $events as $event ) {
-				foreach ( $event->Types as $eventType ) {
-					if ( isset( $types[$eventType->Title] ) ) {
-						$types[$eventType->Title] = $types[$eventType->Title] + 1;
-					}else {
-						$types[$eventType->Title] = 0;
+				if($event->Types && $event->Types->First()){
+					foreach ( $event->Types as $eventType ) {
+						if ( isset( $types[$eventType->Title] ) ) {
+							$types[$eventType->Title] = $types[$eventType->Title] + 1;
+						}else {
+							$types[$eventType->Title] = 0;
+						}
 					}
 				}
-
 			}
+
 			arsort( $types );
 			foreach ( $types as $key => $type ) {
 				$localistEventType = new LocalistEventType();
@@ -255,6 +243,34 @@ class LocalistCalendar extends Page {
 
 	}
 
+	public function GeneralInterestList() {
+
+		$cache = new SimpleCache();
+		$feedURL = LOCALIST_FEED_URL.'events/filters/';
+
+		$genInterestsList = new ArrayList();
+
+		$rawFeed = $cache->get_data( $feedURL, $feedURL );
+		$genInterestsDecoded = json_decode( $rawFeed, TRUE );
+
+		if ( isset($genInterestsDecoded['event_general_interest'])) {
+			$genInterestsArray = $genInterestsDecoded['event_general_interest'];
+		}
+
+		//print_r($genInterestsArray);
+		if ( isset( $genInterestsArray ) ) {
+			foreach ( $genInterestsArray as $genInterest ) {
+				$localistGenInterest = new LocalistEventType();
+				$localistGenInterest = $localistGenInterest->parseType( $genInterest );
+				$genInterestsList->push( $localistGenInterest );
+			}
+		}
+
+		//print_r($genInterestsList);
+
+		return $genInterestsList;
+
+	}
 	/**
 	 * Finds a specific event type by checking the master TypeList() and matching the ID against
 	 * all types. 
@@ -348,7 +364,9 @@ class LocalistCalendar extends Page {
 		if ( $this->VenueFilterID != 0 ) {
 			$venueFilterID = $this->VenueFilterID;
 		}
-
+		if ( $this->GeneralInterestFilterID != 0 ) {
+			$genInterestFilterID = $this->GeneralInterestFilterID;
+		}
 		$feedParams = '?';
 		$feedParams .= 'days='.$days;
 		
@@ -384,10 +402,14 @@ class LocalistCalendar extends Page {
 		if ( isset( $departmentFilterID ) ) {
 			$feedParams .= '&type[]='.$departmentFilterID;
 		}
+		if ( isset( $genInterestFilterID ) ) {
+			$feedParams .= '&type[]='.$genInterestFilterID;
+		}
 		
 		if ( isset( $venueFilterID ) ) {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}	
+
 
 		$feedParams .= '&pp=50&distinct=true';
 
@@ -429,10 +451,13 @@ class LocalistCalendar extends Page {
 		$eventsDecoded = $this->getJson($feedURL);
 
 		$event = $eventsDecoded['event'];
+		print_r ("hello");
 		if ( isset( $event ) ) {
 			$localistEvent = new LocalistEvent();
 			return $localistEvent->parseEvent( $event );
 		}
+
+
 		return false;
 	}
 
@@ -494,12 +519,13 @@ class LocalistCalendar_Controller extends Page_Controller {
 			$events = $this->EventList();
 			foreach ( $events as $key => $e ) {
 				if ( $e->URLSegment == $eventID ) {
+					print_r($e);
 					return $this->customise( $e )->renderWith( array( 'LocalistEvent', 'Page' ) );;
 				}
 			}
 		}
 
-		return $this->httpError( 404, 'The requested event can\'t be found in the upcoming events list.');
+		return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 
 	}
 
