@@ -157,28 +157,53 @@ class LocalistCalendar extends Page {
 		}
 	}
 
+	public function requestAllPages($feedURL, $resourceName) {
+		$page = 1;
+		$pp = 100;
+		$info = $this->getJson($feedURL.'?pp='.$pp.'&page='.$page);
+		$fullPageList = $info;
+		
+		if (isset($info['page']['total'])) {
+			$numOfPages = $info['page']['total'];		
+			for ($page; $page <= $numOfPages; $page++) {
+				$thisPage = $this->getJson($feedURL.'?pp='.$pp.'&page='.$page);
+				foreach ($thisPage[$resourceName] as $key => $value) {
+					array_push($fullPageList[$resourceName], $thisPage[$resourceName][$key]);
+				}
+				if ($page > 999) { //failsafe for infinite loops
+					break;
+				}
+			}
+		} else {
+			return $fullPageList;
+		}
+		
+		return $fullPageList;
+	}
+
 	/**
 	 * Returns an ArrayList of all venues that are coming through our main EventList function
 	 * @return ArrayList
 	 */
-	public function VenueList() {
+	public function ActiveVenueList() {
 		$activeEvents = $this->EventList();
 		$venuesList = new ArrayList();
 
 		foreach ( $activeEvents as $key => $parsedEvent ) {
 			$venuesList->push( $parsedEvent->Venue );
 		}
+		
 		return $venuesList;
-
 	}
-
+	
 	public function VenuesList() {
-
-		$feedURL = LOCALIST_FEED_URL.'places';
+		$resourceName = "places";
+		$feedURL = LOCALIST_FEED_URL.$resourceName;
 		$venuesList = new ArrayList();
 
-		$venuesDecoded = $this->getJson($feedURL);
-		$venuesArray = $venuesDecoded['places'];
+		//$venuesDecoded = $this->getJson($feedURL);
+		$venuesDecoded = $this->requestAllPages($feedURL, $resourceName);
+		$venuesArray = $venuesDecoded[$resourceName];
 		//print_r($venuesArray);
 
 		if ( isset ( $venuesArray ) ) {
@@ -188,7 +213,7 @@ class LocalistCalendar extends Page {
 				$venuesList->push($localistVenue);
 			}
 		}
-
+		
 		return $venuesList;
 	}
 
@@ -198,13 +223,15 @@ class LocalistCalendar extends Page {
 	 */
 	public function TypeList() {
 		$cache = new SimpleCache();
+		$resourceName = 'event_types';
 		$feedURL = LOCALIST_FEED_URL.'events/filters';
 
 		$typesList = new ArrayList();
 
 		$rawFeed = $cache->get_data( $feedURL, $feedURL );
 		$typesDecoded = json_decode( $rawFeed, TRUE );
-		$typesArray = $typesDecoded['event_types'];
+		//$typesDecoded = $this->requestAllPages($feedURL, $resourceName);
+		$typesArray = $typesDecoded[$resourceName];
 
 		if ( isset( $typesArray ) ) {
 			foreach ( $typesArray as $type ) {
@@ -215,7 +242,6 @@ class LocalistCalendar extends Page {
 		}
 
 		return $typesList;
-
 	}
 
 	public function DepartmentList() {
@@ -271,6 +297,7 @@ class LocalistCalendar extends Page {
 		return $genInterestsList;
 
 	}
+	
 	/**
 	 * Finds a specific event type by checking the master TypeList() and matching the ID against
 	 * all types. 
@@ -291,8 +318,8 @@ class LocalistCalendar extends Page {
 	}
 
 	public function getVenueByID( $id ) {
-		$venues = $this->VenueList();
-
+		$venues = $this->ActiveVenueList();
+		
 		foreach ( $venues as $venue ) {
 			if ( isset( $venue ) ) {
 				if ( $venue->ID == $id ) {
@@ -300,9 +327,10 @@ class LocalistCalendar extends Page {
 				}
 			}
 		}
-
 		return false;
+		
 	}
+	
 	public function getTodayEvents() {
 		$startDate = sfDate::getInstance()->format( 'Y-m-d' );
 		$endDate = sfDate::getInstance()->format( 'Y-m-d' );
@@ -334,8 +362,13 @@ class LocalistCalendar extends Page {
 		    $cache->set_cache($feedURL, $rawFeed);
 			$eventsDecoded = json_decode( $rawFeed, TRUE );
 		}
-
-		return $eventsDecoded;
+		
+		if (!empty($eventsDecoded)) {
+			return $eventsDecoded;
+		} else {
+			return false;
+		}
+		
 	}
 
 	/**
@@ -410,7 +443,6 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}	
 
-
 		$feedParams .= '&pp=50&distinct=true';
 
 		$cache = new SimpleCache();
@@ -432,7 +464,7 @@ class LocalistCalendar extends Page {
 			}
 			return $eventsList;
 		}
-
+		
 	}
 
 	/**
@@ -456,7 +488,6 @@ class LocalistCalendar extends Page {
 			$localistEvent = new LocalistEvent();
 			return $localistEvent->parseEvent( $event );
 		}
-
 
 		return false;
 	}
@@ -576,6 +607,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		return $this->customise( $Data )->renderWith( array( 'LocalistCalendar', 'Page' ) );
 
 	}
+	
 	/**
 	 * Controller Function that renders a filtered Event List by a Localist tag or keyword.
 	 * @param SS_HTTPRequest $request 
