@@ -41,6 +41,7 @@ class LocalistEvent extends DataObject {
 		if(isset($venue['place']['name'])){
 			$this->VenueTitle = $venue['place']['name'];
 		}
+		
 		return $this;
 
 	}
@@ -62,7 +63,7 @@ class LocalistEvent extends DataObject {
 		foreach($eventInstances as $i => $eventInstance){
 			$dateTime = new LocalistDatetime();
 			$dateTime->setValue($eventInstances[$i]['event_instance']['start']);
-			if(!$dateTime->InPast()){
+			if(!$dateTime->InPast() || $dateTime->IsToday() ){
 				$eventInstancesArray->push($dateTime);
 			}
 		}
