@@ -29,6 +29,7 @@ class LocalistEvent extends DataObject {
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		$this->Content = $rawEvent['description'];
+		$this->SummaryContent = $rawEvent['description_text'];
 		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
