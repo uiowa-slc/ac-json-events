@@ -135,10 +135,10 @@ class LocalistCalendar extends Page {
 			foreach ( $events as $event ) {
 				if($event->Types && $event->Types->First()){
 					foreach ( $event->Types as $eventType ) {
-						if ( isset( $types[$eventType->Title] ) ) {
-							$types[$eventType->Title] = $types[$eventType->Title] + 1;
+						if ( isset( $types[$eventType->ID] ) ) {
+							$types[$eventType->ID] = $types[$eventType->ID] + 1;
 						}else {
-							$types[$eventType->Title] = 0;
+							$types[$eventType->ID] = 0;
 						}
 					}
 				}
@@ -146,8 +146,8 @@ class LocalistCalendar extends Page {
 
 			arsort( $types );
 			foreach ( $types as $key => $type ) {
-				$localistEventType = new LocalistEventType();
-				$localistEventType->Title = $key;
+
+				$localistEventType = $this->getTypeByID($key);
 				$localistEventTypes->push( $localistEventType );
 			}
 			
@@ -222,14 +222,13 @@ class LocalistCalendar extends Page {
 	 * @return ArrayList
 	 */
 	public function TypeList() {
-		$cache = new SimpleCache();
+
 		$resourceName = 'event_types';
 		$feedURL = LOCALIST_FEED_URL.'events/filters';
 
 		$typesList = new ArrayList();
 
-		$rawFeed = $cache->get_data( $feedURL, $feedURL );
-		$typesDecoded = json_decode( $rawFeed, TRUE );
+		$typesDecoded = $this->getJson($feedURL);
 		//$typesDecoded = $this->requestAllPages($feedURL, $resourceName);
 		$typesArray = $typesDecoded[$resourceName];
 
@@ -316,7 +315,17 @@ class LocalistCalendar extends Page {
 
 		return false;
 	}
+	public function getTagByID( $id ) {
+		$types = $this->TagList();
 
+		foreach ( $types as $type ) {
+			if ( $type->ID == $id ) {
+				return $type;
+			}
+		}
+
+		return false;
+	}
 	public function getVenueByID( $id ) {
 		$venues = $this->ActiveVenueList();
 		
@@ -381,10 +390,11 @@ class LocalistCalendar extends Page {
 	 * @param int $venue 
 	 * @param string $keyword 
 	 * @param int $type 
+	 * @param boolean $distinct
 	 * @return ArrayList
 	 */
 
-	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null ) {
+	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null, $distinct = true ) {
 
 		if ( $this->EventTypeFilterID != 0 ) {
 			$primaryFilterTypeID = $this->EventTypeFilterID;
@@ -443,7 +453,7 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}	
 
-		$feedParams .= '&pp=50&distinct=true';
+		$feedParams .= '&pp=50&distinct='.$distinct;
 
 		$cache = new SimpleCache();
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
@@ -622,10 +632,11 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 */
 	public function tag( $request ) {
 		$tagName = addslashes( $this->urlParams['tag'] );
-		$events = $this->EventList( 200, null, null, null, $tagName );
+		$events = $this->EventList( 200, null, null, null, rawurlencode($tagName) );
 		$filterHeader = 'Events tagged as "'.$tagName.'"';
 
 		$Data = array (
+			'Title' => $tagName.' | '.$this->Title,
 			'EventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
@@ -642,6 +653,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		$filterHeader = 'Events categorized as type "'.$type->Title.'"';
 
 		$Data = array (
+			'Title' => $type->Title.' | '.$this->Title,
 			'EventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
@@ -658,6 +670,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		$filterHeader = 'Events listed at '.$venue->Title;
 
 		$Data = array (
+			'Title' => $venue->Title.' | '.$this->Title,
 			'Venue' => $venue,
 			'EventList' => $events,
 			'FilterHeader' => $filterHeader,
@@ -715,10 +728,10 @@ class LocalistCalendar_Controller extends Page_Controller {
  		//Determine which feed we're going to output
  		switch($feedType){
  			case "json":
- 				return $this->getJsonFeed($events);
+ 				return $this->generateJsonFeed($events);
  				break;
  			default:
- 				return $this->getJsonFeed($events);
+ 				return $this->generateJsonFeed($events);
  				break;
  		}
 
@@ -745,7 +758,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 return json_encode($data);
  	}
 
- 	public function getJsonFeed($events){
+ 	public function generateJsonFeed($events){
  		if(!isset($events)){
  			$events = $this->EventList();
  		}
