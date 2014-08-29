@@ -394,7 +394,7 @@ class LocalistCalendar extends Page {
 	 * @return ArrayList
 	 */
 
-	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null, $distinct = true ) {
+	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null, $distinct = 'true' ) {
 
 		if ( $this->EventTypeFilterID != 0 ) {
 			$primaryFilterTypeID = $this->EventTypeFilterID;
@@ -723,7 +723,7 @@ class LocalistCalendar_Controller extends Page_Controller {
  		//else get all events	
  		}else{
  			
- 			$events = $this->EventList();
+ 			$events = $this->EventList(200, null, null, null, null, null, 'false');
  		}
  		//Determine which feed we're going to output
  		switch($feedType){
@@ -760,7 +760,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
  	public function generateJsonFeed($events){
  		if(!isset($events)){
- 			$events = $this->EventList(200, null, null, null, false);
+ 			$events = $this->EventList(200, null, null, null, null, null, 'false');
  		}
  		$data = array();
 
