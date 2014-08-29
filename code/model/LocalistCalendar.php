@@ -455,7 +455,6 @@ class LocalistCalendar extends Page {
 
 		$feedParams .= '&pp=50&distinct='.$distinct;
 
-		$cache = new SimpleCache();
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
 		//print_r($feedURL);
@@ -568,7 +567,8 @@ class LocalistCalendar_Controller extends Page_Controller {
 			foreach ( $events as $key => $e ) {
 				if ( $e->URLSegment == $eventID ) {
 					//print_r($e->URLSegment);
-					return $this->customise( $e )->renderWith( array( 'LocalistEvent', 'Page' ) );;
+					$singleEvent = $this->SingleEvent($e->ID);
+					return $this->customise( $singleEvent )->renderWith( array( 'LocalistEvent', 'Page' ) );;
 				}
 			}
 		}
