@@ -760,7 +760,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
  	public function generateJsonFeed($events){
  		if(!isset($events)){
- 			$events = $this->EventList();
+ 			$events = $this->EventList(200, null, null, null, false);
  		}
  		$data = array();
 
@@ -772,7 +772,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
  			foreach($dates as $dateNum => $date){
  				$datesArray[$dateNum]["start_date"] = $date->Format('Y-m-d');
- 				$datesArray[$dateNum]["start_time"] = $date->Time();
+ 				$datesArray[$dateNum]["start_time"] = $date->Format('H:i:s');
  				$datesArray[$dateNum]["end_date"] = $date->EndDate;
  				$datesArray[$dateNum]["end_time"] = $date->EndTime;
  				$datesArray[$dateNum]["all_day"] = $date->AllDay;
@@ -804,15 +804,11 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 			}
  			}
 
-  			/*$sponsorsArray = array();
- 			$sponsors = $event->sponsors();
-
- 			foreach($sponsors as $sponsorNum => $sponsor){
- 				$sponsorsArray[$sponsorNum]["id"] = $sponsor->ID;
- 				$sponsorsArray[$sponsorNum]["name"] = $sponsor->Title;
- 				$sponsorsArray[$sponsorNum]["info"] = $sponsor->Information;
- 				$sponsorsArray[$sponsorNum]["website_link"] = $sponsor->WebsiteURL;
- 			}*/
+  			$sponsorsArray = array();
+			$sponsorsArray[0]["id"] = '';
+			$sponsorsArray[0]["name"] = $event->Sponsor;
+			$sponsorsArray[0]["info"] = '';
+			$sponsorsArray[0]["website_link"] = '';
  			
  			$data["events"][$eventNum]["id"] = $event->ID;
  			$data["events"][$eventNum]["name"] = $event->Title;
@@ -829,7 +825,7 @@ class LocalistCalendar_Controller extends Page_Controller {
  			$data["events"][$eventNum]["price"] = $event->Cost;
  			$data["events"][$eventNum]["location"] = $event->Location;
  			$data["events"][$eventNum]["venues"] = $venuesArray;
- 			//$data["events"][$eventNum]["sponsors"] = $sponsorsArray;
+ 			$data["events"][$eventNum]["sponsors"] = $sponsorsArray;
  			$data["events"][$eventNum]["event_types"] = $eventTypesArray;
  			unset($datesArray);
  		}

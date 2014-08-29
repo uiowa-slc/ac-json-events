@@ -38,6 +38,7 @@ class LocalistEvent extends DataObject {
 		$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['custom_fields']['contact_name']) ? $rawEvent['custom_fields']['contact_name'] : '');
 		$this->ContactEmail = (isset($rawEvent['custom_fields']['contact_email']) ? $rawEvent['custom_fields']['contact_email'] : '');
+		$this->Sponsor = (isset($rawEvent['custom_fields']['sponsor']) ? $rawEvent['custom_fields']['sponsor'] : '');
 
 		if(isset($venue['place']['name'])){
 			$this->VenueTitle = $venue['place']['name'];
