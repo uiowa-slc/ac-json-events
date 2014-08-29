@@ -65,7 +65,7 @@ class LocalistEvent extends DataObject {
 		foreach($eventInstances as $i => $eventInstance){
 			$dateTime = new LocalistDatetime();
 			$dateTime->setValue($eventInstances[$i]['event_instance']['start']);
-			if(!$dateTime->InPast() || $dateTime->IsToday() ){
+			if((!$dateTime->InPast()) || $dateTime->IsToday() ){
 				$eventInstancesArray->push($dateTime);
 			}
 		}
