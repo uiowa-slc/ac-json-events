@@ -394,26 +394,40 @@ class LocalistCalendar extends Page {
 	 * @return ArrayList
 	 */
 
-	public function EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = null, $distinct = 'true' ) {
+	public function EventList( 
+		$days = '200', 
+		$startDate = null, 
+		$endDate = null, 
+		$venue = null, 
+		$keyword = null,
+		$type = null, 
+		$distinct = 'true', 
+		$enableFilter = true, 
+		$searchTerm = null ) {
 
-		if ( $this->EventTypeFilterID != 0 ) {
-			$primaryFilterTypeID = $this->EventTypeFilterID;
-		} 
-
-		if ( $this->DepartmentFilterID != 0 ) {
-			$departmentFilterID = $this->DepartmentFilterID;
+		if($enableFilter){
+			if ($this->EventTypeFilterID != 0) {
+				$primaryFilterTypeID = $this->EventTypeFilterID;
+			} 
+			if ($this->DepartmentFilterID != 0) {
+				$departmentFilterID = $this->DepartmentFilterID;
+			}
+			if ($this->VenueFilterID != 0) {
+				$venueFilterID = $this->VenueFilterID;
+			}
+			if ($this->GeneralInterestFilterID != 0) {
+				$genInterestFilterID = $this->GeneralInterestFilterID;
+			}
 		}
 
-		if ( $this->VenueFilterID != 0 ) {
-			$venueFilterID = $this->VenueFilterID;
+		$feedParams = '';
+
+		if(isset($searchTerm)){
+			$feedParams = '/search';
 		}
-		if ( $this->GeneralInterestFilterID != 0 ) {
-			$genInterestFilterID = $this->GeneralInterestFilterID;
-		}
-		$feedParams = '?';
+		$feedParams .= '?';
 		$feedParams .= 'days='.$days;
 		
-
 		$startDateSS = new SS_Datetime();
 		$endDateSS = new SS_Datetime();
 
@@ -430,10 +444,11 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&venue_id='.$venue;
 		}
 
-		if ( isset( $keyword ) ) {
-			$feedParams .= '&keyword='.$keyword;
+		if(!isset($searchTerm)){
+			if ( isset( $keyword ) ) {
+				$feedParams .= '&keyword='.$keyword;
+			}
 		}
-
 		if ( isset( $type ) ) {
 			$feedParams .= '&type[]='.$type;
 		}
@@ -452,7 +467,9 @@ class LocalistCalendar extends Page {
 		if ( isset( $venueFilterID ) ) {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}	
-
+		if ( isset( $searchTerm ) ) {
+			$feedParams .= '&search='.$searchTerm;
+		}
 		$feedParams .= '&pp=50&distinct='.$distinct;
 
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
@@ -468,6 +485,7 @@ class LocalistCalendar extends Page {
 			foreach ( $eventsArray as $event ) {
 				if ( isset( $event ) ) {
 					$localistEvent = new LocalistEvent();
+
 					$eventsList->push( $localistEvent->parseEvent( $event['event'] ) );
 				}
 			}
@@ -527,6 +545,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'tag',
 		'type',
 		'venue',
+		'search',
 
 		//legacy feed actions
 		'feed'
@@ -542,6 +561,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'tag/$tag' => 'tag',
 		'type/$type' => 'type',
 		'venue/$venue' => 'venue',
+		'search' => 'search',
 
 		//legacy feed urls:
 
@@ -677,6 +697,20 @@ class LocalistCalendar_Controller extends Page_Controller {
 		);
 
 		return $this->customise( $Data )->renderWith( array( 'LocalistVenue', 'LocalistCalendar', 'Page' ) );
+	}
+
+	public function search($request){
+		$term = $request->getVar('term');
+		//print_r('term: '.$term);
+		$events = $this->EventList('200', null, null, null, null,null, 'true', false, $term);
+
+		$data = array( 
+			"Results" => $events,
+			"Term" => $term
+		);
+
+		return $this->customise( $data )->renderWith( array( 'LocalistCalendar_search', 'Page' ) );
+
 	}
 
 	public function monthjson( $r ) {

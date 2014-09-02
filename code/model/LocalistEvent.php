@@ -10,6 +10,7 @@ class LocalistEvent extends DataObject {
 	public function parseEvent($rawEvent){
 
 		$image = new LocalistImage();
+		
 
 		if(isset($rawEvent['photo_id'])){
 			$image = $image->getByID($rawEvent['photo_id']);
@@ -43,7 +44,17 @@ class LocalistEvent extends DataObject {
 		if(isset($venue['place']['name'])){
 			$this->VenueTitle = $venue['place']['name'];
 		}
-		
+
+		/* It's possible in some scenarios (such as search) to be displaying events that aren't listed on the current site
+		See if the event is local or not by attempting to find it in the filtered EventList
+		AfterClassLink property so we can test against that in the templates. */
+
+		/*if($this->isExternal()){
+			$this->External = true;
+		}else{
+			$this->External = false;
+		}*/
+
 		return $this;
 
 	}
@@ -159,6 +170,21 @@ class LocalistEvent extends DataObject {
 		$link = $calendar->Link().'event/'.$this->URLSegment;
 		return $link;
 	}
+
+	/**
+	 * Check to see if the event can be found on the current calendar.
+	 * @return type
+	 */
+	/*private function isExternal(){
+		$calendar = LocalistCalendar::get()->First();
+		$events = $calendar->EventList();
+		foreach ( $events as $key => $e ) {
+			if ( $e->ID == $this->ID ) {
+				return false;
+			}
+		}
+		return true;
+	}*/
 	
 	/**
 	 * Generate a list events similar to the current event. Randomly selects based on tags they have in common.
