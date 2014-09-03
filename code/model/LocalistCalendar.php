@@ -5,7 +5,13 @@ class LocalistCalendar extends Page {
 		'EventTypeFilterID' => 'Int',
 		'DepartmentFilterID'=> 'Int',
 		'VenueFilterID' 	=> 'Int',
-		'GeneralInterestFilterID' => 'Int'
+		'GeneralInterestFilterID' => 'Int',
+
+		'FeaturedEvent1ID' => 'Int',
+		'FeaturedEvent2ID' => 'Int',
+		'FeaturedEvent3ID' => 'Int',
+		'FeaturedEvent4ID' => 'Int',
+
 	);
 
 	private static $has_one = array(
@@ -49,6 +55,33 @@ class LocalistCalendar extends Page {
 		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content' );
 		$fields->addFieldToTab(' Root.Main', $genInterestDropDownField, 'Content' );
 		$fields->removeByName( 'Content' );
+		$fields->removeByName( 'Metadata' );
+
+		$events = $this->EventList();
+
+		if ($events->First()) {
+			$eventsArray = $events->map();
+
+			$fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in Localist will be used.' ));
+
+			$featuredEvent1Field = new DropdownField( "FeaturedEvent1ID", "Featured Event 1", $eventsArray );
+			$featuredEvent1Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent1Field );
+
+			$featuredEvent2Field = new DropdownField( "FeaturedEvent2ID", "Featured Event 2", $eventsArray );
+			$featuredEvent2Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent2Field );
+
+			$featuredEvent3Field = new DropdownField( "FeaturedEvent3ID", "Featured Event 3", $eventsArray );
+			$featuredEvent3Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent3Field );
+
+			$featuredEvent4Field = new DropdownField( "FeaturedEvent4ID", "Featured Event 4", $eventsArray );
+			$featuredEvent4Field->setEmptyString( '(No Event)' );
+			$fields->addFieldToTab( 'Root.Main', $featuredEvent4Field );
+
+		}
+
 
 		return $fields;
 	}
@@ -65,10 +98,30 @@ class LocalistCalendar extends Page {
 		$events = $this->EventList();
 		$featuredEvents = new ArrayList();
 
-		foreach ( $events as $event ) {
-			if($event->Featured == true){
-				$featuredEvents->push($event);
-			}
+		//Get featured events from SilverStripe if there are any.
+
+		if($this->FeaturedEvent1ID != 0){
+			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent1ID ) );
+		}
+		if($this->FeaturedEvent2ID != 0){
+			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent2ID ) );
+		}
+		if($this->FeaturedEvent3ID != 0){
+			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent3ID ) );
+		}
+		if($this->FeaturedEvent4ID != 0){
+			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent4ID ) );
+		}
+
+		//If there aren't any featured events selected in SilverStripe, fall back on events marked as featured in Localist. 
+		if($featuredEvents->First()){
+			return $featuredEvents;
+		}else{
+			foreach ( $events as $event ) {
+				if($event->Featured == 'true'){
+					$featuredEvents->push($event);
+				}
+			}		
 		}
 
 		return $featuredEvents;
@@ -470,7 +523,7 @@ class LocalistCalendar extends Page {
 		if ( isset( $searchTerm ) ) {
 			$feedParams .= '&search='.$searchTerm;
 		}
-		$feedParams .= '&pp=50&distinct='.$distinct;
+		$feedParams .= '&pp=50&match=all&distinct='.$distinct;
 
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
@@ -609,15 +662,15 @@ class LocalistCalendar_Controller extends Page_Controller {
 		switch ( $dateFilter ) {
 		case 'weekend':
 			$events = $this->getWeekendEvents();
-			$filterHeader = 'Events happening this weekend';
+			$filterHeader = 'Events happening this weekend:';
 			break;
 		case 'today':
 			$events = $this->getTodayEvents();
-			$filterHeader = 'Events happening today';
+			$filterHeader = 'Events happening today:';
 			break;
 		case 'month':
 			$events = $this->getMonthEvents();
-			$filterHeader = 'Events happening this month';
+			$filterHeader = 'Events happening this month:';
 			break;
 		default:
 			$startDate = new SS_Datetime();
@@ -653,7 +706,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 	public function tag( $request ) {
 		$tagName = addslashes( $this->urlParams['tag'] );
 		$events = $this->EventList( 200, null, null, null, rawurlencode($tagName) );
-		$filterHeader = 'Events tagged as "'.$tagName.'"';
+		$filterHeader = 'Events tagged as "'.$tagName.'":';
 
 		$Data = array (
 			'Title' => $tagName.' | '.$this->Title,
@@ -670,7 +723,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 		$events = $this->EventList( 200, null, null, null, null, $type->ID );
 
-		$filterHeader = 'Events categorized as type "'.$type->Title.'"';
+		$filterHeader = 'Events categorized as "'.$type->Title.'":';
 
 		$Data = array (
 			'Title' => $type->Title.' | '.$this->Title,
@@ -685,18 +738,22 @@ class LocalistCalendar_Controller extends Page_Controller {
 		$venueID = addslashes( $this->urlParams['venue'] );
 		$venue = $this->getVenueByID( $venueID );
 
-		$events = $this->EventList( 200, null, null, $venue->ID );
+		if(isset($venue)){
+			$events = $this->EventList( 200, null, null, $venue->ID );
 
-		$filterHeader = 'Events listed at '.$venue->Title;
+			$filterHeader = 'Events listed at '.$venue->Title.':';
 
-		$Data = array (
-			'Title' => $venue->Title.' | '.$this->Title,
-			'Venue' => $venue,
-			'EventList' => $events,
-			'FilterHeader' => $filterHeader,
-		);
+			$Data = array (
+				'Title' => $venue->Title.' | '.$this->Title,
+				'Venue' => $venue,
+				'EventList' => $events,
+				'FilterHeader' => $filterHeader,
+			);
 
-		return $this->customise( $Data )->renderWith( array( 'LocalistVenue', 'LocalistCalendar', 'Page' ) );
+			return $this->customise( $Data )->renderWith( array( 'LocalistVenue', 'LocalistCalendar', 'Page' ) );
+		}else{
+			return $this->httpError( 404, 'The requested venue can\'t be found in the events.uiowa.edu upcoming events list.');
+		}
 	}
 
 	public function search($request){
