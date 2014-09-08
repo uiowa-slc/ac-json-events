@@ -244,9 +244,9 @@ class LocalistCalendar extends Page {
 
 		foreach ( $activeEvents as $key => $parsedEvent ) {
 
-		
+			if ( $parsedEvent->Venue->ID != 0 ) {
 				$venuesList->push( $parsedEvent->Venue );
-		
+				}
 		}
 
 		$venuesList->removeDuplicates();
@@ -531,7 +531,7 @@ class LocalistCalendar extends Page {
 
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-		print_r($feedURL);
+		//	print_r($feedURL);
 
 		$eventsList = new ArrayList();
 
