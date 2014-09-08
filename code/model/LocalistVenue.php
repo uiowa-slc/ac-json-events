@@ -32,11 +32,13 @@ class LocalistVenue extends DataObject {
 	
 	public function Events() {
 		$calendar = LocalistCalendar::get()->First();
-		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
+		$events = $calendar->EventList();
 		$eventsAtPlaceList = new ArrayList();
 
 		foreach($events as $event) {
-			$eventsAtPlaceList->push($event);
+			if($event->Venue->Title == $this->Title){
+				$eventsAtPlaceList->push($event);
+			}
 		}		
 
 		return $eventsAtPlaceList;   

@@ -243,8 +243,13 @@ class LocalistCalendar extends Page {
 		$venuesList = new ArrayList();
 
 		foreach ( $activeEvents as $key => $parsedEvent ) {
-			$venuesList->push( $parsedEvent->Venue );
+
+		
+				$venuesList->push( $parsedEvent->Venue );
+		
 		}
+
+		$venuesList->removeDuplicates();
 		
 		return $venuesList;
 	}
@@ -395,15 +400,14 @@ class LocalistCalendar extends Page {
 	
 	public function getTodayEvents() {
 		$startDate = sfDate::getInstance()->format( 'Y-m-d' );
-		$endDate = sfDate::getInstance()->format( 'Y-m-d' );
-		$events = $this->EventList( null, $startDate, $endDate );
+		$events = $this->EventList( 200, $startDate);
 		return $events;
 	}
 
 	public function getWeekendEvents() {
 		$startDate = sfDate::getInstance()->firstDayOfWeek()->format( 'Y-m-d' );
 		$endDate = sfDate::getInstance()->finalDayOfWeek()->format( 'Y-m-d' );
-		$events = $this->EventList( null, $startDate, $endDate );
+		$events = $this->EventList( 200, $startDate, $endDate );
 		return $events;
 	}
 
@@ -527,7 +531,7 @@ class LocalistCalendar extends Page {
 
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-		//print_r($feedURL);
+		print_r($feedURL);
 
 		$eventsList = new ArrayList();
 
