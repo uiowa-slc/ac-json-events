@@ -527,11 +527,11 @@ class LocalistCalendar extends Page {
 		if ( isset( $searchTerm ) ) {
 			$feedParams .= '&search='.$searchTerm;
 		}
-		$feedParams .= '&pp=50&match=all&distinct='.$distinct;
+		$feedParams .= '&pp=100&match=all&distinct='.$distinct;
 
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-		//	print_r($feedURL);
+			//print_r($feedURL);
 
 		$eventsList = new ArrayList();
 
