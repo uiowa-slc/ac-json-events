@@ -399,14 +399,26 @@ class LocalistCalendar extends Page {
 	}
 	
 	public function getTodayEvents() {
-		$startDate = sfDate::getInstance()->format( 'Y-m-d' );
-		$events = $this->EventList( 200, $startDate);
+		$start = sfDate::getInstance();
+
+		$events = $this->EventList( 200, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
 		return $events;
 	}
 
 	public function getWeekendEvents() {
-		$startDate = sfDate::getInstance()->firstDayOfWeek()->format( 'Y-m-d' );
-		$endDate = sfDate::getInstance()->finalDayOfWeek()->format( 'Y-m-d' );
+		$start = sfDate::getInstance();
+
+		if($start->format('w') == sfTime::SATURDAY) {
+			$start->yesterday();
+		}
+		elseif($start->format('w') != sfTime::FRIDAY) {
+			$start->nextDay(sfTime::FRIDAY);
+		}
+		$end = sfDate::getInstance($start)->nextDay(sfTime::SUNDAY);
+
+		$startDate = $start->format('Y-m-d');
+		$endDate = $end->format('Y-m-d');
+
 		$events = $this->EventList( 200, $startDate, $endDate );
 		return $events;
 	}
@@ -528,13 +540,11 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&search='.$searchTerm;
 		}
 		$feedParams .= '&pp=100&match=all&distinct='.$distinct;
-
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-			//print_r($feedURL);
+		print_r($feedURL);
 
 		$eventsList = new ArrayList();
-
 		$eventsDecoded = $this->getJson($feedURL);
 
 		if(isset($eventsDecoded['events'])){
