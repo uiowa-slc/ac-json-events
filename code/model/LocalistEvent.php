@@ -35,7 +35,7 @@ class LocalistEvent extends DataObject {
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
 		$this->LocalistLink = $rawEvent['localist_url'];
-		$this->AfterClassLink = AFTERCLASS_BASE.$this->Link();
+		$this->AfterClassLink = AFTERCLASS_BASE.$this->URLSegment;
 		$this->MoreInfoLink = $rawEvent['url'];
 		$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['custom_fields']['contact_name']) ? $rawEvent['custom_fields']['contact_name'] : '');
@@ -45,16 +45,6 @@ class LocalistEvent extends DataObject {
 		if(isset($venue['place']['name'])){
 			$this->VenueTitle = $venue['place']['name'];
 		}
-
-		/* It's possible in some scenarios (such as search) to be displaying events that aren't listed on the current site
-		See if the event is local or not by attempting to find it in the filtered EventList
-		AfterClassLink property so we can test against that in the templates. */
-
-		/*if($this->isExternal()){
-			$this->External = true;
-		}else{
-			$this->External = false;
-		}*/
 
 		return $this;
 
