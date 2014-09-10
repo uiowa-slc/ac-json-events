@@ -542,7 +542,7 @@ class LocalistCalendar extends Page {
 		$feedParams .= '&pp=100&match=all&distinct='.$distinct;
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
-		print_r($feedURL);
+		//print_r($feedURL);
 
 		$eventsList = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
