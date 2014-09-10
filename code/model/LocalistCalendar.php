@@ -658,9 +658,13 @@ class LocalistCalendar_Controller extends Page_Controller {
 					return $this->customise( $singleEvent )->renderWith( array( 'LocalistEvent', 'Page' ) );;
 				}
 			}
-		}
 
-		return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
+		
+				
+		}
+		//echo "hello";
+		$this->Redirect(LOCALIST_BASE.'event/'.$eventID);
+		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 
 	}
 
