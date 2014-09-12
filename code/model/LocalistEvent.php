@@ -10,7 +10,6 @@ class LocalistEvent extends DataObject {
 	public function parseEvent($rawEvent){
 
 		$image = new LocalistImage();
-		
 
 		if(isset($rawEvent['photo_id'])){
 			$image = $image->getByID($rawEvent['photo_id']);
@@ -66,8 +65,17 @@ class LocalistEvent extends DataObject {
 
 		foreach($eventInstances as $i => $eventInstance){
 			$dateTime = new LocalistDatetime();
-			$dateTime->setValue($eventInstances[$i]['event_instance']['start']);
-			if((!$dateTime->InPast()) || $dateTime->IsToday() ){
+
+			$dateTime->StartDateTime = new SS_Datetime();
+			$dateTime->EndDateTime = new SS_Datetime();
+
+			$dateTime->StartDateTime->setValue($eventInstances[$i]['event_instance']['start']);
+			//print_r('end date: '.$dateTime->EndDateTime);
+			if(isset($eventInstances[$i]['event_instance']['end'])){
+				$dateTime->EndDateTime->setValue($eventInstances[$i]['event_instance']['end']);
+			}
+
+			if((!$dateTime->StartDateTime->InPast()) || $dateTime->StartDateTime->IsToday() ){
 				$eventInstancesArray->push($dateTime);
 			}
 		}
@@ -162,21 +170,6 @@ class LocalistEvent extends DataObject {
 		return $link;
 	}
 
-	/**
-	 * Check to see if the event can be found on the current calendar.
-	 * @return type
-	 */
-	/*private function isExternal(){
-		$calendar = LocalistCalendar::get()->First();
-		$events = $calendar->EventList();
-		foreach ( $events as $key => $e ) {
-			if ( $e->ID == $this->ID ) {
-				return false;
-			}
-		}
-		return true;
-	}*/
-	
 	/**
 	 * Generate a list events similar to the current event. Randomly selects based on tags they have in common.
 	 * @param int $limit 
