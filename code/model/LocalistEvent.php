@@ -34,7 +34,7 @@ class LocalistEvent extends DataObject {
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
 		$this->LocalistLink = $rawEvent['localist_url'];
-		$this->AfterClassLink = AFTERCLASS_BASE.$this->URLSegment;
+		$this->AfterClassLink = AFTERCLASS_BASE.'event/'.$this->URLSegment;
 		$this->MoreInfoLink = $rawEvent['url'];
 		$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['custom_fields']['contact_name']) ? $rawEvent['custom_fields']['contact_name'] : '');
