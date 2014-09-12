@@ -2,12 +2,12 @@
 	<% if $Dates %>
 		<% loop $Dates.Limit(1) %>
 			<% with $StartDateTime %>
-				<time itemprop="startDate" datetime="$Format(c)" class="$FirstLast">$Format(M) $Format(j)</time>
+				<a href="{$Link}" class="date-link"><time itemprop="startDate" datetime="$Format(c)" class="$FirstLast">$Format(M) $Format(j)</time></a>
 			<% end_with %>
 			<% if $EndDate %>
 			 - 
 			<% with $EndDate %>
-				<time itemprop="endDate" datetime="$Format(c)" class="$FirstLast">$Format(M) $Format(j)</time>
+				<a href="{$Link}" class="date-link"><time itemprop="endDate" datetime="$Format(c)" class="$FirstLast">$Format(M) $Format(j)</time></a>
 			<% end_with %>
 			<% end_if %>
 		<% end_loop %>
@@ -17,7 +17,7 @@
 		<% with $Venue %>
 			<span> @ </span>
 				<span itemprop="location" itemscope itemtype="http://data-vocabulary.org/​Organization">
-			<span itemprop="name">$Title.LimitCharacters(25)</span>
+			<a href="$Link" class="tag button" ><span itemprop="name">$Title.LimitCharacters(25)</span></a>
 		</span>	
 		<% end_with %>
 	<% end_if %>	

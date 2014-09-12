@@ -880,10 +880,12 @@ class LocalistCalendar_Controller extends Page_Controller {
  			$dates = $event->Dates;
 
  			foreach($dates as $dateNum => $date){
- 				$datesArray[$dateNum]["start_date"] = $date->Format('Y-m-d');
- 				$datesArray[$dateNum]["start_time"] = $date->Format('H:i:s');
- 				$datesArray[$dateNum]["end_date"] = $date->EndDate;
- 				$datesArray[$dateNum]["end_time"] = $date->EndTime;
+ 				$datesArray[$dateNum]["start_date"] = $date->StartDateTime->Format('Y-m-d');
+ 				$datesArray[$dateNum]["start_time"] = $date->StartDateTime->Format('H:i:s');
+ 				if(!empty($date->EndDateTime)){
+	 				$datesArray[$dateNum]["end_date"] = $date->EndDateTime->Format('Y-m-d');
+	 				$datesArray[$dateNum]["end_time"] = $date->EndDateTime->Format('H:i:s');
+	 			}
  				$datesArray[$dateNum]["all_day"] = $date->AllDay;
  			}
 

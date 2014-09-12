@@ -20,7 +20,7 @@ class LocalistDatetime extends DataObject {
 	}
 
 	public function getEndDate(){
-		print_r($this->getField('EndDateTime')->getValue());
+		//print_r($this->getField('EndDateTime')->getValue());
 		$endDate = $this->getField('EndDateTime')->Date();
 		$startDate = $this->StartDateTime->Date();
 
