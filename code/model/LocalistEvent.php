@@ -25,7 +25,7 @@ class LocalistEvent extends DataObject {
 		$this->URLSegment = $rawEvent['urlname'];
 		$this->Featured = $rawEvent['featured'];
 		$this->Cost = $rawEvent['ticket_cost'];
-		$this->Location = $rawEvent['room_number'];
+		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		$this->Content = $rawEvent['description'];
@@ -52,6 +52,14 @@ class LocalistEvent extends DataObject {
 	//Weird hack to get around the default DataObject getTitle
 	public function getTitle(){
 		return $this->EventTitle;
+	}
+
+	private function parseLocation($location){
+		if(is_numeric($location)){
+			return "Rm ".$location;
+		}else{
+			return $location;
+		}
 	}
 	/**
 	 * Get a list of upcoming dates for a single event by checking an individual event
