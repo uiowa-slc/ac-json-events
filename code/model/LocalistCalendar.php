@@ -101,20 +101,28 @@ class LocalistCalendar extends Page {
 		//Get featured events from SilverStripe if there are any.
 
 		if($this->FeaturedEvent1ID != 0){
-			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent1ID ) );
+			if($this->SingleEvent( $this->FeaturedEvent1ID)){
+				$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent1ID ) );
+			}
 		}
 		if($this->FeaturedEvent2ID != 0){
-			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent2ID ) );
+			if($this->SingleEvent( $this->FeaturedEvent2ID)){
+				$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent2ID ) );
+			}
 		}
 		if($this->FeaturedEvent3ID != 0){
-			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent3ID ) );
+			if($this->SingleEvent( $this->FeaturedEvent3ID)){
+				$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent3ID ) );
+			}
 		}
 		if($this->FeaturedEvent4ID != 0){
-			$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent4ID ) );
+			if($this->SingleEvent( $this->FeaturedEvent4ID)){
+				$featuredEvents->push( $this->SingleEvent( $this->FeaturedEvent4ID ) );
+			}
 		}
 
 		//If there aren't any featured events selected in SilverStripe, fall back on events marked as featured in Localist. 
-		if($featuredEvents->First()){
+		if($featuredEvents->count() > 0){
 			return $featuredEvents;
 		}else{
 			foreach ( $events as $event ) {
