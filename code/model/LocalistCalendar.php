@@ -124,7 +124,11 @@ class LocalistCalendar extends Page {
 			}		
 		}
 
-		return $featuredEvents;
+		if($featuredEvents->First()){
+			return $featuredEvents;
+		}else{
+			return false;
+		}
 
 	}
 
@@ -567,22 +571,28 @@ class LocalistCalendar extends Page {
 	 * @return LocalistEvent
 	 */
 
-	public function SingleEvent( $id ) {
+	public function SingleEvent( $id, $mustBeUpcoming = true ) {
 		if(!isset($id) || $id == 0) return false;
-
 
 		$feedParams = 'events/'.$id;
 		$feedURL = LOCALIST_FEED_URL.$feedParams;
 
 		$eventsDecoded = $this->getJson($feedURL);
-
 		$event = $eventsDecoded['event'];
-		//print_r ("hello");
 		if ( isset( $event ) ) {
 			$localistEvent = new LocalistEvent();
-			return $localistEvent->parseEvent( $event );
+			$parsedEvent = $localistEvent->parseEvent( $event );
+			//If we're only looking for an event with upcoming dates, check the event's Dates and return the event if there are any.
+			if($mustBeUpcoming){
+				if($parsedEvent->Dates->count() > 0){
+					return $parsedEvent;
+				}else{
+					return false;
+				}
+			}else{
+				return $parsedEvent;
+			}
 		}
-
 		return false;
 	}
 
@@ -806,8 +816,8 @@ class LocalistCalendar_Controller extends Page_Controller {
 		foreach ( $list as $e ) {
 			//print_r($e->Dates);
 			foreach ( $e->Dates as $date ) {
-				if ( isset( $json[$date->Format( 'Y-m-d' )] ) ) {
-					$json[$date->Format( 'Y-m-d' )]['events'][] = $e->getTitle();
+				if ( isset( $json[$date->StartDateTime->Format( 'Y-m-d' )] ) ) {
+					$json[$date->StartDateTime->Format( 'Y-m-d' )]['events'][] = $e->getTitle();
 				}
 			}
 		}

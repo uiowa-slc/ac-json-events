@@ -18,6 +18,8 @@ class LocalistEvent extends DataObject {
 			$image = new LocalistImage();
 			$image->URL = $themeDir.'/images/LocalistEventPlaceholder.jpg';
 		}
+
+		$this->Dates = new ArrayList();
 		
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
