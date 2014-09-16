@@ -36,13 +36,10 @@ class LocalistDatetime extends DataObject {
 	localist caliendar filter */
 
 	public function Link(){
-		$datestring = date("Y-m-d", strtotime($this->StartDateTime->value));
-		$urlparts = array(
-			"events/show/",
-			$datestring
-			);
-		//print_r(implode($urlparts));
-		return (implode($urlparts));
+		$calendarLink = LocalistCalendar::get()->First()->Link();
+		$datestring = $this->StartDateTime->Format("Y-m-d");
+		print_r($datestring);
+		return $calendarLink.'/show/'.$datestring;
 
 	}
 
