@@ -22,7 +22,7 @@
             <h2 class="null" style="margin: 0;padding: 0;display: block;font-family: Helvetica;font-size: 26px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;color: #ffffff !important;"><a href="{$Event.AfterClassLink}" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #ffffff;font-weight: normal;text-decoration: underline;">$Event.Title</a></h2>
             $Summary
 <ul>
-	<li style="-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"><% loop $Event.Dates %><% include LocalistDateLongNoLinks %><% end_loop %></li>
+	<li style="-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"><% loop $Event.Dates.First %><% include LocalistDateLongNoLinks %><% end_loop %><% if $Event.Dates.Count > "1" %><a href="{$Event.AfterClassLink}" target="_blank">more dates</a><% end_if %></li>
 	<li style="-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;"><% with $Event %><% include LocalistLocationLongNoLinks %><% end_with %></li>
 </ul>
 
