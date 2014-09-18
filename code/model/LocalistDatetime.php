@@ -38,9 +38,7 @@ class LocalistDatetime extends DataObject {
 	public function Link(){
 		$calendarLink = LocalistCalendar::get()->First()->Link();
 		$datestring = $this->StartDateTime->Format("Y-m-d");
-		print_r($datestring);
-		return $calendarLink.'/show/'.$datestring;
-
+		return $calendarLink.'show/'.$datestring;
 	}
 
 }
