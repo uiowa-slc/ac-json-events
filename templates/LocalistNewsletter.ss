@@ -483,7 +483,7 @@
                         <tbody><tr>
                             <td class="mcnImageContent" valign="top" style="padding-right: 0px;padding-left: 0px;padding-top: 0;padding-bottom: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                 
-                                    <a href="#" title="" class="" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                                    <a href="http://afterclass.uiowa.edu/" title="" class="" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                         <img align="left" alt="After Class - the best of ui's culture, events and nightlife" src="http://gallery.mailchimp.com/c61b1cddac92babd42d7d628e/images/6cd1b582-2bef-4a71-bac4-a97995b34ade.jpg" width="600" style="max-width: 600px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" class="mcnImage">
                                     </a>
                                 
@@ -629,9 +629,9 @@
         <td class="mcnCaptionBottomImageContent" align="center" valign="top" style="padding: 0 9px 9px 9px;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
         
             
-
+        	<a href="http://studentlife.uiowa.edu/">
             <img alt="Division of Student Life" src="http://gallery.mailchimp.com/c61b1cddac92babd42d7d628e/images/22502d90-f6d8-4948-b858-2ec137ac611a.jpg" width="370" style="max-width: 370px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;vertical-align: bottom;" class="mcnImage">
-            
+            </a>
         
         </td>
     </tr>
