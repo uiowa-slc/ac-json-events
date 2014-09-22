@@ -629,7 +629,7 @@
         <td class="mcnCaptionBottomImageContent" align="center" valign="top" style="padding: 0 9px 9px 9px;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
         
             
-        	<a href="http://studentlife.uiowa.edu/">
+        	<a href="http://studentlife.uiowa.edu/" target="_blank">
             <img alt="Division of Student Life" src="http://gallery.mailchimp.com/c61b1cddac92babd42d7d628e/images/22502d90-f6d8-4948-b858-2ec137ac611a.jpg" width="370" style="max-width: 370px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;vertical-align: bottom;" class="mcnImage">
             </a>
         
