@@ -8,7 +8,7 @@
             <a href="{$AfterClassLink}" title="" class="" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
             
 
-            <img alt="$Title" src="$Image.URL" width="264" style="max-width: 837px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;vertical-align: bottom;" class="mcnImage">
+            <img alt="$Title" src="$Image.URL" width="264" height="165" style="max-width: 837px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;vertical-align: bottom;" class="mcnImage">
             </a>
         
         </td>
