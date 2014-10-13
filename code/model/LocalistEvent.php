@@ -98,8 +98,7 @@ class LocalistEvent extends DataObject {
 	 * @return ArrayList
 	 */
 	private function getTagsFromRaw($rawEvent){
-		$tagsRaw = $rawEvent['keywords'];
-		$tagsRaw = array_merge($tagsRaw, $rawEvent['tags']);
+		$tagsRaw = $rawEvent['tags'];
 		$tags = new ArrayList();
 
 		foreach($tagsRaw as $tagRaw){
