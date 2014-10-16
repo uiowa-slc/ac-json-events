@@ -98,8 +98,7 @@ class LocalistEvent extends DataObject {
 	 * @return ArrayList
 	 */
 	private function getTagsFromRaw($rawEvent){
-		$tagsRaw = $rawEvent['keywords'];
-		$tagsRaw = array_merge($tagsRaw, $rawEvent['tags']);
+		$tagsRaw = $rawEvent['tags'];
 		$tags = new ArrayList();
 
 		foreach($tagsRaw as $tagRaw){
@@ -148,7 +147,9 @@ class LocalistEvent extends DataObject {
 			$venue->Title = $rawEvent['location'];
 			$venue->Latitude = $rawEvent['geo']['latitude'];
 			$venue->Longitude = $rawEvent['geo']['longitude'];
-			$venue->Address = $rawEvent['geo']['street'].', '.$rawEvent['geo']['city'].', '.$rawEvent['geo']['state'].' '.$rawEvent['geo']['zip'];
+			if (isset($rawEvent['geo']['street'])) {
+				$venue->Address = $rawEvent['geo']['street'].', '.$rawEvent['geo']['city'].', '.$rawEvent['geo']['state'].' '.$rawEvent['geo']['zip'];
+			}
 			return $venue;
 		}
 	}
