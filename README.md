@@ -1,5 +1,4 @@
 # Using Localist in SilverStripe
-======
 
 ## Installation
 *Note: If you're using division-project or cfo-project, ac-json-events will be installed by default. In this case you only need to do step 1.*
