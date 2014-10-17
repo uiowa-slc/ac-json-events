@@ -1,7 +1,6 @@
 # Using Localist in SilverStripe
 ================================
 
-
 ## Installation
 *Note: If you're using division-project or cfo-project, ac-json-events will be installed by default. In this case you only need to do step 1.*
 
@@ -58,8 +57,6 @@ This is the calendar's home page. The available loops and fields are as follows 
 * ```getTodayEvents``` - List of events happening today
 * ```getWeekendEvents``` - List of events happening Friday, Saturday, and Sunday.
 * ```getMonthEvents``` - List of events happening in current month.
-
-```%>```
 
 ###LocalistEvent.ss
 This is an individual event page. The following loops and fields are available on each event individually or during a ```<% loop $EventList %>``` function on another page:
