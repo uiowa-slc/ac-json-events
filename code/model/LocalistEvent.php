@@ -15,7 +15,7 @@ class LocalistEvent extends DataObject {
 			$image = $image->getByID($rawEvent['photo_id']);
 		}else{
 			$themeDir = $this->ThemeDir();
-			$image = new LocalistImage();
+			//$image = new LocalistImage(); //redundant?
 			$image->URL = $themeDir.'/images/LocalistEventPlaceholder.jpg';
 		}
 
