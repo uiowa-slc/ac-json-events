@@ -59,10 +59,7 @@ This is the calendar's home page. The available loops and fields are as follows 
 
 ```%>```
 
-
-
-```<% end_loop %>```
-
+``<% end_loop %>``
 
 ###LocalistEvent.ss
 This is an individual event page. The following loops and fields are available on each event individually or during a ```<% loop $EventList %>``` function on another page:
