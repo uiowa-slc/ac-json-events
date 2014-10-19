@@ -30,7 +30,11 @@ class LocalistEvent extends DataObject {
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
+		// I recommend changing Content to $rawEvent['descritption_text'];
 		$this->Content = $rawEvent['description'];
+		// and change the property SummaryContent to HTMLContent and set it to $rawEvent['description'];
+		// description is the same as description_text, only difference is description includes poorly escaped HTML
+		// also, isn't there a way to comment on code direclty in GitHub? 
 		$this->SummaryContent = $rawEvent['description_text'];
 		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
