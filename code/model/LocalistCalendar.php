@@ -832,135 +832,14 @@ class LocalistCalendar_Controller extends Page_Controller {
 		return Convert::array2json( $json );
 	}
 
-	//Legacy Json functions, to be deleted sometime.
-
-/*****************************/
-	/* RSS And JSON Feed Methods */
-	/*****************************/	
+	/*******************************************/
+	/* RSS And JSON Feed Methods are now DEAD. */
+	/*******************************************/	
 
  	public function Feed(){
- 		$feedType = addslashes($this->urlParams['Type']);
-
- 		//If we have Category in the URL params, get events from a category only
- 		if(array_key_exists('Category', $this->urlParams)){
- 			$categoryTitle = $this->urlParams['Category'];
- 			$category = Category::get()->filter(array('Title' => $categoryTitle))->First();
-
- 			$events = $category->Events();
- 		//else get all events	
- 		}else{
- 			
- 			$events = $this->EventList(200, null, null, null, null, null, 'false');
- 		}
- 		//Determine which feed we're going to output
- 		switch($feedType){
- 			case "json":
- 				return $this->generateJsonFeed($events);
- 				break;
- 			default:
- 				return $this->generateJsonFeed($events);
- 				break;
- 		}
-
+ 		$this->redirect("events/");
  	}
- 	public function getCategoriesJsonFeed($categories){
- 		if(!isset($categories)){
- 			$categories = Category::get();
- 		}
- 		$data = array();
- 		foreach($categories as $catNum => $category){
- 			$data["categories"][$catNum]['id'] = $category->ID;
- 			$data["categories"][$catNum]['title'] = $category->Title;
- 			$data["categories"][$catNum]['kind'] = $category->ClassName;
- 			$data["categories"][$catNum]['has_upcoming_events'] = $category->Events()->exists();
- 			$data["categories"][$catNum]['feed_url'] = $category->jsonFeedLink();
- 			$data["categories"][$catNum]['address'] = $category->Address;
- 			$data["categories"][$catNum]['info'] = $category->Information;
- 			$data["categories"][$catNum]["contact_email"] = $category->Email;
- 			$data["categories"][$catNum]["contact_phone"] = $category->Phone;
- 			$data["categories"][$catNum]["website_link"] = $category->WebsiteURL;
- 			$data["categories"][$catNum]["latitude"] = $category->Lat;
- 			$data["categories"][$catNum]["longitude"] = $category->Lng;			
- 		}
-	 return json_encode($data);
- 	}
-
- 	public function generateJsonFeed($events){
- 		if(!isset($events)){
- 			$events = $this->EventList(200, null, null, null, null, null, 'false');
- 		}
- 		$data = array();
-
- 		foreach($events as $eventNum => $event){
-
- 			/* Get Dates in  an array for later */
- 			$datesArray = array();
- 			$dates = $event->Dates;
-
- 			foreach($dates as $dateNum => $date){
- 				$datesArray[$dateNum]["start_date"] = $date->StartDateTime->Format('Y-m-d');
- 				$datesArray[$dateNum]["start_time"] = $date->StartDateTime->Format('H:i:s');
- 				if(!empty($date->EndDateTime)){
-	 				$datesArray[$dateNum]["end_date"] = $date->EndDateTime->Format('Y-m-d');
-	 				$datesArray[$dateNum]["end_time"] = $date->EndDateTime->Format('H:i:s');
-	 			}
- 				$datesArray[$dateNum]["all_day"] = $date->AllDay;
- 			}
-
- 			$venuesArray = array();
- 			$venues = $event->Venue;
-
- 			foreach($venues as $venueNum => $venue){
- 				$venuesArray[$venueNum]["id"] = $venue->ID;
- 				$venuesArray[$venueNum]["name"] = $venue->AltTitle ? $venue->AltTitle : $venue->Title;
- 				$venuesArray[$venueNum]["address"] = $venue->Address;
- 				$venuesArray[$venueNum]["info"] = $venue->Information;
- 				$venuesArray[$venueNum]["contact_email"] = $venue->Email;
- 				$venuesArray[$venueNum]["contact_phone"] = $venue->Phone;
- 				$venuesArray[$venueNum]["website_link"] = $venue->WebsiteURL;
- 				$venuesArray[$venueNum]["latitude"] = $venue->Lat;
- 				$venuesArray[$venueNum]["longitude"] = $venue->Lng;
- 			}
-
- 			$eventTypesArray = array();
- 			$eventTypes = $event->Types;
-
- 			if(!empty($eventTypes)){
-	 			foreach($eventTypes as $eventTypeNum => $eventType){
-	 				$eventTypesArray[$eventTypeNum]["id"] = $eventType->ID;
-	 				$eventTypesArray[$eventTypeNum]["name"] = $eventType->Title;
-	 				$eventTypesArray[$eventTypeNum]["info"] = $eventType->Information;
-	 			}
- 			}
-
-  			$sponsorsArray = array();
-			$sponsorsArray[0]["id"] = '';
-			$sponsorsArray[0]["name"] = $event->Sponsor;
-			$sponsorsArray[0]["info"] = '';
-			$sponsorsArray[0]["website_link"] = '';
- 			
- 			$data["events"][$eventNum]["id"] = $event->ID;
- 			$data["events"][$eventNum]["name"] = $event->Title;
- 			$data["events"][$eventNum]["link"] = $event->LocalistLink;
- 			$data["events"][$eventNum]["more_info_link"] = $event->MoreInfoLink;
- 			$data["events"][$eventNum]["facebook_event_link"] = $event->FacebookEventLink;
- 			
- 			if(isset($event->Image)){
- 				$data["events"][$eventNum]["image"] = $event->Image->URL;
- 			}
- 			//$data["events"][$eventNum]["description"] = $event->Content;
- 			$data["events"][$eventNum]["cancel_note"] = $event->CancelReason;
- 			$data["events"][$eventNum]["dates"] = $datesArray;
- 			$data["events"][$eventNum]["price"] = $event->Cost;
- 			$data["events"][$eventNum]["location"] = $event->Location;
- 			$data["events"][$eventNum]["venues"] = $venuesArray;
- 			$data["events"][$eventNum]["sponsors"] = $sponsorsArray;
- 			$data["events"][$eventNum]["event_types"] = $eventTypesArray;
- 			unset($datesArray);
- 		}
-
- 		return json_encode($data);
- 	}
+ 	
 
 }
 ?>
