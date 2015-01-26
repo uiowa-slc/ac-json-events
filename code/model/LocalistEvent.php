@@ -199,8 +199,14 @@ class LocalistEvent extends DataObject {
 			//$randEventType = $curEventTypes[array_splice($randEventTypes, 1)];
 			//print_r($randEventType->Title);
 			
-			$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
-			$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
+			$relatedEvents = $calendar->EventList( 
+				$days = '200', 
+				$startDate = null, 
+				$endDate = null, 
+				$venue = null, 
+				$keyword = null, 
+				$type = $randEventType->ID)->exclude('ID', $this->ID);
+			$relatedEvents = $relatedEvents;
 			return $relatedEvents;
 		}else{
 			return false;
