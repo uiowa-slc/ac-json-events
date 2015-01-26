@@ -200,8 +200,6 @@ class LocalistEvent extends DataObject {
 			//print_r($randEventType->Title);
 			
 			$relatedEvents = $calendar->EventList( $days = '200', $startDate = null, $endDate = null, $venue = null, $keyword = null, $type = $randEventType->ID);
-			print_r($this->ID);
-			print_r($relatedEvents);
 			$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
 			return $relatedEvents;
 		}else{
