@@ -652,6 +652,26 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 		'feed/$Type' => 'Feed',
 	);
+	
+
+	public function index(){
+
+		$startDate = new SS_Datetime();
+		$endDate = new SS_Datetime();
+
+		$startDate->setValue(date('Y-m-d'));
+		$endDate->setValue(strtotime($startDate." +200 days"));
+
+		$filterHeader = $startDate->format('F j').' - '.$endDate->format('F j');
+
+		$Data = array (
+			'FilterHeader' => $filterHeader
+		);
+
+		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+
+
+	}
 
 	/**
 	 * Controller function that renders a single event through a $url_handlers route.
@@ -698,15 +718,15 @@ class LocalistCalendar_Controller extends Page_Controller {
 		switch ( $dateFilter ) {
 		case 'weekend':
 			$events = $this->getWeekendEvents();
-			$filterHeader = 'Events happening this weekend:';
+			$filterHeader = 'This weekend:';
 			break;
 		case 'today':
 			$events = $this->getTodayEvents();
-			$filterHeader = 'Events happening today:';
+			$filterHeader = 'Today:';
 			break;
 		case 'month':
 			$events = $this->getMonthEvents();
-			$filterHeader = 'Events happening this month:';
+			$filterHeader = 'This month:';
 			break;
 		default:
 			$startDate = new SS_Datetime();
@@ -714,8 +734,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 			$endDate = new SS_Datetime();
 			$endDate->setValue( addslashes( $this->urlParams['endDate'] ) );
-			$filterHeader = 'Events happening on ';
-			$filterHeader .= $startDate->format( 'l, F j' );
+			$filterHeader = $startDate->format( 'l, F j' );
 
 			if ( $endDate->getValue() ) {
 				$filterHeader .= ' to '.$endDate->format( 'l, F j' );
