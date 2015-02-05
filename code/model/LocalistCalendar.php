@@ -693,7 +693,9 @@ class LocalistCalendar_Controller extends Page_Controller {
 				if ( $e->URLSegment == $eventID ) {
 					//print_r($e->URLSegment);
 					$singleEvent = $this->SingleEvent($e->ID);
-					return $this->customise( $singleEvent )->renderWith( array( 'LocalistEvent', 'Page' ) );;
+					if($singleEvent){
+						return $this->customise( $singleEvent )->renderWith( array( 'LocalistEvent', 'Page' ) );
+					}
 				}
 			}
 
