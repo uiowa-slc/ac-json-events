@@ -29,6 +29,7 @@ class LocalistEvent extends DataObject {
 		$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
+		$this->FirstStartDateTime = $this->Dates->First();
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		// I recommend changing Content to $rawEvent['descritption_text'];
 		$this->Content = $rawEvent['description'];
