@@ -29,8 +29,10 @@ class LocalistEvent extends DataObject {
 		$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
+
 		$firstDateTime = new SS_Datetime();
-		$firstDateTime->setValue($this->Dates->First());
+		$firstDateTimeObj = $this->Dates->First();
+		$firstDateTime->setValue($firstDateTimeObj->StartDateTime->getValue());
 
 		$this->FirstStartDateTime = $firstDateTime;
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
