@@ -588,11 +588,11 @@ class LocalistCalendar extends Page {
 					$startDate = null, 
 					$endDate = null, 
 					$venue = null, 
-					$keyword = null,
+					$keyword = $tagFiltered,
 					$type = null, 
 					$distinct = 'true', 
 					$enableFilter = true, 
-					$searchTerm = $tagFiltered 
+					$searchTerm = null
 				);
 		return $events;
 
