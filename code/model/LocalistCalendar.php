@@ -599,6 +599,28 @@ class LocalistCalendar extends Page {
 	}
 
 	/**
+	 * Returns an ArrayList of events filtered by specified search term
+	 * @param string $term
+	 * @return ArrayList
+	 */
+
+	public function EventListBySearchTerm($term){
+		$termFiltered = urlencode($term);
+		$events = $this->EventList( 
+					$days = '200', 
+					$startDate = null, 
+					$endDate = null, 
+					$venue = null, 
+					$keyword = null,
+					$type = null, 
+					$distinct = 'true', 
+					$enableFilter = true, 
+					$searchTerm = $termFiltered
+				);
+		return $events;
+
+	}
+	/**
 	 * Gets a single event from the Localist Feed based on ID.
 	 * @param int $id 
 	 * @return LocalistEvent
