@@ -559,6 +559,8 @@ class LocalistCalendar extends Page {
 		$eventsList = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
 
+		//print_r($eventsDecoded);
+
 		if(isset($eventsDecoded['events'])){
 			$eventsArray = $eventsDecoded['events'];
 			foreach ( $eventsArray as $event ) {
@@ -571,6 +573,29 @@ class LocalistCalendar extends Page {
 			return $eventsList;
 		}
 		
+	}
+
+	/**
+	 * Returns an ArrayList of events filtered by specified tag
+	 * @param string $tag 
+	 * @return ArrayList
+	 */
+
+	public function EventListByTag($tag){
+		$tagFiltered = urlencode($tag);
+		$events = $this->EventList( 
+					$days = '200', 
+					$startDate = null, 
+					$endDate = null, 
+					$venue = null, 
+					$keyword = null,
+					$type = null, 
+					$distinct = 'true', 
+					$enableFilter = true, 
+					$searchTerm = $tagFiltered 
+				);
+		return $events;
+
 	}
 
 	/**
