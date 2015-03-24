@@ -213,8 +213,13 @@ class LocalistEvent extends DataObject {
 				$type = $randEventType->ID
 			);
 
-			$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
-			return $relatedEvents;
+			if (isset($relatedEvents) && $relatedEvents->First()) {
+				$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
+				return $relatedEvents;
+			} else {
+				return false;
+			}
+
 		} else {
 			return false;
 		}
