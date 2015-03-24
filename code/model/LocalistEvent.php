@@ -32,9 +32,12 @@ class LocalistEvent extends DataObject {
 
 		$firstDateTime = new SS_Datetime();
 		$firstDateTimeObj = $this->Dates->First();
-		$firstDateTime->setValue($firstDateTimeObj->StartDateTime->getValue());
 
-		$this->FirstStartDateTime = $firstDateTime;
+		if (isset($firstDateTimeObj)) {
+			$firstDateTime->setValue($firstDateTimeObj->StartDateTime->getValue());
+
+			$this->FirstStartDateTime = $firstDateTime;
+		}
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		// I recommend changing Content to $rawEvent['descritption_text'];
 		$this->Content = $rawEvent['description'];
