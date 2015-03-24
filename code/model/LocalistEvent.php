@@ -33,7 +33,7 @@ class LocalistEvent extends DataObject {
 		$firstDateTime = new SS_Datetime();
 		$firstDateTimeObj = $this->Dates->First();
 
-		if (isset($firstDateTimeObj)) {
+		if (isset($firstDateTimeObj->StartDateTime)) {
 			$firstDateTime->setValue($firstDateTimeObj->StartDateTime->getValue());
 
 			$this->FirstStartDateTime = $firstDateTime;
