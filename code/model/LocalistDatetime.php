@@ -11,6 +11,11 @@ class LocalistDatetime extends DataObject {
 		return $this->StartDateTime;
 	}
 
+	public function getStartTime(){
+		$time = $this->StartDateTime;
+		return $time;
+	}
+
 	public function getEndTime() {
 		if (!empty($this->EndDateTime)) {
 			$endDate = $this->EndDateTime->Date();
