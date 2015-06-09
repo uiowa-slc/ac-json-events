@@ -1,6 +1,6 @@
 <?php
 
-class LocalistEvent extends DataObject {
+class LocalistEvent extends Page {
 
 	/**
 	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent

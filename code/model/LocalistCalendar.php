@@ -18,7 +18,7 @@ class LocalistCalendar extends Page {
 
 	);
 
-	private static $allowed_children = array('');
+
 	private static $icon = 'ac-json-events/images/calendar-file.png';
 
 	function getCMSFields() {
@@ -121,9 +121,9 @@ class LocalistCalendar extends Page {
 		}
 
 		//If there aren't any featured events selected in SilverStripe, fall back on events marked as featured in Localist.
-		if ($featuredEvents->count() > 0) {
+		if ((isset($featuredEvents)) && ($featuredEvents->count() > 0)) {
 			return $featuredEvents;
-		} else {
+		} else if (isset($events)) {
 			foreach ($events as $event) {
 				if ($event->Featured == 'true') {
 					$featuredEvents->push($event);
@@ -158,7 +158,7 @@ class LocalistCalendar extends Page {
 		$tags = array();
 		$localistTags = new ArrayList();
 
-		if ($events->First()) {
+		if (isset($events) && $events->First()) {
 			foreach ($events as $event) {
 
 				foreach ($event->Tags as $eventTag) {
@@ -194,7 +194,7 @@ class LocalistCalendar extends Page {
 		$events = $this->EventList();
 		$types = array();
 
-		if ($events->First()) {
+		if (isset($events) && $events->First()) {
 			$localistEventTypes = new ArrayList();
 			foreach ($events as $event) {
 				if ($event->Types && $event->Types->First()) {
@@ -442,24 +442,6 @@ class LocalistCalendar extends Page {
 		return $events;
 	}
 
-	public function getJson($feedURL) {
-		$cache = new SimpleCache();
-		if ($rawFeed = $cache->get_data($feedURL, $feedURL)) {
-			$eventsDecoded = json_decode($rawFeed, TRUE);
-		} else {
-			$rawFeed = $cache->do_curl($feedURL);
-			$cache->set_cache($feedURL, $rawFeed);
-			$eventsDecoded = json_decode($rawFeed, TRUE);
-		}
-
-		if (!empty($eventsDecoded)) {
-			return $eventsDecoded;
-		} else {
-			return false;
-		}
-
-	}
-
 	/**
 	 * Produces a list of Events based on a number of factors, used in templates
 	 * and as a helper function in this class and others.
@@ -526,7 +508,7 @@ class LocalistCalendar extends Page {
 
 		if (!isset($searchTerm)) {
 			if (isset($keyword)) {
-				$feedParams .= '&keyword=' . $keyword;
+				$feedParams .= '&keyword=' . urlencode($keyword);
 			}
 		}
 		if (isset($type)) {
@@ -548,12 +530,12 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&venue_id=' . $venueFilterID;
 		}
 		if (isset($searchTerm)) {
-			$feedParams .= '&search=' . $searchTerm;
+			$feedParams .= '&search=' . urlencode($searchTerm);
 		}
 		$feedParams .= '&pp=100&match=all&distinct=' . $distinct;
 		$feedURL = LOCALIST_FEED_URL . 'events' . $feedParams;
 
-		//print_r($feedURL);
+		//$feedURL = urlencode($feedURL);
 
 		$eventsList = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
