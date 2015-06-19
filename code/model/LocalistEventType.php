@@ -31,6 +31,7 @@ class LocalistEventType extends DataObject {
 		return $localistType;
 
 	}
+
 	public function Link(){
 		$calendar = LocalistCalendar::get()->First();
 
@@ -39,17 +40,30 @@ class LocalistEventType extends DataObject {
 	}
 
 	
-/*public function Events() {
+	public function EventList() {
+		//echo "type: <br />";
+		//print_r($this->ID);
+		//echo "<br />";
+
 		$calendar = LocalistCalendar::get()->First();
-		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
-		$eventsAtPlaceList = new ArrayList();
+
+		//print_r($calendar);
+		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = null, $keyword = null, $type = $this->ID);
+		//print_r($events);
+
+		$eventsAtTypeList = new ArrayList();
+		//print_r($events);
+		if(!isset($events)){
+			return false;
+		}
+
 
 		foreach($events as $event) {
-			$eventsAtPlaceList->push($event);
+			$eventsAtTypeList->push($event);
 		}		
-
-		return $eventsAtPlaceList;   
-	}*/
+ 
+		return $events;   
+	}
 	/*public function Link(){
 		$calendar = LocalistCalendar::get()->First();
 		$link = $calendar->Link().'event/'.$this->ID;

@@ -800,7 +800,9 @@ class LocalistCalendar_Controller extends Page_Controller {
 	public function type($request) {
 		$typeID = addslashes($this->urlParams['type']);
 		$type = $this->getTypeByID($typeID);
-
+		//echo "type: <br />";
+		//print_r($type->ID);
+		//echo "<br />";
 		$events = $this->EventList(200, null, null, null, null, $type->ID);
 
 		$filterHeader = 'Events categorized as "' . $type->Title . '":';
