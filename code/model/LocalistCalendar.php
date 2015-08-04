@@ -410,6 +410,7 @@ class LocalistCalendar extends Page {
 
 	}
 
+
 	public function getTodayEvents() {
 		$start = sfDate::getInstance();
 
@@ -536,6 +537,7 @@ class LocalistCalendar extends Page {
 		$feedURL = LOCALIST_FEED_URL . 'events' . $feedParams;
 
 		//$feedURL = urlencode($feedURL);
+		//print_r($feedURL);
 
 		$eventsList = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
@@ -556,6 +558,11 @@ class LocalistCalendar extends Page {
 
 	}
 
+	public function EventListByDate($date){
+		$start = sfDate::getInstance($date);
+		$events = $this->EventList(200, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		return $events;
+	}
 	/**
 	 * Returns an ArrayList of events filtered by specified tag
 	 * @param string $tag
