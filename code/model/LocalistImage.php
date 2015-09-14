@@ -46,6 +46,8 @@ class LocalistImage extends DataObject {
 		$this->Caption = $rawImage['caption'];
 		$this->URL = $rawImage['photo_url'];
 		$this->Credit = $rawImage['credit'];
+		$this->Width = $rawImage['width'];
+		$this->Height = $rawImage['height'];
 		return $this;
 	}
 
