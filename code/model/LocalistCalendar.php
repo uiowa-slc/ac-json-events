@@ -696,10 +696,8 @@ class LocalistCalendar_Controller extends Page_Controller {
 		$startDate->setValue(date('Y-m-d'));
 		$endDate->setValue(strtotime($startDate." +200 days"));
 
-		$filterHeader = $startDate->format('F j').' - '.$endDate->format('F j');
-
 		$Data = array(
-			'FilterHeader' => $filterHeader,
+
 		);
 
 		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));

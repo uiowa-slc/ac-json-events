@@ -1,13 +1,7 @@
 <?php
-
 class LocalistImage extends DataObject {
 
-	private static $db = array(
-		"Caption" => "Text",
-		"URL" => "Text",
-		"Credit" => "Text",
-
-	);
+	private static $db = array("Caption" => "Text", "URL" => "Text", "Credit" => "Text", );
 
 	public function getByID($id) {
 
@@ -17,12 +11,12 @@ class LocalistImage extends DataObject {
 
 		$cache = new SimpleCache();
 
-		$feedParams = 'photos/' . $id;
-		$feedURL = LOCALIST_FEED_URL . $feedParams;
+		$feedParams = 'photos/'.$id;
+		$feedURL    = LOCALIST_FEED_URL.$feedParams;
 
 		//print_r($feedURL);
 
-		$rawFeed = $cache->get_data($feedURL, $feedURL);
+		$rawFeed       = $cache->get_data($feedURL, $feedURL);
 		$imagesDecoded = json_decode($rawFeed, TRUE);
 
 		$image = $imagesDecoded['photo'];
@@ -42,10 +36,12 @@ class LocalistImage extends DataObject {
 	 * @return LocalistEvent
 	 */
 	public function parse($rawImage) {
-		$this->ID = $rawImage['id'];
+		$this->ID      = $rawImage['id'];
 		$this->Caption = $rawImage['caption'];
-		$this->URL = $rawImage['photo_url'];
-		$this->Credit = $rawImage['credit'];
+		$this->URL     = $rawImage['photo_url'];
+		$this->Credit  = $rawImage['credit'];
+		$this->Width   = $rawImage['width'];
+		$this->Height  = $rawImage['height'];
 		return $this;
 	}
 
@@ -57,9 +53,20 @@ class LocalistImage extends DataObject {
 		if (isset($this->URL)) {
 			return $this->getField('URL');
 		} else {
-			$themeFolder = 'themes/' . SSViewer::current_theme();
-			return $themeFolder . '/images/LocalistEventPlaceholder.jpg';
+			$themeFolder = 'themes/'.SSViewer::current_theme();
+			return $themeFolder.'/images/LocalistEventPlaceholder.jpg';
 		}
 	}
 
+	public function getOrientation() {
+		$width  = $this->Width;
+		$height = $this->Height;
+		if ($width > $height) {
+			return "Landscape";
+		} elseif ($height > $width) {
+			return "Portrait";
+		} else {
+			return "Square";
+		}
+	}
 }
