@@ -44,7 +44,6 @@ class LocalistNewsletter extends Page {
 		'MoreEventsTitle' => 'More Events'
 	);
 
-	private static $allowed_children = array( '' );
 	private static $icon = 'ac-json-events/images/calendar-file.png';
 
 	function getCMSFields() {
