@@ -144,7 +144,7 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function CalendarWidget() {
-		$calendar = CalendarWidget::create($this);
+		$calendar = LocalistCalendarWidget::create($this);
 		return $calendar;
 	}
 
