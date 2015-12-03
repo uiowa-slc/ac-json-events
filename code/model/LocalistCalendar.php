@@ -771,7 +771,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 					$filterHeader .= ' to '.$endDate->format('l, F j');
 				}
 
-				$events = $this->EventList(null, $startDate->format('l, F j'), $endDate->format('l, F j'));
+				$events = $this->EventList(null, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
 
 		}
 
