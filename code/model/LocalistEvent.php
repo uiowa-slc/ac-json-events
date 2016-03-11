@@ -10,13 +10,20 @@ class LocalistEvent extends Page {
 	public function parseEvent($rawEvent) {
 
 		$image = new LocalistImage();
+		$this->Venue = $this->getVenueFromRaw($rawEvent);
 
 		if (isset($rawEvent['photo_id'])) {
 			$image = $image->getByID($rawEvent['photo_id']);
 		} else {
 			$themeDir = $this->ThemeDir();
-			//$image = new LocalistImage(); //redundant?
-			$image->URL = $themeDir . '/images/LocalistEventPlaceholder.jpg';
+
+			if ($this->Venue) {
+				$image->URL = $this->Venue->ImageURL;
+
+			} else {
+				$image->URL = $themeDir . '/images/LocalistEventPlaceholder.jpg';
+
+			}
 		}
 
 		$this->Dates = new ArrayList();
@@ -38,7 +45,7 @@ class LocalistEvent extends Page {
 
 			$this->FirstStartDateTime = $firstDateTime;
 		}
-		$this->Venue = $this->getVenueFromRaw($rawEvent);
+
 		// I recommend changing Content to $rawEvent['descritption_text'];
 		$this->Content = $rawEvent['description'];
 		// and change the property SummaryContent to HTMLContent and set it to $rawEvent['description'];
@@ -59,7 +66,6 @@ class LocalistEvent extends Page {
 		if (isset($venue['place']['name'])) {
 			$this->VenueTitle = $venue['place']['name'];
 		}
-
 		return $this;
 
 	}
