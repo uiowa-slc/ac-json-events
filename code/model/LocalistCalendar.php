@@ -790,7 +790,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 	 */
 	public function tag($request) {
 		$tagName      = addslashes($this->urlParams['tag']);
-		$events       = $this->EventList(200, null, null, null, rawurlencode($tagName));
+		$events       = $this->EventList(200, null, null, null, $tagName);
 		$filterHeader = 'Events tagged as "'.$tagName.'":';
 
 		$Data = array(

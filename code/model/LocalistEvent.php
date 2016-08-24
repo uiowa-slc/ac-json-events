@@ -17,7 +17,8 @@ class LocalistEvent extends Page {
 		} else {
 			$themeDir = $this->ThemeDir();
 
-			if ($this->Venue) {
+			if ($this->Venue && $this->Venue->ImageURL != '') {
+
 				$image->URL = $this->Venue->ImageURL;
 
 			} else {
