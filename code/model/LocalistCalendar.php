@@ -584,6 +584,27 @@ class LocalistCalendar extends Page {
 		return $events;
 
 	}
+	/**
+	 * Returns an ArrayList of randomized events 
+	 * @param none
+	 * @return Randomized ArrayList
+	 */
+
+	public function EventListRandom() {
+
+		//$randomEvents = new ArrayList();
+		$events = $this->EventList();
+		$eventsArray = $events->toArray();
+
+		shuffle($eventsArray);
+
+		$eventsArrayList = new ArrayList($eventsArray);
+
+		//Debug::show($eventsArray);
+
+		return $eventsArrayList;
+
+	}
 
 	/**
 	 * Returns an ArrayList of events filtered by specified search term
