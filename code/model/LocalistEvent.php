@@ -91,10 +91,20 @@ class LocalistEvent extends Page {
 	 */
 	private function getUpcomingDatesFromRaw($rawEvent) {
 		$eventInstances = $rawEvent['event_instances'];
+
 		$eventInstancesArray = new ArrayList();
 
 		foreach ($eventInstances as $i => $eventInstance) {
 			$dateTime = new LocalistDatetime();
+
+			//$allDayBoolean = new Boolean();
+
+			if($eventInstances[$i]['event_instance']['all_day'] == 1){
+
+				$dateTime->AllDay = 1;
+			}else{
+				$dateTime->AllDay = 0;
+			}
 
 			$dateTime->StartDateTime = new SS_Datetime();
 			$dateTime->EndDateTime = new SS_Datetime();
@@ -108,7 +118,10 @@ class LocalistEvent extends Page {
 			if ((!$dateTime->StartDateTime->InPast()) || $dateTime->StartDateTime->IsToday()) {
 				$eventInstancesArray->push($dateTime);
 			}
+
+			//Debug::show($dateTime);
 		}
+		//print_r($eventInstancesArray);
 		return $eventInstancesArray;
 	}
 

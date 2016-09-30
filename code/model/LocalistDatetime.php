@@ -5,6 +5,7 @@ class LocalistDatetime extends DataObject {
 	private static $db = array(
 		'StartDateTime' => 'SS_Datetime',
 		'EndDateTime' => 'SS_Datetime',
+		'AllDay' => 'Boolean'
 	);
 
 	public function getStartDate() {
