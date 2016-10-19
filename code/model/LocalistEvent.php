@@ -214,6 +214,16 @@ class LocalistEvent extends Page {
 	}
 
 	/**
+	 * Generate a link to download the event to a calendar using the event's URL segment.ics
+	 * @return string
+	 */
+	public function CalendarLink() {
+		$calendar = LocalistCalendar::get()->First();
+		$link = $calendar->Link() . 'event/' . $this->URLSegment . '.ics';
+		return $link;
+	} //test
+
+	/**
 	 * Generate a list events similar to the current event. Randomly selects based on tags they have in common.
 	 * @param int $limit
 	 * @return int
