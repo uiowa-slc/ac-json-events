@@ -35,8 +35,14 @@ class SimpleCache {
 	//Path to cache folder (with trailing /)
 	var $cache_path = 'cache/';
 	//Length of time to cache a file in seconds
-	var $cache_time = 3600;
-
+	
+	function getCacheTime(){
+		if(Director::isLive()) {
+			return 3600;
+		}else{
+			return 2592000;
+		}
+	}
 
 
 	//This is just a functionality wrapper function
@@ -70,7 +76,7 @@ class SimpleCache {
 	{
 		$filename = BASE_PATH .'/'. $this->cache_path . $this->safe_filename($label) .'.cache';
 
-		if(file_exists($filename) && (filemtime($filename) + $this->cache_time >= time())) return true;
+		if(file_exists($filename) && (filemtime($filename) + $this->getCacheTime() >= time())) return true;
 
 		return false;
 	}
