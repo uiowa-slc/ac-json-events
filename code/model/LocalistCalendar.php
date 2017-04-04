@@ -709,7 +709,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'feed/$Type' => 'Feed',
 	);
 
-	public function index() {
+	public function index(SS_HTTPRequest $r) {
 
 		$startDate = new SS_Datetime();
 		$endDate   = new SS_Datetime();
