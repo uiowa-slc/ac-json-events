@@ -50,8 +50,12 @@ class LocalistImage extends DataObject {
 	}
 
 	public function getURL() {
+		$cloudFrontDomain = 'https://d3e1o4bcbhmj8g.cloudfront.net';
 		if (isset($this->URL)) {
-			return $this->getField('URL');
+			$localistServerURL = $this->getField('URL');
+			$parsedURL = parse_url($localistServerURL);
+			$cloudFrontURL = $cloudFrontDomain.$parsedURL['path'];
+			return $cloudFrontURL;
 		} else {
 			$themeFolder = 'themes/'.SSViewer::current_theme();
 			return $themeFolder.'/images/LocalistEventPlaceholder.jpg';
