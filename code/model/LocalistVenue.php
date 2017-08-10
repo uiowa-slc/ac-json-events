@@ -31,7 +31,7 @@ class LocalistVenue extends DataObject {
 
 	
 	public function Events() {
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 		$events = $calendar->EventList();
 		$eventsAtPlaceList = new ArrayList();
 
@@ -50,7 +50,7 @@ class LocalistVenue extends DataObject {
 	 */
 	public function Link(){
 		if($this->ID != 0) {
-			$calendar = LocalistCalendar::get()->First();
+			$calendar = LocalistCalendar::getOrCreate();
 			$link = $calendar->Link().'venue/'.$this->ID;
 			return $link;
 		}else{

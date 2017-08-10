@@ -24,7 +24,7 @@ class LocalistTag extends DataObject {
 	}*/
 
 	public function Link(){
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 
 		return $calendar->Link().'tag/'.$this->Title;
 
@@ -32,7 +32,7 @@ class LocalistTag extends DataObject {
 
 	
 /*public function Events() {
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
 		$eventsAtPlaceList = new ArrayList();
 
@@ -43,7 +43,7 @@ class LocalistTag extends DataObject {
 		return $eventsAtPlaceList;   
 	}*/
 	/*public function Link(){
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 		$link = $calendar->Link().'event/'.$this->ID;
 		return $link;
 	}*/

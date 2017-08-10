@@ -3,7 +3,7 @@
 class LocalistPageExtension extends DataExtension {
 
 	public function LocalistCalendar() {
-		return LocalistCalendar::get()->First();
+		return LocalistCalendar::getOrCreate();
 	}
 
 	public function getJson($feedURL) {

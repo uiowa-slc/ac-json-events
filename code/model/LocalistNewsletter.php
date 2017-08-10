@@ -48,7 +48,7 @@ class LocalistNewsletter extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 		$fields->removeByName('Content');
 		$fields->removeByName('Metadata');
 		$events = $calendar->EventList();
@@ -171,7 +171,7 @@ class LocalistNewsletter extends Page {
 class LocalistNewsletter_Controller extends Page_Controller {
 
 	public function FeaturedEvent(){
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 		$feature = new LocalistNewsletterFeature();
 		$event = $calendar->SingleEvent($this->FeaturedEventID);
 
@@ -186,7 +186,7 @@ class LocalistNewsletter_Controller extends Page_Controller {
 
 	public function Categories(){
 		$categories = new ArrayList();
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 
 		for ($i = 1; $i <= 4; $i++) {
 			$catProperty = 'Category'.$i;
@@ -209,7 +209,7 @@ class LocalistNewsletter_Controller extends Page_Controller {
 	}
 	public function NonFeaturedRows(){
 		$rows = new ArrayList();
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 
 		for ($i = 1; $i <= 10; $i++) {
 			$rowProperty = 'NonFeaturedRow'.$i;

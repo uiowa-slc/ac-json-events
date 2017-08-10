@@ -209,8 +209,13 @@ class LocalistEvent extends Page {
 	 */
 	public function Link() {
 		$calendar = LocalistCalendar::get()->First();
-		$link = $calendar->Link() . 'event/' . $this->URLSegment;
-		return $link;
+		if($calendar){
+			$link = $calendar->Link() . 'event/' . $this->URLSegment;
+			return $link;
+		}
+		
+		return $this->AfterClassLink;
+		
 	}
 
 	/**

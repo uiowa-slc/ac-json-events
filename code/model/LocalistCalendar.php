@@ -20,7 +20,7 @@ class LocalistCalendar extends Page {
 
 	private static $icon = 'ac-json-events/images/calendar-file.png';
 
-	function getCMSFields() {
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
 		$types      = $this->TypeList();
@@ -82,6 +82,15 @@ class LocalistCalendar extends Page {
 		}
 
 		return $fields;
+	}
+
+	public static function getOrCreate(){
+		$calendar = LocalistCalendar::get()->First();
+
+		if($calendar){
+			return $calendar;
+		}
+		return LocalistCalendar::create();
 	}
 
 	/**
