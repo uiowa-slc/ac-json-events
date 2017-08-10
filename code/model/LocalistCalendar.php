@@ -53,7 +53,7 @@ class LocalistCalendar extends Page {
 		$fields->addFieldToTab(' Root.Main', $departmentDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $genInterestDropDownField, 'Content');
-		$fields->removeByName('Content');
+		
 		$fields->removeByName('Metadata');
 
 		$events = $this->EventList();
