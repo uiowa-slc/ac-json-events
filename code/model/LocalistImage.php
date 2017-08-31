@@ -46,7 +46,7 @@ class LocalistImage extends DataObject {
 	}
 
 	public function getAbsoluteURL() {
-		return $this->URL();
+		return $this->URL;
 	}
 
 	public function getOrientation() {

@@ -51,7 +51,13 @@ class LocalistVenue extends DataObject {
 	public function Link(){
 		if($this->ID != 0) {
 			$calendar = LocalistCalendar::getOrCreate();
-			$link = $calendar->Link().'venue/'.$this->ID;
+
+			if($calendar->IsInDB()){
+				$link = $calendar->Link().'venue/'.$this->ID;
+			}else{
+				$link = $this->LocalistLink;
+			}
+			
 			return $link;
 		}else{
 			return false;

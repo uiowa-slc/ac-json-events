@@ -27,15 +27,18 @@ class LocalistEventType extends DataObject {
 		$localistType = new LocalistEventType();
 		$localistType->ID = $rawType['id'];
 		$localistType->Title = $rawType['name'];
-
+		//$localistType->LocalistLink = $rawType['localist_url'];
+		$localistType->LocalistLink = LOCALIST_BASE.'search/events/?event_types='.$localistType->ID;
 		return $localistType;
 
 	}
 
 	public function Link(){
 		$calendar = LocalistCalendar::getOrCreate();
-
-		return $calendar->Link().'type/'.$this->ID;
+		if($calendar->IsInDB()){
+			return $calendar->Link().'type/'.$this->ID;
+		}
+		return $this->LocalistLink;
 
 	}
 

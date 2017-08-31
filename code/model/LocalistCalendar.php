@@ -53,7 +53,7 @@ class LocalistCalendar extends Page {
 		$fields->addFieldToTab(' Root.Main', $departmentDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $genInterestDropDownField, 'Content');
-		$fields->removeByName('Content');
+		
 		$fields->removeByName('Metadata');
 
 		$events = $this->EventList();
@@ -93,6 +93,47 @@ class LocalistCalendar extends Page {
 		return LocalistCalendar::create();
 	}
 
+	public function Link(){
+
+		if($this->isInDB()){
+			//return full calendar link if it exists in db
+			return parent::Link();
+		}
+
+		if ($this->EventTypeFilterID != 0) {
+
+			$primaryFilterTypeID = $this->EventTypeFilterID;
+		}
+		if ($this->DepartmentFilterID != 0) {
+			$departmentFilterID = $this->DepartmentFilterID;
+		}
+		if ($this->VenueFilterID != 0) {
+			$venueFilterID = $this->VenueFilterID;
+		}
+		if ($this->GeneralInterestFilterID != 0) {
+			$genInterestFilterID = $this->GeneralInterestFilterID;
+		}			
+
+		if (isset($primaryFilterTypeID)) {
+			$type = $this->getTypeByID($primaryFilterTypeID);
+			//print_r($primaryFilterTypeID);
+			return $type->LocalistLink;
+		}
+		if (isset($departmentFilterID)) {
+			$type = $this->getTypeByID($departmentFilterID);
+			return $type->Link();
+		}
+		if (isset($venueFilterID)) {
+			$venue = $this->getVenueByID($venueFilterID);
+			return $venue->Link();
+		}
+		if (isset($genInterestFilterID )) {
+			$type = $this->getGeneralInterestByID($genInterestFilterID);
+			print_r($genInterestFilterID);
+			return $type->Link();
+		}
+
+	}
 	/**
 	 * Generates an ArrayList of Featured Events by using the calendar's FeaturedEvent IDs.
 	 * TODO: Check for the existence of the events in the API first before pushing them to the
@@ -309,7 +350,7 @@ class LocalistCalendar extends Page {
 		$typesDecoded = $this->getJson($feedURL);
 		//$typesDecoded = $this->requestAllPages($feedURL, $resourceName);
 		$typesArray = $typesDecoded[$resourceName];
-
+		//print_r($typesArray);
 		if (isset($typesArray)) {
 			foreach ($typesArray as $type) {
 				$localistType = new LocalistEventType();
@@ -384,6 +425,17 @@ class LocalistCalendar extends Page {
 	 */
 	public function getTypeByID($id) {
 		$types = $this->TypeList();
+
+		foreach ($types as $type) {
+			if ($type->ID == $id) {
+				return $type;
+			}
+		}
+
+		return false;
+	}
+	public function getGeneralInterestByID($id) {
+		$types = $this->GeneralInterestList();
 
 		foreach ($types as $type) {
 			if ($type->ID == $id) {

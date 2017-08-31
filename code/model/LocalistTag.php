@@ -25,9 +25,7 @@ class LocalistTag extends DataObject {
 
 	public function Link(){
 		$calendar = LocalistCalendar::getOrCreate();
-
 		return $calendar->Link().'tag/'.$this->Title;
-
 	}
 
 	
