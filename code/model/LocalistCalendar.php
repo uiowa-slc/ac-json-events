@@ -94,7 +94,6 @@ class LocalistCalendar extends Page {
 	}
 
 	public function Link(){
-
 		if($this->isInDB()){
 			//return full calendar link if it exists in db
 			return parent::Link();
