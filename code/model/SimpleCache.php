@@ -38,7 +38,10 @@ class SimpleCache {
 	
 	function getCacheTime(){
 		if(Director::isLive()) {
-			return 3600;
+			if(Director::is_cli()){
+				return 3600;
+			}
+			return 7200;
 		}else{
 			return 2592000;
 		}
