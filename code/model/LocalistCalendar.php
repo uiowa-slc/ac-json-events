@@ -129,7 +129,7 @@ class LocalistCalendar extends Page {
 		}
 		if (isset($genInterestFilterID )) {
 			$type = $this->getGeneralInterestByID($genInterestFilterID);
-			print_r($genInterestFilterID);
+			//print_r($genInterestFilterID);
 			return $type->Link();
 		}
 
@@ -525,7 +525,8 @@ class LocalistCalendar extends Page {
 		$type = null,
 		$distinct = 'true',
 		$enableFilter = true,
-		$searchTerm = null
+		$searchTerm = null,
+		$perPage = 100
 	) {
 
 		if ($enableFilter) {
@@ -593,11 +594,14 @@ class LocalistCalendar extends Page {
 		if (isset($searchTerm)) {
 			$feedParams .= '&search='.urlencode($searchTerm);
 		}
-		$feedParams .= '&pp=100&match=all&distinct='.$distinct;
+		if (isset($perPage)) {
+			$feedParams .= '&pp='.urlencode($perPage);
+		}
+		$feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
 
 		//$feedURL = urlencode($feedURL);
-		//print_r($feedURL);
+		//print_r($feedURL.'<br />');
 
 		$eventsList    = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
@@ -617,7 +621,20 @@ class LocalistCalendar extends Page {
 		}
 
 	}
-
+	public function EventListLimited($number = 3){
+		return $this->EventList(
+			$days = '90',
+			$startDate = null,
+			$endDate = null,
+			$venue = null,
+			$keyword = null,
+			$type = null,
+			$distinct = 'true',
+			$enableFilter = true,
+			$searchTerm = null,
+			$perPage = $number
+		);
+	}
 	public function EventListByDate($date) {
 		$start  = sfDate::getInstance($date);
 		$events = $this->EventList(200, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
@@ -752,6 +769,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 		//legacy feed actions
 		'feed',
+		'prime'
 	);
 
 	/** URL handlers / routes
@@ -764,7 +782,6 @@ class LocalistCalendar_Controller extends Page_Controller {
 		'type/$type'               => 'type',
 		'venue/$venue'             => 'venue',
 		'search'                   => 'search',
-
 		//legacy feed urls:
 
 		'feed/$Type' => 'Feed',
@@ -797,7 +814,9 @@ class LocalistCalendar_Controller extends Page_Controller {
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
-			return $event->renderWith(array('LocalistEvent', 'Page'));
+			if($this->isInDB()){
+				return $this->customise($event)->renderWith(array('LocalistEvent', 'Page'));	
+			}
 		} else {
 
 			/* Getting an event based on the url slug **EXPERIMENTAL ** */

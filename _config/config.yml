@@ -1,3 +1,5 @@
 Page:
   extensions:
     - LocalistPageExtension
+LocalistEvent:
+  use_nice_links: false

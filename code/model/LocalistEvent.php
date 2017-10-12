@@ -1,6 +1,12 @@
 <?php
 
 class LocalistEvent extends Page {
+    /**
+     * @config
+     */
+
+    //Performance issues if you enable this. Only enable on sites that NEED nice URLs.
+	private static $use_nice_links = false;
 
 	/**
 	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent
@@ -11,9 +17,10 @@ class LocalistEvent extends Page {
 
 		$image = new LocalistImage();
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
-
-		if (isset($rawEvent['photo_id'])) {
-			$image = $image->getByID($rawEvent['photo_id']);
+		//print_r($rawEvent['photo_url']);
+		if (isset($rawEvent['photo_url'])) {
+			//$image = $image->getByID($rawEvent['photo_id']);
+			$image->URL = $rawEvent['photo_url'];
 		} else {
 			$themeDir = $this->ThemeDir();
 
@@ -26,13 +33,14 @@ class LocalistEvent extends Page {
 
 			}
 		}
-
+		;
 		$this->Dates = new ArrayList();
 
 		$this->ID = $rawEvent['id'];
 		$this->Title = $rawEvent['title'];
 		$this->EventTitle = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
+		// $this->Thumbnail = $rawEvent['photo_url'];
 		$this->Featured = $rawEvent['featured'];
 		$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
@@ -67,6 +75,8 @@ class LocalistEvent extends Page {
 		if (isset($venue['place']['name'])) {
 			$this->VenueTitle = $venue['place']['name'];
 		}
+
+		// Debug::show($this->Image);
 		return $this;
 
 	}
@@ -209,8 +219,14 @@ class LocalistEvent extends Page {
 	 */
 	public function Link() {
 		$calendar = LocalistCalendar::get()->First();
+		$niceLinks = Config::inst()->get('LocalistEvent', 'use_nice_links');
+		if($niceLinks){
+			$urlSeg = $this->URLSegment;
+		}else{
+			$urlSeg = $this->ID;
+		}
 		if($calendar){
-			$link = $calendar->Link() . 'event/' . $this->URLSegment;
+			$link = $calendar->Link() . 'event/' . $urlSeg;
 			return $link;
 		}
 		
@@ -223,7 +239,6 @@ class LocalistEvent extends Page {
 	 * @return string
 	 */
 	public function CalendarLink() {
-		$calendar = LocalistCalendar::get()->First();
 		$link = $this->LocalistLink . '.ics';
 		return $link;
 	} //test
@@ -234,7 +249,7 @@ class LocalistEvent extends Page {
 	 * @return int
 	 */
 	public function RelatedEvents() {
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = LocalistCalendar::getOrCreate();
 
 		if ($this->Types && $this->Types->First()) {
 			$curEventTypes = $this->Types;
@@ -243,7 +258,7 @@ class LocalistEvent extends Page {
 			//print_r($randEventType->Title);
 
 			$relatedEvents = $calendar->EventList(
-				$days = '200',
+				$days = '90',
 				$startDate = null,
 				$endDate = null,
 				$venue = null,
@@ -281,5 +296,10 @@ class LocalistEvent extends Page {
 	public function UsesGoogleMaps() {
 		return true;
 	}
+
+}
+
+class LocalistEvent_Controller extends Page_Controller {
+
 
 }
