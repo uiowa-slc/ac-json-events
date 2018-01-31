@@ -7,6 +7,8 @@ class LocalistCalendar extends Page {
 		'VenueFilterID'           => 'Int',
 		'GeneralInterestFilterID' => 'Int',
 
+		'SearchTerm' => 'varchar(255)',
+
 		'FeaturedEvent1ID' => 'Int',
 		'FeaturedEvent2ID' => 'Int',
 		'FeaturedEvent3ID' => 'Int',
@@ -527,7 +529,6 @@ class LocalistCalendar extends Page {
 		$searchTerm = null,
 		$perPage = 100
 	) {
-
 		if ($enableFilter) {
 			if ($this->EventTypeFilterID != 0) {
 				$primaryFilterTypeID = $this->EventTypeFilterID;
@@ -540,6 +541,10 @@ class LocalistCalendar extends Page {
 			}
 			if ($this->GeneralInterestFilterID != 0) {
 				$genInterestFilterID = $this->GeneralInterestFilterID;
+			}
+			if ($this->SearchTerm != '') {
+
+				$searchTerm = $this->SearchTerm;
 			}
 		}
 
@@ -598,14 +603,12 @@ class LocalistCalendar extends Page {
 		}
 		$feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
-
-		//$feedURL = urlencode($feedURL);
 		//print_r($feedURL.'<br />');
+		//$feedURL = urlencode($feedURL);
+		
 
 		$eventsList    = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
-
-		//print_r($eventsDecoded);
 
 		if (isset($eventsDecoded['events'])) {
 			$eventsArray = $eventsDecoded['events'];
