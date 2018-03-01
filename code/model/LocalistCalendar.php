@@ -816,7 +816,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
-			if($this->isInDB()){
+			if($this->isInDB() && $event){
 				return $this->customise($event)->renderWith(array('LocalistEvent', 'Page'));	
 			}
 		} else {
