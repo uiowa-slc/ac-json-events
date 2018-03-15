@@ -574,7 +574,7 @@ class LocalistCalendar extends Page {
 
 		if (!isset($searchTerm)) {
 			if (isset($keyword)) {
-				$feedParams .= '&keyword='.urlencode($keyword);
+				$feedParams .= '&keyword='.$keyword;
 			}
 		}
 		if (isset($type)) {
@@ -596,10 +596,10 @@ class LocalistCalendar extends Page {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}
 		if (isset($searchTerm)) {
-			$feedParams .= '&search='.urlencode($searchTerm);
+			$feedParams .= '&search='.$searchTerm;
 		}
 		if (isset($perPage)) {
-			$feedParams .= '&pp='.urlencode($perPage);
+			$feedParams .= '&pp='.$perPage;
 		}
 		$feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;

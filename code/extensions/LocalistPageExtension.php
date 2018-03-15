@@ -7,6 +7,7 @@ class LocalistPageExtension extends DataExtension {
 	}
 
 	public function getJson($feedURL) {
+		print_r($feedURL);
 		$cache = new SimpleCache();
 		if ($rawFeed = $cache->get_data($feedURL, $feedURL)) {
 			$eventsDecoded = json_decode($rawFeed, TRUE);
