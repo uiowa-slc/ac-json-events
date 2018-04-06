@@ -19,8 +19,7 @@ class LocalistEvent extends Page {
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
 		if (isset($rawEvent['photo_url'])) {
-			//$image = $image->getByID($rawEvent['photo_id']);
-			$image->URL = $rawEvent['photo_url'];
+			$image = $image->getByID($rawEvent['photo_id']);
 		} else {
 			$themeDir = $this->ThemeDir();
 
