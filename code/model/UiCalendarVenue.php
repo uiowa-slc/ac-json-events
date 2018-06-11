@@ -1,11 +1,11 @@
 <?php
-class LocalistVenue extends DataObject {
+class UiCalendarVenue extends DataObject {
 
 	private static $db = array(
 		"Title"		=> "Varchar(255)",
 		"Content"	=> "HTMLText",
 		"ImageURL"	=> "Text",
-		"LocalistLink" => "Text",
+		"UiCalendarLink" => "Text",
 		"WebsiteLink" => "Text",
 		"Latitude"	=> "Text",
 		"Longitute"	=> "Text",
@@ -19,7 +19,7 @@ class LocalistVenue extends DataObject {
 			$this->Title = $venueDecoded['name'];
 			$this->Content = $venueDecoded['description_text'];
 			$this->ImageURL = $venueDecoded['photo_url'];
-			$this->LocalistLink = $venueDecoded['localist_url'];
+			$this->UiCalendarLink = $venueDecoded['localist_url'];
 			$this->WebsiteLink = $venueDecoded['url'];
 			$this->Latitude = $venueDecoded['geo']['latitude'];
 			$this->Longitude = $venueDecoded['geo']['longitude'];
@@ -31,7 +31,7 @@ class LocalistVenue extends DataObject {
 
 	
 	public function Events() {
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 		$events = $calendar->EventList();
 		$eventsAtPlaceList = new ArrayList();
 
@@ -50,12 +50,12 @@ class LocalistVenue extends DataObject {
 	 */
 	public function Link(){
 		if($this->ID != 0) {
-			$calendar = LocalistCalendar::getOrCreate();
+			$calendar = UiCalendar::getOrCreate();
 
 			if($calendar->IsInDB()){
 				$link = $calendar->Link().'venue/'.$this->ID;
 			}else{
-				$link = $this->LocalistLink;
+				$link = $this->UiCalendarLink;
 			}
 			
 			return $link;

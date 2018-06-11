@@ -1,5 +1,5 @@
 <?php
-class LocalistNewsletter extends Page {
+class UiCalendarNewsletter extends Page {
 
 	private static $db = array(
 
@@ -48,7 +48,7 @@ class LocalistNewsletter extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 		$fields->removeByName('Content');
 		$fields->removeByName('Metadata');
 		$events = $calendar->EventList();
@@ -168,11 +168,11 @@ class LocalistNewsletter extends Page {
 	
 
 }
-class LocalistNewsletter_Controller extends Page_Controller {
+class UiCalendarNewsletter_Controller extends Page_Controller {
 
 	public function FeaturedEvent(){
-		$calendar = LocalistCalendar::getOrCreate();
-		$feature = new LocalistNewsletterFeature();
+		$calendar = UiCalendar::getOrCreate();
+		$feature = new UiCalendarNewsletterFeature();
 		$event = $calendar->SingleEvent($this->FeaturedEventID);
 
 		
@@ -186,7 +186,7 @@ class LocalistNewsletter_Controller extends Page_Controller {
 
 	public function Categories(){
 		$categories = new ArrayList();
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 
 		for ($i = 1; $i <= 4; $i++) {
 			$catProperty = 'Category'.$i;
@@ -195,7 +195,7 @@ class LocalistNewsletter_Controller extends Page_Controller {
 			$catEvent1Prop = $catProperty.'Event1ID';
 			$catEvent2Prop = $catProperty.'Event2ID';
 
-			$cat = new LocalistNewsletterCategory();
+			$cat = new UiCalendarNewsletterCategory();
 
 			$cat->CatTitle = $this->{$catTitleProp};
 			//print_r($catEvent1Prop);
@@ -209,14 +209,14 @@ class LocalistNewsletter_Controller extends Page_Controller {
 	}
 	public function NonFeaturedRows(){
 		$rows = new ArrayList();
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 
 		for ($i = 1; $i <= 10; $i++) {
 			$rowProperty = 'NonFeaturedRow'.$i;
 			$rowEvent1Prop = $rowProperty.'Event1ID';
 			$rowEvent2Prop = $rowProperty.'Event2ID';
 
-			$row = new LocalistNewsletterNonFeaturedRow();
+			$row = new UiCalendarNewsletterNonFeaturedRow();
 
 			//print_r($catEvent1Prop);
 			$row->Event1 = $calendar->SingleEvent($this->{$rowEvent1Prop});

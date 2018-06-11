@@ -1,5 +1,5 @@
 <?php
-class LocalistCalendar extends Page {
+class UiCalendar extends Page {
 
 	private static $db = array(
 		'EventTypeFilterID'       => 'Int',
@@ -39,16 +39,16 @@ class LocalistCalendar extends Page {
 
 		//print_r($genInterestsArray);
 
-		$typeListBoxField = new DropdownField('EventTypeFilterID', 'Filter the calendar by this Localist event type:', $typesArray);
+		$typeListBoxField = new DropdownField('EventTypeFilterID', 'Filter the calendar by this UiCalendar event type:', $typesArray);
 		$typeListBoxField->setEmptyString('(No Filter)');
 
-		$departmentDropDownField = new DropdownField('DepartmentFilterID', 'Filter the calendar by this Localist department', $departmentsArray);
+		$departmentDropDownField = new DropdownField('DepartmentFilterID', 'Filter the calendar by this UiCalendar department', $departmentsArray);
 		$departmentDropDownField->setEmptyString('(No Filter)');
 
-		$venueDropDownField = new DropdownField('VenueFilterID', 'Filter the calendar by this Localist Venue', $venuesArray);
+		$venueDropDownField = new DropdownField('VenueFilterID', 'Filter the calendar by this UiCalendar Venue', $venuesArray);
 		$venueDropDownField->setEmptyString('(No Filter)');
 
-		$genInterestDropDownField = new DropdownField('GeneralInterestFilterID', 'Filter the calendar by this Localist General Interest', $genInterestsArray);
+		$genInterestDropDownField = new DropdownField('GeneralInterestFilterID', 'Filter the calendar by this UiCalendar General Interest', $genInterestsArray);
 		$genInterestDropDownField->setEmptyString('(No Filter)');
 
 		$fields->addFieldToTab('Root.Main', $typeListBoxField, 'Content');
@@ -63,7 +63,7 @@ class LocalistCalendar extends Page {
 		if ($events->First()) {
 			$eventsArray = $events->map();
 
-			$fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in Localist will be used.'));
+			$fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in UiCalendar will be used.'));
 
 			$featuredEvent1Field = new DropdownField("FeaturedEvent1ID", "Featured Event 1", $eventsArray);
 			$featuredEvent1Field->setEmptyString('(No Event)');
@@ -87,12 +87,12 @@ class LocalistCalendar extends Page {
 	}
 
 	public static function getOrCreate(){
-		$calendar = LocalistCalendar::get()->First();
+		$calendar = UiCalendar::get()->First();
 
 		if($calendar){
 			return $calendar;
 		}
-		return LocalistCalendar::create();
+		return UiCalendar::create();
 	}
 
 	public function Link(){
@@ -118,7 +118,7 @@ class LocalistCalendar extends Page {
 		if (isset($primaryFilterTypeID)) {
 			$type = $this->getTypeByID($primaryFilterTypeID);
 			//print_r($primaryFilterTypeID);
-			return $type->LocalistLink;
+			return $type->UiCalendarLink;
 		}
 		if (isset($departmentFilterID)) {
 			$type = $this->getTypeByID($departmentFilterID);
@@ -170,7 +170,7 @@ class LocalistCalendar extends Page {
 			}
 		}
 
-		//If there aren't any featured events selected in SilverStripe, fall back on events marked as featured in Localist.
+		//If there aren't any featured events selected in SilverStripe, fall back on events marked as featured in UiCalendar.
 		if ((isset($featuredEvents)) && ($featuredEvents->count() > 0)) {
 			return $featuredEvents;
 		} else if (isset($events)) {
@@ -195,7 +195,7 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function CalendarWidget() {
-		$calendar = LocalistCalendarWidget::create($this);
+		$calendar = UiCalendarWidget::create($this);
 		return $calendar;
 	}
 
@@ -223,7 +223,7 @@ class LocalistCalendar extends Page {
 			arsort($tags);
 
 			foreach ($tags as $key => $tag) {
-				$localistTag        = new LocalistTag();
+				$localistTag        = new UiCalendarTag();
 				$localistTag->Title = $key;
 				$localistTags->push($localistTag);
 
@@ -318,7 +318,7 @@ class LocalistCalendar extends Page {
 
 	public function VenuesList() {
 		$resourceName = "places";
-		$feedURL      = LOCALIST_FEED_URL.$resourceName;
+		$feedURL      = UICALENDAR_FEED_URL.$resourceName;
 		$venuesList   = new ArrayList();
 
 		//$venuesDecoded = $this->getJson($feedURL);
@@ -328,7 +328,7 @@ class LocalistCalendar extends Page {
 
 		if (isset($venuesArray)) {
 			foreach ($venuesArray as $venue) {
-				$localistVenues = new LocalistVenue();
+				$localistVenues = new UiCalendarVenue();
 				$localistVenue  = $localistVenues->parseVenue($venue);
 				$venuesList->push($localistVenue);
 			}
@@ -338,13 +338,13 @@ class LocalistCalendar extends Page {
 	}
 
 	/**
-	 * Returns an ArrayList of all LocalistEventTypes based on the events coming through EventList()
+	 * Returns an ArrayList of all UiCalendarEventTypes based on the events coming through EventList()
 	 * @return ArrayList
 	 */
 	public function TypeList() {
 
 		$resourceName = 'event_types';
-		$feedURL      = LOCALIST_FEED_URL.'events/filters';
+		$feedURL      = UICALENDAR_FEED_URL.'events/filters';
 
 		$typesList = new ArrayList();
 
@@ -354,7 +354,7 @@ class LocalistCalendar extends Page {
 		//print_r($typesArray);
 		if (isset($typesArray)) {
 			foreach ($typesArray as $type) {
-				$localistType = new LocalistEventType();
+				$localistType = new UiCalendarEventType();
 				$localistType = $localistType->parseType($type);
 				$typesList->push($localistType);
 			}
@@ -365,7 +365,7 @@ class LocalistCalendar extends Page {
 
 	public function DepartmentList() {
 		$cache   = new SimpleCache();
-		$feedURL = LOCALIST_FEED_URL.'events/filters/';
+		$feedURL = UICALENDAR_FEED_URL.'events/filters/';
 
 		$departmentsList = new ArrayList();
 
@@ -378,7 +378,7 @@ class LocalistCalendar extends Page {
 
 		if (isset($departmentsArray)) {
 			foreach ($departmentsArray as $department) {
-				$localistDepartment = new LocalistEventType();
+				$localistDepartment = new UiCalendarEventType();
 				$localistDepartment = $localistDepartment->parseType($department);
 				$departmentsList->push($localistDepartment);
 			}
@@ -391,7 +391,7 @@ class LocalistCalendar extends Page {
 	public function GeneralInterestList() {
 
 		$cache   = new SimpleCache();
-		$feedURL = LOCALIST_FEED_URL.'events/filters/';
+		$feedURL = UICALENDAR_FEED_URL.'events/filters/';
 
 		$genInterestsList = new ArrayList();
 
@@ -405,7 +405,7 @@ class LocalistCalendar extends Page {
 		//print_r($genInterestsArray);
 		if (isset($genInterestsArray)) {
 			foreach ($genInterestsArray as $genInterest) {
-				$localistGenInterest = new LocalistEventType();
+				$localistGenInterest = new UiCalendarEventType();
 				$localistGenInterest = $localistGenInterest->parseType($genInterest);
 				$genInterestsList->push($localistGenInterest);
 			}
@@ -422,7 +422,7 @@ class LocalistCalendar extends Page {
 	 * all types.
 	 * TODO: More effecient way to do this? Through the API?
 	 * @param int $id
-	 * @return LocalistEventType
+	 * @return UiCalendarEventType
 	 */
 	public function getTypeByID($id) {
 		$types = $this->TypeList();
@@ -518,7 +518,7 @@ class LocalistCalendar extends Page {
 	 */
 
 	public function EventList(
-		$days = '200',
+		$days = 'threemonths',
 		$startDate = null,
 		$endDate = null,
 		$venue = null,
@@ -550,59 +550,59 @@ class LocalistCalendar extends Page {
 
 		$feedParams = '';
 
-		if (isset($searchTerm)) {
-			$feedParams = '/search';
-		}
-		$feedParams .= '?';
-		$feedParams .= 'days='.$days;
+		// if (isset($searchTerm)) {
+		// 	$feedParams = '/search';
+		// }
+
+		$feedParams .= '/views/events_api.json?display_id='.$days;
 
 		$startDateSS = new SS_Datetime();
 		$endDateSS   = new SS_Datetime();
 
 		if (isset($startDate)) {
 			$startDateSS->setValue($startDate);
-			$feedParams .= '&start='.$startDateSS->format('Y-m-d');
+			$feedParams .= '&filters[startdate][value][date]='.$startDateSS->format('Y-m-d');
 		}
 		if (isset($endDate)) {
 			$endDateSS->setValue($endDate);
-			$feedParams .= '&end='.$endDateSS->format('Y-m-d');
+			$feedParams .= '&filters[enddate][value][date]='.$endDateSS->format('Y-m-d');
 		}
 
 		if (isset($venue)) {
-			$feedParams .= '&venue_id='.$venue;
+			$feedParams .= '&filters[place]='.$venue;
 		}
 
 		if (!isset($searchTerm)) {
 			if (isset($keyword)) {
-				$feedParams .= '&keyword='.$keyword;
+				$feedParams .= '&filters[keywords]'.$keyword;
 			}
 		}
 		if (isset($type)) {
-			$feedParams .= '&type[]='.$type;
+			$feedParams .= '&filters[types]='.$type;
 		}
 
 		if (isset($primaryFilterTypeID)) {
-			$feedParams .= '&type[]='.$primaryFilterTypeID;
+			$feedParams .= '&filters[types]='.$primaryFilterTypeID;
 		}
 
 		if (isset($departmentFilterID)) {
-			$feedParams .= '&type[]='.$departmentFilterID;
+			$feedParams .= '&filters[department]='.$departmentFilterID;
 		}
 		if (isset($genInterestFilterID)) {
-			$feedParams .= '&type[]='.$genInterestFilterID;
+			$feedParams .= '&filters[audiences]='.$genInterestFilterID;
 		}
 
 		if (isset($venueFilterID)) {
 			$feedParams .= '&venue_id='.$venueFilterID;
 		}
-		if (isset($searchTerm)) {
-			$feedParams .= '&search='.$searchTerm;
-		}
+		// if (isset($searchTerm)) {
+		// 	$feedParams .= '&search='.$searchTerm;
+		// }
 		if (isset($perPage)) {
-			$feedParams .= '&pp='.$perPage;
+			$feedParams .= '&items_per_page='.$perPage;
 		}
-		$feedParams .= '&match=all&distinct='.$distinct;
-		$feedURL = LOCALIST_FEED_URL.'events'.$feedParams;
+		// $feedParams .= '&match=all&distinct='.$distinct;
+		$feedURL = UICALENDAR_FEED_URL.$feedParams;
 		//print_r($feedURL.'<br />');
 		//$feedURL = urlencode($feedURL);
 		
@@ -614,7 +614,7 @@ class LocalistCalendar extends Page {
 			$eventsArray = $eventsDecoded['events'];
 			foreach ($eventsArray as $event) {
 				if (isset($event)) {
-					$localistEvent = new LocalistEvent();
+					$localistEvent = new UiCalendarEvent();
 
 					$eventsList->push($localistEvent->parseEvent($event['event']));
 				}
@@ -625,7 +625,7 @@ class LocalistCalendar extends Page {
 	}
 	public function EventListLimited($number = 3){
 		return $this->EventList(
-			$days = '90',
+			$days = 'threemonths',
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
@@ -710,9 +710,9 @@ class LocalistCalendar extends Page {
 
 	}
 	/**
-	 * Gets a single event from the Localist Feed based on ID.
+	 * Gets a single event from the UiCalendar Feed based on ID.
 	 * @param int $id
-	 * @return LocalistEvent
+	 * @return UiCalendarEvent
 	 */
 
 	public function SingleEvent($id, $mustBeUpcoming = true) {
@@ -720,13 +720,13 @@ class LocalistCalendar extends Page {
 			return false;
 		}
 
-		$feedParams = 'events/'.$id;
-		$feedURL    = LOCALIST_FEED_URL.$feedParams;
+		$feedParams = 'events/node/'.$id.'.json';
+		$feedURL    = UICALENDAR_FEED_URL.$feedParams;
 
 		$eventsDecoded = $this->getJson($feedURL);
 		$event         = $eventsDecoded['event'];
 		if (isset($event)) {
-			$localistEvent = new LocalistEvent();
+			$localistEvent = new UiCalendarEvent();
 			$parsedEvent   = $localistEvent->parseEvent($event);
 			//If we're only looking for an event with upcoming dates, check the event's Dates and return the event if there are any.
 			if ($mustBeUpcoming) {
@@ -743,7 +743,7 @@ class LocalistCalendar extends Page {
 	}
 
 }
-class LocalistCalendar_Controller extends Page_Controller {
+class UiCalendar_Controller extends Page_Controller {
 
 	/**
 	 * An array of actions that can be accessed via a request. Each array element should be an action name, and the
@@ -801,7 +801,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 		);
 
-		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 
 	}
 
@@ -817,7 +817,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
 			if($this->isInDB() && $event){
-				return $this->customise($event)->renderWith(array('LocalistEvent', 'Page'));	
+				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));	
 			}
 		} else {
 
@@ -828,14 +828,14 @@ class LocalistCalendar_Controller extends Page_Controller {
 					//print_r($e->URLSegment);
 					$singleEvent = $this->SingleEvent($e->ID);
 					if ($singleEvent) {
-						return $this->customise($singleEvent)->renderWith(array('LocalistEvent', 'Page'));
+						return $this->customise($singleEvent)->renderWith(array('UiCalendarEvent', 'Page'));
 					}
 				}
 			}
 
 		}
 		//echo "hello";
-		$this->Redirect(LOCALIST_BASE.'event/'.$eventID);
+		$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
 		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 
 	}
@@ -882,12 +882,12 @@ class LocalistCalendar_Controller extends Page_Controller {
 			'EventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
-		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 
 	}
 
 	/**
-	 * Controller Function that renders a filtered Event List by a Localist tag or keyword.
+	 * Controller Function that renders a filtered Event List by a UiCalendar tag or keyword.
 	 * @param SS_HTTPRequest $request
 	 * @return Controller
 	 */
@@ -902,7 +902,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			'FilterHeader' => $filterHeader,
 		);
 
-		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 	}
 
 	public function type($request) {
@@ -921,7 +921,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			'FilterHeader' => $filterHeader,
 		);
 
-		return $this->customise($Data)->renderWith(array('LocalistCalendar', 'Page'));
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 	}
 
 	public function venue($request) {
@@ -940,7 +940,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 				'FilterHeader' => $filterHeader,
 			);
 
-			return $this->customise($Data)->renderWith(array('LocalistVenue', 'LocalistCalendar', 'Page'));
+			return $this->customise($Data)->renderWith(array('UiCalendarVenue', 'UiCalendar', 'Page'));
 		} else {
 			return $this->httpError(404, 'The requested venue can\'t be found in the events.uiowa.edu upcoming events list.');
 		}
@@ -956,7 +956,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 			"Term"    => $term,
 		);
 
-		return $this->customise($data)->renderWith(array('LocalistCalendar_search', 'Page'));
+		return $this->customise($data)->renderWith(array('UiCalendar_search', 'Page'));
 
 	}
 
@@ -1083,7 +1083,7 @@ class LocalistCalendar_Controller extends Page_Controller {
 
 			$data["events"][$eventNum]["id"]                  = $event->ID;
 			$data["events"][$eventNum]["name"]                = $event->Title;
-			$data["events"][$eventNum]["link"]                = $event->LocalistLink;
+			$data["events"][$eventNum]["link"]                = $event->UiCalendarLink;
 			$data["events"][$eventNum]["more_info_link"]      = $event->MoreInfoLink;
 			$data["events"][$eventNum]["facebook_event_link"] = $event->FacebookEventLink;
 

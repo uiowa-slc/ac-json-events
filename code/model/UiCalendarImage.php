@@ -1,5 +1,5 @@
 <?php
-class LocalistImage extends DataObject {
+class UiCalendarImage extends DataObject {
 
 	private static $db = array("Caption" => "Text", "URL" => "Text", "Credit" => "Text", );
 
@@ -12,7 +12,7 @@ class LocalistImage extends DataObject {
 		$cache = new SimpleCache();
 
 		$feedParams = 'photos/'.$id;
-		$feedURL    = LOCALIST_FEED_URL.$feedParams;
+		$feedURL    = UICALENDAR_FEED_URL.$feedParams;
 
 		//print_r($feedURL);
 
@@ -21,7 +21,7 @@ class LocalistImage extends DataObject {
 
 		$image = $imagesDecoded['photo'];
 		if (isset($image)) {
-			$localistImage = new LocalistImage();
+			$localistImage = new UiCalendarImage();
 			return $localistImage->parse($image);
 		}
 		return false;
@@ -31,9 +31,9 @@ class LocalistImage extends DataObject {
 	localist caliendar filter */
 
 	/**
-	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent
+	 * Convert an event in an array format (from UiCalendar JSON Feed) to a UiCalendarEvent
 	 * @param array $rawEvent
-	 * @return LocalistEvent
+	 * @return UiCalendarEvent
 	 */
 	public function parse($rawImage) {
 		$this->ID      = $rawImage['id'];

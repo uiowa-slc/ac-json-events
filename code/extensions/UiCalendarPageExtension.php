@@ -1,9 +1,9 @@
 <?php
 
-class LocalistPageExtension extends DataExtension {
+class UiCalendarPageExtension extends DataExtension {
 
-	public function LocalistCalendar() {
-		return LocalistCalendar::getOrCreate();
+	public function UiCalendar() {
+		return UiCalendar::getOrCreate();
 	}
 
 	public function getJson($feedURL) {

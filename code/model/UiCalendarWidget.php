@@ -1,6 +1,6 @@
 <?php
 
-class LocalistCalendarWidget extends ViewableData {
+class UiCalendarWidget extends ViewableData {
 
 	protected $calendar;
 
@@ -10,7 +10,7 @@ class LocalistCalendarWidget extends ViewableData {
 
 	protected $options = array();
 
-	public function __construct(LocalistCalendar $calendar) {
+	public function __construct(UiCalendar $calendar) {
 		$this->calendar = $calendar;
 	}
 

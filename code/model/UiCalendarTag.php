@@ -1,5 +1,5 @@
 <?php
-class LocalistTag extends DataObject {
+class UiCalendarTag extends DataObject {
 
 	private static $db = array(
 		"Title"		=> "Varchar(255)"
@@ -13,7 +13,7 @@ class LocalistTag extends DataObject {
 			$this->Content = $venueDecoded['description_text'];
 			$this->PageList = Page::get();
 			$this->ImageURL = $venueDecoded['photo_url'];
-			$this->LocalistLink = $venueDecoded['localist_url'];
+			$this->UiCalendarLink = $venueDecoded['localist_url'];
 			$this->WebsiteLink = $venueDecoded['url'];
 			$this->Latitude = $venueDecoded['geo']['latitude'];
 			$this->Longitude = $venueDecoded['geo']['longitude'];
@@ -24,13 +24,13 @@ class LocalistTag extends DataObject {
 	}*/
 
 	public function Link(){
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 		return $calendar->Link().'tag/'.$this->Title;
 	}
 
 	
 /*public function Events() {
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 		$events = $calendar->EventList(200, $startDate = NULL, $endDate = NULL, $venue = $this->ID);
 		$eventsAtPlaceList = new ArrayList();
 
@@ -41,7 +41,7 @@ class LocalistTag extends DataObject {
 		return $eventsAtPlaceList;   
 	}*/
 	/*public function Link(){
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 		$link = $calendar->Link().'event/'.$this->ID;
 		return $link;
 	}*/

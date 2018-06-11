@@ -1,9 +1,9 @@
 <?php
 
-class PrimeLocalistTask extends BuildTask{
+class PrimeUiCalendarTask extends BuildTask{
 
-	protected $title = 'Prime Localist Cache';
-	protected $description = 'Updates Localist cache';
+	protected $title = 'Prime UiCalendar Cache';
+	protected $description = 'Updates UiCalendar cache';
 
 	protected $enabled = true;
 
@@ -11,7 +11,7 @@ class PrimeLocalistTask extends BuildTask{
 		echo '<h2>Finding all calendars....</h2>';
 
 		//Prime calendars that exist in the db and their events.
-		$calendars = LocalistCalendar::get();
+		$calendars = UiCalendar::get();
 		foreach($calendars as $calendar){
 			echo '<p>Priming: '.$calendar->Title.'... <br />';
 

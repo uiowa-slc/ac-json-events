@@ -1,6 +1,6 @@
 <?php
 
-class LocalistEvent extends Page {
+class UiCalendarEvent extends Page {
     /**
      * @config
      */
@@ -9,17 +9,17 @@ class LocalistEvent extends Page {
 	private static $use_nice_links = false;
 
 	/**
-	 * Convert an event in an array format (from Localist JSON Feed) to a LocalistEvent
+	 * Convert an event in an array format (from UiCalendar JSON Feed) to a UiCalendarEvent
 	 * @param array $rawEvent
-	 * @return LocalistEvent
+	 * @return UiCalendarEvent
 	 */
 	public function parseEvent($rawEvent) {
 
-		$image = new LocalistImage();
+		$image = new UiCalendarImage();
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
-		if (isset($rawEvent['photo_url'])) {
-			$image = $image->getByID($rawEvent['photo_id']);
+		if (isset($rawEvent['large_image'])) {
+			$image->URL = $rawEvent['large_image'];
 		} else {
 			$themeDir = $this->ThemeDir();
 
@@ -28,7 +28,7 @@ class LocalistEvent extends Page {
 				$image->URL = $this->Venue->ImageURL;
 
 			} else {
-				$image->URL = $themeDir . '/images/LocalistEventPlaceholder.jpg';
+				$image->URL = $themeDir . '/images/UiCalendarEventPlaceholder.jpg';
 
 			}
 		}
@@ -40,8 +40,8 @@ class LocalistEvent extends Page {
 		$this->EventTitle = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
 		// $this->Thumbnail = $rawEvent['photo_url'];
-		$this->Featured = $rawEvent['featured'];
-		$this->Cost = $rawEvent['ticket_cost'];
+		//$this->Featured = $rawEvent['featured'];
+		//$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
@@ -60,16 +60,16 @@ class LocalistEvent extends Page {
 		// description is the same as description_text, only difference is description includes poorly escaped HTML
 		// also, isn't there a way to comment on code direclty in GitHub?
 		$this->SummaryContent = $rawEvent['description_text'];
-		$this->Tags = $this->getTagsFromRaw($rawEvent);
+		//$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
-		$this->LocalistLink = $rawEvent['localist_url'];
+		$this->UiCalendarLink = UICALENDAR_BASE.$rawEvent['urlname'];
 		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->URLSegment;
 		$this->MoreInfoLink = $rawEvent['url'];
-		$this->FacebookEventLink = $rawEvent['facebook_id'];
-		$this->ContactName = (isset($rawEvent['custom_fields']['contact_name']) ? $rawEvent['custom_fields']['contact_name'] : '');
-		$this->ContactEmail = (isset($rawEvent['custom_fields']['contact_email']) ? $rawEvent['custom_fields']['contact_email'] : '');
-		$this->Sponsor = (isset($rawEvent['custom_fields']['sponsor']) ? $rawEvent['custom_fields']['sponsor'] : '');
+		//$this->FacebookEventLink = $rawEvent['facebook_id'];
+		$this->ContactName = (isset($rawEvent['contact_name']) ? $rawEvent['contact_name'] : '');
+		$this->ContactEmail = (isset($rawEvent['contact_email']) ? $rawEvent['contact_email'] : '');
+		// $this->Sponsor = (isset($rawEvent['custom_fields']['sponsor']) ? $rawEvent['custom_fields']['sponsor'] : '');
 
 		if (isset($venue['place']['name'])) {
 			$this->VenueTitle = $venue['place']['name'];
@@ -94,7 +94,7 @@ class LocalistEvent extends Page {
 	}
 	/**
 	 * Get a list of upcoming dates for a single event by checking an individual event
-	 * for instances from Localist
+	 * for instances from UiCalendar
 	 * @param array $rawEvent
 	 * @return ArrayList
 	 */
@@ -104,7 +104,7 @@ class LocalistEvent extends Page {
 		$eventInstancesArray = new ArrayList();
 
 		foreach ($eventInstances as $i => $eventInstance) {
-			$dateTime = new LocalistDatetime();
+			$dateTime = new UiCalendarDatetime();
 
 			//$allDayBoolean = new Boolean();
 
@@ -135,7 +135,7 @@ class LocalistEvent extends Page {
 	}
 
 	/**
-	 * Generate a list of tags from an event array from Localist
+	 * Generate a list of tags from an event array from UiCalendar
 	 * @param array $rawEvent
 	 * @return ArrayList
 	 */
@@ -144,7 +144,7 @@ class LocalistEvent extends Page {
 		$tags = new ArrayList();
 
 		foreach ($tagsRaw as $tagRaw) {
-			$tag = new LocalistTag();
+			$tag = new UiCalendarTag();
 			$tag->Title = $tagRaw;
 
 			$tags->push($tag);
@@ -154,7 +154,7 @@ class LocalistEvent extends Page {
 	}
 
 	/**
-	 * Generate a list of types from an event array from Localist
+	 * Generate a list of types from an event array from UiCalendar
 	 * @param array $rawEvent
 	 * @return ArrayList
 	 */
@@ -164,7 +164,7 @@ class LocalistEvent extends Page {
 			$typesRaw = $rawEvent['filters']['event_types'];
 			$types = new ArrayList();
 			foreach ($typesRaw as $typeRaw) {
-				$type = new LocalistEventType();
+				$type = new UiCalendarEventType();
 				$type->ID = $typeRaw['id'];
 				$type->Title = $typeRaw['name'];
 				$types->push($type);
@@ -178,37 +178,42 @@ class LocalistEvent extends Page {
 	 * Get a Venue from a raw event array from a JSON feed. If there's a venue id, we get a venue based on that id,
 	 * otherwise we retrieve the geo and location info from the event itself.
 	 * @param array $rawEvent
-	 * @return LocalistVenue
+	 * @return UiCalendarVenue
 	 */
 	private function getVenueFromRaw($rawEvent) {
 		if (isset($rawEvent['venue_id'])) {
 			$id = $rawEvent['venue_id'];
 			return $this->getVenueFromID($id);
 		} else {
-			$venue = new LocalistVenue();
-			$venue->Title = $rawEvent['location'];
-			$venue->Latitude = $rawEvent['geo']['latitude'];
-			$venue->Longitude = $rawEvent['geo']['longitude'];
-			if (isset($rawEvent['geo']['street'])) {
-				$venue->Address = $rawEvent['geo']['street'] . ', ' . $rawEvent['geo']['city'] . ', ' . $rawEvent['geo']['state'] . ' ' . $rawEvent['geo']['zip'];
-			}
-			return $venue;
+			// print_r($rawEvent);
+			
+			if(isset($rawEvent['location_name'])){
+				$venue = new UiCalendarVenue();
+				$venue->Title = $rawEvent['location_name'];
+				$venue->Latitude = $rawEvent['geo']['latitude'];
+				$venue->Longitude = $rawEvent['geo']['longitude'];
+				if (isset($rawEvent['geo']['street'])) {
+					$venue->Address = $rawEvent['geo']['street'] . ', ' . $rawEvent['geo']['city'] . ', ' . $rawEvent['geo']['state'] . ' ' . $rawEvent['geo']['zip'];
+				}
+				return $venue;
+				}
+			
 		}
 	}
 
 	/**
-	 * Retrieve a single venue from the Localist Venue API by an ID number
+	 * Retrieve a single venue from the UiCalendar Venue API by an ID number
 	 * @param int $venueID
-	 * @return LocalistVenue
+	 * @return UiCalendarVenue
 	 */
 	public function getVenueFromID($venueID) {
-		$feedURL = LOCALIST_FEED_URL . 'places/' . $venueID;
+		$feedURL = UICALENDAR_FEED_URL . 'places/' . $venueID;
 		$cache = new SimpleCache();
 
 		$rawVenue = $cache->get_data($feedURL, $feedURL);
 		$venueDecoded = json_decode($rawVenue, TRUE);
 
-		$venue = new LocalistVenue();
+		$venue = new UiCalendarVenue();
 		return $venue->parseVenue($venueDecoded);
 	}
 
@@ -217,8 +222,8 @@ class LocalistEvent extends Page {
 	 * @return string
 	 */
 	public function Link() {
-		$calendar = LocalistCalendar::get()->First();
-		$niceLinks = Config::inst()->get('LocalistEvent', 'use_nice_links');
+		$calendar = UiCalendar::get()->First();
+		$niceLinks = Config::inst()->get('UiCalendarEvent', 'use_nice_links');
 		if($niceLinks){
 			$urlSeg = $this->URLSegment;
 		}else{
@@ -238,7 +243,7 @@ class LocalistEvent extends Page {
 	 * @return string
 	 */
 	public function CalendarLink() {
-		$link = $this->LocalistLink . '.ics';
+		$link = $this->UiCalendarLink . '.ics';
 		return $link;
 	} //test
 
@@ -248,7 +253,7 @@ class LocalistEvent extends Page {
 	 * @return int
 	 */
 	public function RelatedEvents() {
-		$calendar = LocalistCalendar::getOrCreate();
+		$calendar = UiCalendar::getOrCreate();
 
 		if ($this->Types && $this->Types->First()) {
 			$curEventTypes = $this->Types;
@@ -298,7 +303,7 @@ class LocalistEvent extends Page {
 
 }
 
-class LocalistEvent_Controller extends Page_Controller {
+class UiCalendarEvent_Controller extends Page_Controller {
 
 
 }

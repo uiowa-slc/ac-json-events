@@ -1,6 +1,6 @@
 <?php
 
-class LocalistDatetime extends DataObject {
+class UiCalendarDatetime extends DataObject {
 
 	private static $db = array(
 		'StartDateTime' => 'SS_Datetime',
@@ -45,7 +45,7 @@ class LocalistDatetime extends DataObject {
 	localist caliendar filter */
 
 	public function Link() {
-		$calendarLink = LocalistCalendar::getOrCreate()->Link();
+		$calendarLink = UiCalendar::getOrCreate()->Link();
 		$datestring = $this->StartDateTime->Format("Y-m-d");
 		return $calendarLink . 'show/' . $datestring;
 	}
