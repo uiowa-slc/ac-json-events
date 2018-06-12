@@ -18,8 +18,9 @@ class UiCalendarEvent extends Page {
 		$image = new UiCalendarImage();
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
-		if (isset($rawEvent['large_image'])) {
-			$image->URL = $rawEvent['large_image'];
+		// print_r($rawEvent);
+		if (isset($rawEvent['media'][0]['original_image'])) {
+			$image->URL = $rawEvent['media'][0]['original_image'];
 		} else {
 			$themeDir = $this->ThemeDir();
 
@@ -55,10 +56,9 @@ class UiCalendarEvent extends Page {
 		}
 
 		// I recommend changing Content to $rawEvent['descritption_text'];
-		$this->Content = $rawEvent['description'];
-		// and change the property SummaryContent to HTMLContent and set it to $rawEvent['description'];
-		// description is the same as description_text, only difference is description includes poorly escaped HTML
-		// also, isn't there a way to comment on code direclty in GitHub?
+		if(isset($rawEvent['description']))
+			$this->Content = $rawEvent['description'];
+		if(isset($rawEvent['description_text']))
 		$this->SummaryContent = $rawEvent['description_text'];
 		//$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
