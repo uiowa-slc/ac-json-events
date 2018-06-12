@@ -204,35 +204,35 @@ class UiCalendar extends Page {
 	 * @return ArrayList
 	 */
 	public function TrendingTags() {
-		$events       = $this->EventList();
-		$tags         = array();
-		$localistTags = new ArrayList();
+		// $events       = $this->EventList();
+		// $tags         = array();
+		// $localistTags = new ArrayList();
 
-		if (isset($events) && $events->First()) {
-			foreach ($events as $event) {
+		// if (isset($events) && $events->First()) {
+		// 	foreach ($events as $event) {
 
-				foreach ($event->Tags as $eventTag) {
-					if (isset($tags[$eventTag->Title])) {
-						$tags[$eventTag->Title] = $tags[$eventTag->Title]+1;
-					} else {
-						$tags[$eventTag->Title] = 0;
-					}
-				}
-			}
+		// 		foreach ($event->Tags as $eventTag) {
+		// 			if (isset($tags[$eventTag->Title])) {
+		// 				$tags[$eventTag->Title] = $tags[$eventTag->Title]+1;
+		// 			} else {
+		// 				$tags[$eventTag->Title] = 0;
+		// 			}
+		// 		}
+		// 	}
 
-			arsort($tags);
+		// 	arsort($tags);
 
-			foreach ($tags as $key => $tag) {
-				$localistTag        = new UiCalendarTag();
-				$localistTag->Title = $key;
-				$localistTags->push($localistTag);
+		// 	foreach ($tags as $key => $tag) {
+		// 		$localistTag        = new UiCalendarTag();
+		// 		$localistTag->Title = $key;
+		// 		$localistTags->push($localistTag);
 
-			}
+		// 	}
 
-			return $localistTags;
-		} else {
-			return false;
-		}
+		// 	return $localistTags;
+		// } else {
+		// 	return false;
+		// }
 
 	}
 
@@ -344,7 +344,7 @@ class UiCalendar extends Page {
 	public function TypeList() {
 
 		$resourceName = 'event_types';
-		$feedURL      = UICALENDAR_FEED_URL.'events/filters';
+		$feedURL      = UICALENDAR_FEED_URL.'/views/filters_api.json?display_id=filters';
 
 		$typesList = new ArrayList();
 
@@ -365,7 +365,7 @@ class UiCalendar extends Page {
 
 	public function DepartmentList() {
 		$cache   = new SimpleCache();
-		$feedURL = UICALENDAR_FEED_URL.'events/filters/';
+		$feedURL      = UICALENDAR_FEED_URL.'/views/filters_api.json?display_id=filters';
 
 		$departmentsList = new ArrayList();
 
@@ -391,7 +391,7 @@ class UiCalendar extends Page {
 	public function GeneralInterestList() {
 
 		$cache   = new SimpleCache();
-		$feedURL = UICALENDAR_FEED_URL.'events/filters/';
+		$feedURL      = UICALENDAR_FEED_URL.'/views/filters_api.json?display_id=filters';
 
 		$genInterestsList = new ArrayList();
 
@@ -554,7 +554,12 @@ class UiCalendar extends Page {
 		// 	$feedParams = '/search';
 		// }
 
-		$feedParams .= '/views/events_api.json?display_id='.$days;
+		if(isset($days)){
+			$feedParams .= '/views/events_api.json?display_id='.$days;
+		}else{
+			$feedParams .= '/views/events_api.json?display_id=events';
+		}
+		
 
 		$startDateSS = new SS_Datetime();
 		$endDateSS   = new SS_Datetime();
@@ -589,11 +594,11 @@ class UiCalendar extends Page {
 			$feedParams .= '&filters[department]='.$departmentFilterID;
 		}
 		if (isset($genInterestFilterID)) {
-			$feedParams .= '&filters[audiences]='.$genInterestFilterID;
+			$feedParams .= '&filters[interests]='.$genInterestFilterID;
 		}
 
 		if (isset($venueFilterID)) {
-			$feedParams .= '&venue_id='.$venueFilterID;
+			$feedParams .= '&filters[venue]='.$venueFilterID;
 		}
 		// if (isset($searchTerm)) {
 		// 	$feedParams .= '&search='.$searchTerm;
@@ -720,11 +725,11 @@ class UiCalendar extends Page {
 			return false;
 		}
 
-		$feedParams = 'events/node/'.$id.'.json';
+		$feedParams = '/node/'.$id.'.json';
 		$feedURL    = UICALENDAR_FEED_URL.$feedParams;
-
+	
 		$eventsDecoded = $this->getJson($feedURL);
-		$event         = $eventsDecoded['event'];
+		$event         = $eventsDecoded;
 		if (isset($event)) {
 			$localistEvent = new UiCalendarEvent();
 			$parsedEvent   = $localistEvent->parseEvent($event);
@@ -835,7 +840,7 @@ class UiCalendar_Controller extends Page_Controller {
 
 		}
 		//echo "hello";
-		$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
+		//$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
 		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 
 	}
