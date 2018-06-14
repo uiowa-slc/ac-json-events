@@ -474,7 +474,7 @@ class UiCalendar extends Page {
 	public function getTodayEvents() {
 		$start = sfDate::getInstance();
 
-		$events = $this->EventList(200, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		$events = $this->EventList('year', $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
 		return $events;
 	}
 
@@ -491,7 +491,7 @@ class UiCalendar extends Page {
 		$startDate = $start->format('Y-m-d');
 		$endDate   = $end->format('Y-m-d');
 
-		$events = $this->EventList(200, $startDate, $endDate);
+		$events = $this->EventList('year', $startDate, $endDate);
 		return $events;
 	}
 
@@ -499,7 +499,7 @@ class UiCalendar extends Page {
 		$startDate = sfDate::getInstance()->firstDayOfMonth()->format('Y-m-d');
 		$endDate   = sfDate::getInstance($this->startDate)->finalDayOfMonth()->format('Y-m-d');
 
-		$events = $this->EventList(200, $startDate, $endDate);
+		$events = $this->EventList('year', $startDate, $endDate);
 		return $events;
 	}
 
@@ -566,11 +566,11 @@ class UiCalendar extends Page {
 
 		if (isset($startDate)) {
 			$startDateSS->setValue($startDate);
-			$feedParams .= '&filters[startdate][value][date]='.$startDateSS->format('Y-m-d');
+			$feedParams .= '&filters[startdate][value][date]='.$startDateSS->format('m-d-Y');
 		}
 		if (isset($endDate)) {
 			$endDateSS->setValue($endDate);
-			$feedParams .= '&filters[enddate][value][date]='.$endDateSS->format('Y-m-d');
+			$feedParams .= '&filters[enddate][value][date]='.$endDateSS->format('m-d-Y');
 		}
 
 		if (isset($venue)) {
@@ -600,15 +600,15 @@ class UiCalendar extends Page {
 		if (isset($venueFilterID)) {
 			$feedParams .= '&filters[venue]='.$venueFilterID;
 		}
-		// if (isset($searchTerm)) {
-		// 	$feedParams .= '&search='.$searchTerm;
-		// }
+		if (isset($searchTerm)) {
+			$feedParams .= '&filters[keywords]='.$searchTerm;
+		}
 		if (isset($perPage)) {
 			$feedParams .= '&items_per_page='.$perPage;
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-		//print_r($feedURL.'<br />');
+	print_r($feedURL.'<br />');
 		//$feedURL = urlencode($feedURL);
 		
 
@@ -644,7 +644,7 @@ class UiCalendar extends Page {
 	}
 	public function EventListByDate($date) {
 		$start  = sfDate::getInstance($date);
-		$events = $this->EventList(200, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		$events = $this->EventList(null, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
 		return $events;
 	}
 	/**
@@ -656,7 +656,7 @@ class UiCalendar extends Page {
 	public function EventListByTag($tag) {
 		$tagFiltered = urlencode($tag);
 		$events      = $this->EventList(
-			$days = '200',
+			$days = 'year',
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
@@ -701,7 +701,7 @@ class UiCalendar extends Page {
 		$termFiltered = urlencode($term);
 
 		$events = $this->EventList(
-			$days = '200',
+			$days = null,
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
@@ -872,7 +872,13 @@ class UiCalendar_Controller extends Page_Controller {
 				$startDate->setValue(addslashes($this->urlParams['startDate']));
 
 				$endDate = new SS_Datetime();
-				$endDate->setValue(addslashes($this->urlParams['endDate']));
+
+				if(isset($this->urlParams['endDate'])){
+					$endDate->setValue(addslashes($this->urlParams['endDate']));
+				}elseif(isset($this->urlParams['startDate'])){
+					$endDate = $startDate;
+				}
+				
 				$filterHeader = $startDate->format('l, F j');
 
 				if ($endDate->getValue()) {
@@ -884,7 +890,7 @@ class UiCalendar_Controller extends Page_Controller {
 		}
 
 		$Data = array(
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
@@ -898,7 +904,7 @@ class UiCalendar_Controller extends Page_Controller {
 	 */
 	public function tag($request) {
 		$tagName      = addslashes($this->urlParams['tag']);
-		$events       = $this->EventList(200, null, null, null, $tagName);
+		$events       = $this->EventList('year', null, null, null, $tagName);
 		$filterHeader = 'Events tagged as "'.$tagName.'":';
 
 		$Data = array(
@@ -916,7 +922,7 @@ class UiCalendar_Controller extends Page_Controller {
 		//echo "type: <br />";
 		//print_r($type->ID);
 		//echo "<br />";
-		$events = $this->EventList(200, null, null, null, null, $type->ID);
+		$events = $this->EventList('year', null, null, null, null, $type->ID);
 
 		$filterHeader = 'Events categorized as "'.$type->Title.'":';
 
@@ -934,7 +940,7 @@ class UiCalendar_Controller extends Page_Controller {
 		$venue   = $this->getVenueByID($venueID);
 
 		if (isset($venue)) {
-			$events = $this->EventList(200, null, null, $venue->ID);
+			$events = $this->EventList('year', null, null, $venue->ID);
 
 			$filterHeader = 'Events listed at '.$venue->Title.':';
 
@@ -954,7 +960,7 @@ class UiCalendar_Controller extends Page_Controller {
 	public function search($request) {
 		$term = $request->getVar('term');
 		//print_r('term: '.$term);
-		$events = $this->EventList('200', null, null, null, null, null, 'true', false, $term);
+		$events = $this->EventList('year', null, null, null, null, null, 'true', false, $term);
 
 		$data = array(
 			"Results" => $events,
@@ -1007,7 +1013,7 @@ class UiCalendar_Controller extends Page_Controller {
 			//else get all events
 		} else {
 
-			$events = $this->EventList(200, null, null, null, null, null, 'false');
+			$events = $this->EventList('year', null, null, null, null, null, 'false');
 		}
 		//Determine which feed we're going to output
 		switch ($feedType) {
@@ -1042,7 +1048,7 @@ class UiCalendar_Controller extends Page_Controller {
 	}
 	public function generateJsonFeed($events) {
 		if (!isset($events)) {
-			$events = $this->EventList(200, null, null, null, null, null, 'false');
+			$events = $this->EventList('year', null, null, null, null, null, 'false');
 		}
 		$data = array();
 		foreach ($events as $eventNum => $event) {
