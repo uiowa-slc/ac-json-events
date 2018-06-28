@@ -842,7 +842,7 @@ class UiCalendar_Controller extends Page_Controller {
 		//echo "hello";
 		//$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
 		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
-
+		return $this->httpError( 404);
 	}
 
 	/**
