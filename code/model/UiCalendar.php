@@ -608,7 +608,7 @@ class UiCalendar extends Page {
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-	print_r($feedURL.'<br />');
+	//print_r($feedURL.'<br />');
 		//$feedURL = urlencode($feedURL);
 		
 
