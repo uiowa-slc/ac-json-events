@@ -17,9 +17,9 @@ class UiCalendarVenue extends DataObject {
 			$venueDecoded = $venueDecoded['place'];
 			$this->ID = $venueDecoded['id'];
 			$this->Title = $venueDecoded['name'];
-			$this->Content = $venueDecoded['description_text'];
-			$this->ImageURL = $venueDecoded['photo_url'];
-			$this->UiCalendarLink = $venueDecoded['localist_url'];
+			// $this->Content = $venueDecoded['description_text'];
+			//$this->ImageURL = $venueDecoded['photo_url'];
+			// $this->UiCalendarLink = $venueDecoded['localist_url'];
 			$this->WebsiteLink = $venueDecoded['url'];
 			$this->Latitude = $venueDecoded['geo']['latitude'];
 			$this->Longitude = $venueDecoded['geo']['longitude'];
