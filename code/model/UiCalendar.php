@@ -327,7 +327,6 @@ class UiCalendar extends Page {
 
 		if (isset($venuesArray)) {
 			foreach ($venuesArray['places'] as $venue) {
-
 				$UiVenue = new UiCalendarVenue();
 				$UiVenue  = $UiVenue->parseVenue($venue);
 				$venuesList->push($UiVenue);
@@ -458,7 +457,7 @@ class UiCalendar extends Page {
 		return false;
 	}
 	public function getVenueByID($id) {
-		$venues = $this->ActiveVenueList();
+		$venues = $this->VenuesList();
 
 		foreach ($venues as $venue) {
 			if (isset($venue)) {
