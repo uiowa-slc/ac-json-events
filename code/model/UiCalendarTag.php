@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\ORM\DataObject;
 class UiCalendarTag extends DataObject {
 
 	private static $db = array(

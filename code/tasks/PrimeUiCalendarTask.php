@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\BuildTask;
+
 class PrimeUiCalendarTask extends BuildTask{
 
 	protected $title = 'Prime UiCalendar Cache';

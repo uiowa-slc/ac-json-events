@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Core\Config\Config;
+
+
 class UiCalendarEvent extends Page {
     /**
      * @config
@@ -46,11 +51,11 @@ class UiCalendarEvent extends Page {
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
-		$firstDateTime = new SS_Datetime();
+		$firstDateTime = new DBDatetime();
 		$firstDateTimeObj = $this->Dates->First();
 
 		if (isset($firstDateTimeObj->StartDateTime)) {
-			$firstDateTime->setValue($firstDateTimeObj->StartDateTime->getValue());
+			$firstDateTime->setValue($firstDateTimeObj->obj('StartDateTime')->getValue());
 
 			$this->FirstStartDateTime = $firstDateTime;
 		}
@@ -109,28 +114,28 @@ class UiCalendarEvent extends Page {
 			//$allDayBoolean = new Boolean();
 
 			if($eventInstances[$i]['event_instance']['all_day'] == 1){
-
 				$dateTime->AllDay = 1;
 			}else{
 				$dateTime->AllDay = 0;
 			}
 
-			$dateTime->StartDateTime = new SS_Datetime();
-			$dateTime->EndDateTime = new SS_Datetime();
+			// $dateTime->StartDateTime = new DBDatetime();
+			// $dateTime->EndDateTime = new DBDatetime();
 
-			$dateTime->StartDateTime->setValue($eventInstances[$i]['event_instance']['start']);
+			$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['start']);
 			//print_r('end date: '.$dateTime->EndDateTime);
 			if (isset($eventInstances[$i]['event_instance']['end'])) {
-				$dateTime->EndDateTime->setValue($eventInstances[$i]['event_instance']['end']);
+				$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['end']);
 			}
-
-			if ((!$dateTime->StartDateTime->InPast()) || $dateTime->StartDateTime->IsToday()) {
+			//print_r($dateTime->StartDateTime);
+			
+			if ((!$dateTime->obj('StartDateTime')->InPast()) || $dateTime->obj('StartDateTime')->IsToday()) {
 				$eventInstancesArray->push($dateTime);
 			}
 
-			//Debug::show($dateTime);
+			
 		}
-		//print_r($eventInstancesArray);
+		
 		return $eventInstancesArray;
 	}
 
@@ -221,7 +226,7 @@ class UiCalendarEvent extends Page {
 	 * Generate a link to the event using the event's URL segment
 	 * @return string
 	 */
-	public function Link() {
+	public function Link($action = null) {
 		$calendar = UiCalendar::get()->First();
 		$niceLinks = Config::inst()->get('UiCalendarEvent', 'use_nice_links');
 		if($niceLinks){
@@ -303,7 +308,7 @@ class UiCalendarEvent extends Page {
 
 }
 
-class UiCalendarEvent_Controller extends Page_Controller {
+class UiCalendarEvent_Controller extends PageController {
 
 
 }

@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Core\Convert;
+use SilverStripe\View\Requirements;
+use SilverStripe\View\ViewableData;
+
 class UiCalendarWidget extends ViewableData {
 
 	protected $calendar;

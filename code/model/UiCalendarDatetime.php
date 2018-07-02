@@ -1,45 +1,59 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
+
 class UiCalendarDatetime extends DataObject {
 
-	private static $db = array(
-		'StartDateTime' => 'SS_Datetime',
-		'EndDateTime' => 'SS_Datetime',
+
+	private $db = [
+		'StartDateTime' => 'DBDatetime',
+		'EndDateTime' => 'DBDatetime',
 		'AllDay' => 'Boolean'
-	);
+	];
 
-	public function getStartDate() {
-		return $this->StartDateTime;
+	// public function getStartDateTime() {
+	// 	return $this->obj('StartDateTime');
+	// }
+
+	// public function getStartTime(){
+	// 	$time = $this->obj('StartDateTime');
+	// 	return $time;
+	// }
+
+	public function setStartDateTime($startDateTime){
+		$obj = new DBDatetime();
+		$obj->setValue($startDateTime);
+		$this->StartDateTime = $obj;
 	}
-
-	public function getStartTime(){
-		$time = $this->StartDateTime;
-		return $time;
+	public function setEndDateTime($endDateTime){
+		$obj = new DBDatetime();
+		$obj->setValue($endDateTime);
+		$this->EndDateTime = $obj;
 	}
+	// public function getEndTime() {
+	// 	if (!empty($this->EndDateTime)) {
+	// 		$endDate = $this->EndDateTime->Date();
+	// 		$startDate = $this->StartDateTime->Date();
 
-	public function getEndTime() {
-		if (!empty($this->EndDateTime)) {
-			$endDate = $this->EndDateTime->Date();
-			$startDate = $this->StartDateTime->Date();
+	// 		if ($endDate == $startDate) {
+	// 			///print_r($this->EndDateTime);
+	// 			return $this->EndDateTime;
+	// 		}
+	// 	}
+	// }
 
-			if ($endDate == $startDate) {
-				///print_r($this->EndDateTime);
-				return $this->EndDateTime;
-			}
-		}
-	}
+	// public function getEndDate() {
+	// 	//print_r($this->getField('EndDateTime')->getValue());
+	// 	$endDate = $this->getField('EndDateTime')->Date();
+	// 	$startDate = $this->StartDateTime->Date();
 
-	public function getEndDate() {
-		//print_r($this->getField('EndDateTime')->getValue());
-		$endDate = $this->getField('EndDateTime')->Date();
-		$startDate = $this->StartDateTime->Date();
-
-		if ($endDate == $startDate) {
-			return false;
-		} else {
-			return $this->getField('EndDateTime');
-		}
-	}
+	// 	if ($endDate == $startDate) {
+	// 		return false;
+	// 	} else {
+	// 		return $this->getField('EndDateTime');
+	// 	}
+	// }
 
 	/* Link function might change to an internal link eventually, currently links to the
 	localist caliendar filter */

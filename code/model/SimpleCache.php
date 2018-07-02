@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\Control\Director;
 /*
  * SimpleCache v1.3.0
  *

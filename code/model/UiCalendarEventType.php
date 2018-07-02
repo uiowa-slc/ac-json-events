@@ -1,4 +1,7 @@
 <?php
+
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
 class UiCalendarEventType extends DataObject {
 
 	private static $db = array(

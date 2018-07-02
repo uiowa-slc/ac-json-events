@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Forms\DropdownField;
+
 class AfterClassEventPickerField extends DropdownField {
 	private $feedBase = 'http://afterclass.uiowa.edu/events/';
 	//private $feedBase = 'http://baltar.imu.uiowa.edu:8888/after-class';

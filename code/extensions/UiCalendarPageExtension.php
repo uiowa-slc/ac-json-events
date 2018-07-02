@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\ORM\DataExtension;
+
 class UiCalendarPageExtension extends DataExtension {
 
 	public function UiCalendar() {

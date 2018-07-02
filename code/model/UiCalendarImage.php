@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\ORM\DataObject;
 class UiCalendarImage extends DataObject {
 
 	private static $db = array("Caption" => "Text", "URL" => "Text", "Credit" => "Text", );

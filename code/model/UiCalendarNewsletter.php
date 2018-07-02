@@ -1,4 +1,10 @@
 <?php
+
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
 class UiCalendarNewsletter extends Page {
 
 	private static $db = array(
@@ -168,7 +174,7 @@ class UiCalendarNewsletter extends Page {
 	
 
 }
-class UiCalendarNewsletter_Controller extends Page_Controller {
+class UiCalendarNewsletter_Controller extends PageController {
 
 	public function FeaturedEvent(){
 		$calendar = UiCalendar::getOrCreate();
