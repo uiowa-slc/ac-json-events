@@ -2,14 +2,16 @@
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\ORM\FieldType\DBBoolean;
+
 
 class UiCalendarDatetime extends DataObject {
 
 
 	private $db = [
-		'StartDateTime' => 'DBDatetime',
-		'EndDateTime' => 'DBDatetime',
-		'AllDay' => 'Boolean'
+		'StartDateTime' => DBDatetime::class,
+		'EndDateTime' => DBDatetime::class,
+		'AllDay' => DBBoolean::class
 	];
 
 	// public function getStartDateTime() {

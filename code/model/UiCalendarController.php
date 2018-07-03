@@ -2,6 +2,8 @@
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBVarchar;
+use SilverStripe\Core\Convert;
+
 class UiCalendarController extends PageController {
 
 	/**
