@@ -36,9 +36,12 @@ class UiCalendarVenue extends DataObject {
 		$eventsAtPlaceList = new ArrayList();
 
 		foreach($events as $event) {
-			if($event->Venue->Title == $this->Title){
-				$eventsAtPlaceList->push($event);
+			if($event->Venue){
+				if($event->Venue->Title == $this->Title){
+					$eventsAtPlaceList->push($event);
+				}				
 			}
+
 		}		
 
 		return $eventsAtPlaceList;   

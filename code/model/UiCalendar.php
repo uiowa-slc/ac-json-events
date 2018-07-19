@@ -306,7 +306,7 @@ class UiCalendar extends Page {
 
 		foreach ($activeEvents as $key => $parsedEvent) {
 
-			if ($parsedEvent->Venue->ID != 0) {
+			if ($parsedEvent->Venue) {
 				$venuesList->push($parsedEvent->Venue);
 			}
 		}
