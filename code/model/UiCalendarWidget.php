@@ -41,12 +41,7 @@ class UiCalendarWidget extends ViewableData {
 	}
 
 	public function forTemplate() {
-		Requirements::javascript("resources/vendor/md/ac-json-events/js/jquery-1.2.6.min.js");
-		Requirements::javascript("resources/vendor/md/ac-json-events/js/calendar_widget.js");
-		$locale_file = _t('Calendar.DATEJSFILE', 'calendar_en.js');
-		Requirements::javascript("resources/vendor/md/ac-json-events/js/lang/{$locale_file}");
-		Requirements::javascript("resources/vendor/md/ac-json-events/js/calendar_widget_init.js");
-		Requirements::css("resources/vendor/md/ac-json-events/css/calendar_widget.css");
+
 		return '<div class="calendar-widget" '.$this->getDataAttributes().'></div>';
 	}
 }
