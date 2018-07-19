@@ -23,7 +23,7 @@ class UiCalendarVenue extends DataObject {
 			$this->WebsiteLink = $venueDecoded['url'];
 			$this->Latitude = $venueDecoded['geo']['latitude'];
 			$this->Longitude = $venueDecoded['geo']['longitude'];
-			$this->Address = $venueDecoded['address'];
+			$this->Address = $venueDecoded['geo']['street'].', '.$venueDecoded['geo']['city'].', '.$venueDecoded['geo']['state'].' '.$venueDecoded['geo']['zip'];
 
 			return $this;
 		}
