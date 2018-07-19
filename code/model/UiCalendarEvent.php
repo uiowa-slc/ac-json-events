@@ -64,7 +64,7 @@ class UiCalendarEvent extends Page {
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
 		$this->UiCalendarLink = $rawEvent['events_site_url'];
-		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->URLSegment;
+		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->ID;
 		$this->MoreInfoLink = $rawEvent['url'];
 		//$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['contact_name']) ? $rawEvent['contact_name'] : '');
