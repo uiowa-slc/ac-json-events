@@ -9,8 +9,8 @@
         },
 	    "extra": {
 	        "expose": [
-	          "js/",
-                  "css/"
+	          "js",
+                  "css"
 	        ]
 
 	    }
