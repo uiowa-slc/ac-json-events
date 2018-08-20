@@ -29,7 +29,7 @@ class UiCalendarEvent extends Page {
 				$image->URL = $this->Venue->ImageURL;
 
 			} else {
-				$image->URL = $themeDir . '/images/UiCalendarEventPlaceholder.jpg';
+				$image->URL = null;
 
 			}
 		}
