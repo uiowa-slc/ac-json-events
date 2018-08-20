@@ -537,7 +537,7 @@
 </table>
 <!-- start featured -->
 <% with $FeaturedEvent %>
-	<% include LocalistNewsletterFeatured %>
+	<% include UiCalendarNewsletterFeatured %>
 <% end_with %>
 <!-- end featured -->
 
@@ -545,45 +545,45 @@
 <% loop $Categories %>
 	<% if $CatTitle %>
 		<% with $CatTitle %>
-			<% include LocalistNewsletterHeading %>
+			<% include UiCalendarNewsletterHeading %>
 		<% end_with %>
 	<% end_if %>
-	<% include LocalistNewsletterCatRowStart %>
+	<% include UiCalendarNewsletterCatRowStart %>
 		<% if $Event1 %>
 			<% with $Event1 %>
-				<% include LocalistNewsletterEvent %>
+				<% include UiCalendarNewsletterEvent %>
 			<% end_with %>
 		<% end_if %>
 		<% if $Event2 %>
 			<% with $Event2 %>
-				<% include LocalistNewsletterEvent %>
+				<% include UiCalendarNewsletterEvent %>
 			<% end_with %>
 		<% end_if %>
-	<% include LocalistNewsletterCatRowEnd %>
+	<% include UiCalendarNewsletterCatRowEnd %>
 <% end_loop %>
 <!-- end Categories -->
 
 <!-- Start Nonfeatured Events -->
 <% if $MoreEventsTitle %>
 	<% with $MoreEventsTitle %>
-		<% include LocalistNewsletterHeading %>
+		<% include UiCalendarNewsletterHeading %>
 	<% end_with %>
 <% end_if %>
 
 <% if $NonFeaturedRows %>
 	<% loop $NonFeaturedRows %>
-		<% include LocalistNewsletterNonFeaturedRowStart %>
+		<% include UiCalendarNewsletterNonFeaturedRowStart %>
 			<% if $Event1 %>
 		    	<% with $Event1 %>
-					<% include LocalistNewsletterNonFeaturedEvent %>
+					<% include UiCalendarNewsletterNonFeaturedEvent %>
 				<% end_with %>
 			<% end_if %>
 		 	<% if $Event2 %>
 		    	<% with $Event2 %>
-					<% include LocalistNewsletterNonFeaturedEvent %>
+					<% include UiCalendarNewsletterNonFeaturedEvent %>
 				<% end_with %>
 			<% end_if %>        
-		<% include LocalistNewsletterNonFeaturedRowEnd %>
+		<% include UiCalendarNewsletterNonFeaturedRowEnd %>
 	<% end_loop %>
 <% end_if %>
 
