@@ -476,7 +476,7 @@ class UiCalendar extends Page {
 	public function getTodayEvents() {
 		$start = sfDate::getInstance();
 
-		$events = $this->EventList('year', $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		$events = $this->EventList(null, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
 		return $events;
 	}
 
@@ -493,7 +493,7 @@ class UiCalendar extends Page {
 		$startDate = $start->format('Y-m-d');
 		$endDate   = $end->format('Y-m-d');
 
-		$events = $this->EventList('year', $startDate, $endDate);
+		$events = $this->EventList(null, $startDate, $endDate);
 		return $events;
 	}
 
@@ -501,7 +501,7 @@ class UiCalendar extends Page {
 		$startDate = sfDate::getInstance()->firstDayOfMonth()->format('Y-m-d');
 		$endDate   = sfDate::getInstance($this->startDate)->finalDayOfMonth()->format('Y-m-d');
 
-		$events = $this->EventList('year', $startDate, $endDate);
+		$events = $this->EventList(null, $startDate, $endDate);
 		return $events;
 	}
 
@@ -520,7 +520,7 @@ class UiCalendar extends Page {
 	 */
 
 	public function EventList(
-		$days = 'threemonths',
+		$days = null,
 		$startDate = null,
 		$endDate = null,
 		$venue = null,
