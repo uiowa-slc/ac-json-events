@@ -520,7 +520,7 @@ class UiCalendar extends Page {
 	 */
 
 	public function EventList(
-		$days = null,
+		$days = 'threemonths',
 		$startDate = null,
 		$endDate = null,
 		$venue = null,
@@ -556,7 +556,7 @@ class UiCalendar extends Page {
 		// 	$feedParams = '/search';
 		// }
 
-		if(isset($days)){
+		if(isset($days) && !(isset($startDate) || isset($endDate))){
 			$feedParams .= '/views/events_api.json?display_id='.$days;
 		}else{
 			$feedParams .= '/views/events_api.json?display_id=events';
