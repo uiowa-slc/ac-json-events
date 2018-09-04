@@ -311,9 +311,12 @@ class UiCalendar extends Page {
 			}
 		}
 
-		$venuesList->removeDuplicates();
 
-		return $venuesList;
+
+		$venuesList->removeDuplicates('Title');
+
+		//print_r($venuesList);
+		return $venuesList->sort('Title ASC');
 	}
 
 	public function VenuesList() {
@@ -607,7 +610,7 @@ class UiCalendar extends Page {
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-	// print_r($feedURL.'<br />');
+	//print_r($feedURL.'<br />');
 		//$feedURL = urlencode($feedURL);
 		
 
@@ -908,7 +911,7 @@ class UiCalendar_Controller extends Page_Controller {
 
 		$Data = array(
 			'Title'        => $tagName.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -927,7 +930,7 @@ class UiCalendar_Controller extends Page_Controller {
 
 		$Data = array(
 			'Title'        => $type->Title.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -946,7 +949,7 @@ class UiCalendar_Controller extends Page_Controller {
 			$Data = array(
 				'Title'        => $venue->Title.' | '.$this->Title,
 				'Venue'        => $venue,
-				'EventList'    => $events,
+				'FilterEventList'    => $events,
 				'FilterHeader' => $filterHeader,
 			);
 
