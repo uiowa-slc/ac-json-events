@@ -48,24 +48,26 @@ class UiCalendarVenue extends DataObject {
 	}
 
 	/**
-	 * Returns a link to the venue.
+	 * Returns a link to the venue. NOTE: We're just going to link to maps.uiowa.edu until venue ID is sent through the events feed properly. 
 	 * @return type
 	 */
-	public function Link(){
-		if($this->ID != 0) {
-			$calendar = UiCalendar::getOrCreate();
+	// public function Link(){
 
-			if($calendar->IsInDB()){
-				$link = $calendar->Link().'venue/'.$this->ID;
-			}else{
-				$link = $this->UiCalendarLink;
-			}
+	// 	if($this->ID != 0) {
+	// 		$calendar = UiCalendar::getOrCreate();
+
+	// 		if($calendar->IsInDB()){
+	// 			$link = $calendar->Link().'venue/'.$this->ID;
+	// 		}else{
+	// 			$link = $this->UiCalendarLink;
+	// 		}
 			
-			return $link;
-		}else{
-			return false;
-		}
-	}
+	// 		return $link;
+	// 	}else{
+
+	// 		return false;
+	// 	}
+	// }
 
 	/**
 	 * Returns a formatted link for directions.
