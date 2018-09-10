@@ -34,6 +34,7 @@ class UiCalendarEventType extends DataObject {
 	}
 
 	public function Link(){
+		print_r($this);
 		$calendar = UiCalendar::getOrCreate();
 		if($calendar->IsInDB()){
 			return $calendar->Link().'type/'.$this->ID;
