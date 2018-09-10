@@ -191,11 +191,17 @@ class UiCalendarEvent extends Page {
 				$venue = new UiCalendarVenue();
 
 				//Temporararily use the title as a unique ID until we get venue ID from event list:
-				$venue->ID = SiteTree::generateURLSegment($rawEvent['location_name']);
-				//Temporarily replacing link function with a simple venue_url until we get venue ID from the event list.
-				if(isset($rawEvent['venue_url'])){
-					$venue->Link = $rawEvent['venue_url'];
+
+				if(isset($rawEvent['location_id'])){
+					$venue->ID = $rawEvent['location_id'];
+				}else{
+					$venue->ID = SiteTree::generateURLSegment($rawEvent['location_name']);
 				}
+				
+				//Temporarily replacing link function with a simple venue_url until we get venue ID from the event list.
+				// if(isset($rawEvent['venue_url'])){
+				// 	$venue->Link = $rawEvent['venue_url'];
+				// }
 				$venue->Title = $rawEvent['location_name'];
 				$venue->Latitude = $rawEvent['geo']['latitude'];
 				$venue->Longitude = $rawEvent['geo']['longitude'];
