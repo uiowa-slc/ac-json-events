@@ -6,6 +6,7 @@ use SilverStripe\Core\Convert;
 
 class UiCalendarController extends PageController {
 
+
 	/**
 	 * An array of actions that can be accessed via a request. Each array element should be an action name, and the
 	 * permissions or conditions required to allow the user to access it.
@@ -72,13 +73,11 @@ class UiCalendarController extends PageController {
 	 * @return Controller
 	 */
 	public function event($request) {
-
 		$eventID = addslashes($this->urlParams['eventID']);
 
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
-
 			if($this->isInDB() && $event){
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));	
 			}
@@ -98,9 +97,9 @@ class UiCalendarController extends PageController {
 
 		}
 		//echo "hello";
-		// return $this->Redirect(UICALENDAR_PUBBASE.$eventID);
+		//$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
+		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 		return $this->httpError( 404);
-
 	}
 
 	/**
@@ -167,7 +166,7 @@ class UiCalendarController extends PageController {
 
 		$Data = array(
 			'Title'        => $tagName.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -186,7 +185,7 @@ class UiCalendarController extends PageController {
 
 		$Data = array(
 			'Title'        => $type->Title.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -205,7 +204,7 @@ class UiCalendarController extends PageController {
 			$Data = array(
 				'Title'        => $venue->Title.' | '.$this->Title,
 				'Venue'        => $venue,
-				'EventList'    => $events,
+				'FilterEventList'    => $events,
 				'FilterHeader' => $filterHeader,
 			);
 

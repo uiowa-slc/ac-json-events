@@ -3,7 +3,7 @@
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Core\Config\Config;
-
+use SilverStripe\CMS\Model\SiteTree;
 
 class UiCalendarEvent extends Page {
     /**
@@ -34,7 +34,7 @@ class UiCalendarEvent extends Page {
 				$image->URL = $this->Venue->ImageURL;
 
 			} else {
-				$image->URL = $themeDir . '/images/UiCalendarEventPlaceholder.jpg';
+				$image->URL = null;
 
 			}
 		}
@@ -69,7 +69,7 @@ class UiCalendarEvent extends Page {
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Image = $image;
 		$this->UiCalendarLink = $rawEvent['events_site_url'];
-		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->URLSegment;
+		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->ID;
 		$this->MoreInfoLink = $rawEvent['url'];
 		//$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['contact_name']) ? $rawEvent['contact_name'] : '');
@@ -190,10 +190,23 @@ class UiCalendarEvent extends Page {
 			$id = $rawEvent['venue_id'];
 			return $this->getVenueFromID($id);
 		} else {
-			// print_r($rawEvent);
+	
 			
 			if(isset($rawEvent['location_name'])){
 				$venue = new UiCalendarVenue();
+
+				//Temporararily use the title as a unique ID until we get venue ID from event list:
+
+				if(isset($rawEvent['location_id'])){
+					$venue->ID = $rawEvent['location_id'];
+				}else{
+					$venue->ID = SiteTree::generateURLSegment($rawEvent['location_name']);
+				}
+				
+				//Temporarily replacing link function with a simple venue_url until we get venue ID from the event list.
+				// if(isset($rawEvent['venue_url'])){
+				// 	$venue->Link = $rawEvent['venue_url'];
+				// }
 				$venue->Title = $rawEvent['location_name'];
 				$venue->Latitude = $rawEvent['geo']['latitude'];
 				$venue->Longitude = $rawEvent['geo']['longitude'];

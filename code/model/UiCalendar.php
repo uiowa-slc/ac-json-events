@@ -11,6 +11,7 @@ class UiCalendar extends Page {
 		'DepartmentFilterID'      => 'Int',
 		'VenueFilterID'           => 'Int',
 		'GeneralInterestFilterID' => 'Int',
+		'KeywordFilterID'		  => 'Int',
 
 		'SearchTerm' => 'Varchar',
 
@@ -42,6 +43,8 @@ class UiCalendar extends Page {
 		$genInterests      = $this->GeneralInterestList();
 		$genInterestsArray = $genInterests->map();
 
+		$keywords = $this->KeywordList();
+		$keywordsArray = $keywords->map();
 		//print_r($genInterestsArray);
 
 		$typeListBoxField = new DropdownField('EventTypeFilterID', 'Filter the calendar by this UiCalendar event type:', $typesArray);
@@ -55,11 +58,14 @@ class UiCalendar extends Page {
 
 		$genInterestDropDownField = new DropdownField('GeneralInterestFilterID', 'Filter the calendar by this UiCalendar General Interest', $genInterestsArray);
 		$genInterestDropDownField->setEmptyString('(No Filter)');
-
+		$keywordDropDownField = new DropdownField('KeywordFilterID', 'Filter the calendar by this UiCalendar Keyword', $keywordsArray);
+		$keywordDropDownField->setEmptyString('(No Filter)');
 		$fields->addFieldToTab('Root.Main', $typeListBoxField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $departmentDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $venueDropDownField, 'Content');
 		$fields->addFieldToTab(' Root.Main', $genInterestDropDownField, 'Content');
+
+		$fields->addFieldToTab(' Root.Main', $keywordDropDownField, 'Content');
 		
 		$fields->removeByName('Metadata');
 
@@ -311,31 +317,33 @@ class UiCalendar extends Page {
 
 		foreach ($activeEvents as $key => $parsedEvent) {
 
-			if ($parsedEvent->Venue->ID != 0) {
+			if ($parsedEvent->Venue) {
 				$venuesList->push($parsedEvent->Venue);
 			}
 		}
 
-		$venuesList->removeDuplicates();
 
-		return $venuesList;
+
+		$venuesList->removeDuplicates('Title');
+
+		//print_r($venuesList);
+		return $venuesList->sort('Title ASC');
 	}
 
 	public function VenuesList() {
-		$resourceName = "places";
-		$feedURL      = UICALENDAR_FEED_URL.$resourceName;
+		$feedURL      = UICALENDAR_FEED_URL.'/views/places_api.json?display_id=places';
 		$venuesList   = new ArrayList();
-
-		//$venuesDecoded = $this->getJson($feedURL);
-		$venuesDecoded = $this->requestAllPages($feedURL, $resourceName);
-		$venuesArray   = $venuesDecoded[$resourceName];
+		// print_r($feedURL);
+		$venuesDecoded = $this->getJson($feedURL);
+		//$venuesDecoded = $this->requestAllPages($feedURL, $resourceName);
+		$venuesArray   = $venuesDecoded;
 		//print_r($venuesArray);
 
 		if (isset($venuesArray)) {
-			foreach ($venuesArray as $venue) {
-				$localistVenues = new UiCalendarVenue();
-				$localistVenue  = $localistVenues->parseVenue($venue);
-				$venuesList->push($localistVenue);
+			foreach ($venuesArray['places'] as $venue) {
+				$UiVenue = new UiCalendarVenue();
+				$UiVenue  = $UiVenue->parseVenue($venue);
+				$venuesList->push($UiVenue);
 			}
 		}
 
@@ -421,7 +429,34 @@ class UiCalendar extends Page {
 		return $genInterestsList;
 
 	}
+	public function KeywordList() {
 
+		$cache   = new SimpleCache();
+		$feedURL      = UICALENDAR_FEED_URL.'/views/filters_api.json?display_id=keywords';
+
+		$keywordList = new ArrayList();
+
+		$rawFeed             = $cache->get_data($feedURL, $feedURL);
+		$keywordsDecoded = json_decode($rawFeed, TRUE);
+
+		if (isset($keywordsDecoded['keywords'])) {
+			$keywordsArray = $keywordsDecoded['keywords'];
+		}
+
+		//print_r($keywordsArray);
+		if (isset($keywordsArray)) {
+			foreach ($keywordsArray as $genInterest) {
+				$localistGenInterest = new UiCalendarEventType();
+				$localistGenInterest = $localistGenInterest->parseType($genInterest);
+				$keywordList->push($localistGenInterest);
+			}
+		}
+
+		//print_r($keywordsList);
+
+		return $keywordList;
+
+	}
 	/**
 	 * Finds a specific event type by checking the master TypeList() and matching the ID against
 	 * all types.
@@ -463,7 +498,7 @@ class UiCalendar extends Page {
 		return false;
 	}
 	public function getVenueByID($id) {
-		$venues = $this->ActiveVenueList();
+		$venues = $this->VenuesList();
 
 		foreach ($venues as $venue) {
 			if (isset($venue)) {
@@ -479,7 +514,7 @@ class UiCalendar extends Page {
 	public function getTodayEvents() {
 		$start = sfDate::getInstance();
 
-		$events = $this->EventList('year', $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		$events = $this->EventList(null, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
 		return $events;
 	}
 
@@ -496,7 +531,7 @@ class UiCalendar extends Page {
 		$startDate = $start->format('Y-m-d');
 		$endDate   = $end->format('Y-m-d');
 
-		$events = $this->EventList('year', $startDate, $endDate);
+		$events = $this->EventList(null, $startDate, $endDate);
 		return $events;
 	}
 
@@ -504,7 +539,7 @@ class UiCalendar extends Page {
 		$startDate = sfDate::getInstance()->firstDayOfMonth()->format('Y-m-d');
 		$endDate   = sfDate::getInstance($this->startDate)->finalDayOfMonth()->format('Y-m-d');
 
-		$events = $this->EventList('year', $startDate, $endDate);
+		$events = $this->EventList(null, $startDate, $endDate);
 		return $events;
 	}
 
@@ -547,9 +582,8 @@ class UiCalendar extends Page {
 			if ($this->GeneralInterestFilterID != 0) {
 				$genInterestFilterID = $this->GeneralInterestFilterID;
 			}
-			if ($this->SearchTerm != '') {
-
-				$searchTerm = $this->SearchTerm;
+			if ($this->KeywordFilterID != 0) {
+				$keywordID = $this->KeywordFilterID;
 			}
 		}
 
@@ -559,7 +593,7 @@ class UiCalendar extends Page {
 		// 	$feedParams = '/search';
 		// }
 
-		if(isset($days)){
+		if(isset($days) && !(isset($startDate) || isset($endDate))){
 			$feedParams .= '/views/events_api.json?display_id='.$days;
 		}else{
 			$feedParams .= '/views/events_api.json?display_id=events';
@@ -582,11 +616,7 @@ class UiCalendar extends Page {
 			$feedParams .= '&filters[place]='.$venue;
 		}
 
-		if (!isset($searchTerm)) {
-			if (isset($keyword)) {
-				$feedParams .= '&filters[keywords]'.$keyword;
-			}
-		}
+
 		if (isset($type)) {
 			$feedParams .= '&filters[types]='.$type;
 		}
@@ -603,17 +633,17 @@ class UiCalendar extends Page {
 		}
 
 		if (isset($venueFilterID)) {
-			$feedParams .= '&filters[venue]='.$venueFilterID;
+			$feedParams .= '&filters[place]='.$venueFilterID;
 		}
-		if (isset($searchTerm)) {
-			$feedParams .= '&filters[keywords]='.$searchTerm;
+		if (isset($keywordID)) {
+			$feedParams .= '&filters[keywords]='.$keywordID;
 		}
 		if (isset($perPage)) {
 			$feedParams .= '&items_per_page='.$perPage;
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-	// print_r($feedURL.'<br />');
+
 		//$feedURL = urlencode($feedURL);
 		
 
@@ -753,3 +783,5 @@ class UiCalendar extends Page {
 	}
 
 }
+
+
