@@ -7,6 +7,7 @@ use SilverStripe\Core\Convert;
 
 class UiCalendar_Controller extends PageController {
 
+
 	/**
 	 * An array of actions that can be accessed via a request. Each array element should be an action name, and the
 	 * permissions or conditions required to allow the user to access it.
@@ -166,7 +167,7 @@ class UiCalendar_Controller extends PageController {
 
 		$Data = array(
 			'Title'        => $tagName.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -185,7 +186,7 @@ class UiCalendar_Controller extends PageController {
 
 		$Data = array(
 			'Title'        => $type->Title.' | '.$this->Title,
-			'EventList'    => $events,
+			'FilterEventList'    => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -204,7 +205,7 @@ class UiCalendar_Controller extends PageController {
 			$Data = array(
 				'Title'        => $venue->Title.' | '.$this->Title,
 				'Venue'        => $venue,
-				'EventList'    => $events,
+				'FilterEventList'    => $events,
 				'FilterHeader' => $filterHeader,
 			);
 
