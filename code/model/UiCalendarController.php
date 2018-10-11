@@ -4,7 +4,8 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Core\Convert;
 
-class UiCalendarController extends PageController {
+
+class UiCalendar_Controller extends PageController {
 
 	/**
 	 * An array of actions that can be accessed via a request. Each array element should be an action name, and the
@@ -72,13 +73,11 @@ class UiCalendarController extends PageController {
 	 * @return Controller
 	 */
 	public function event($request) {
-
 		$eventID = addslashes($this->urlParams['eventID']);
 
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
-
 			if($this->isInDB() && $event){
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));	
 			}
@@ -98,9 +97,9 @@ class UiCalendarController extends PageController {
 
 		}
 		//echo "hello";
-		// return $this->Redirect(UICALENDAR_PUBBASE.$eventID);
+		//$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
+		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
 		return $this->httpError( 404);
-
 	}
 
 	/**

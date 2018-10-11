@@ -311,7 +311,7 @@ class UiCalendar extends Page {
 
 		foreach ($activeEvents as $key => $parsedEvent) {
 
-			if ($parsedEvent->Venue->ID != 0) {
+			if ($parsedEvent->Venue) {
 				$venuesList->push($parsedEvent->Venue);
 			}
 		}
@@ -322,20 +322,19 @@ class UiCalendar extends Page {
 	}
 
 	public function VenuesList() {
-		$resourceName = "places";
-		$feedURL      = UICALENDAR_FEED_URL.$resourceName;
+		$feedURL      = UICALENDAR_FEED_URL.'/views/places_api.json?display_id=places';
 		$venuesList   = new ArrayList();
-
-		//$venuesDecoded = $this->getJson($feedURL);
-		$venuesDecoded = $this->requestAllPages($feedURL, $resourceName);
-		$venuesArray   = $venuesDecoded[$resourceName];
+		// print_r($feedURL);
+		$venuesDecoded = $this->getJson($feedURL);
+		//$venuesDecoded = $this->requestAllPages($feedURL, $resourceName);
+		$venuesArray   = $venuesDecoded;
 		//print_r($venuesArray);
 
 		if (isset($venuesArray)) {
-			foreach ($venuesArray as $venue) {
-				$localistVenues = new UiCalendarVenue();
-				$localistVenue  = $localistVenues->parseVenue($venue);
-				$venuesList->push($localistVenue);
+			foreach ($venuesArray['places'] as $venue) {
+				$UiVenue = new UiCalendarVenue();
+				$UiVenue  = $UiVenue->parseVenue($venue);
+				$venuesList->push($UiVenue);
 			}
 		}
 
@@ -463,7 +462,7 @@ class UiCalendar extends Page {
 		return false;
 	}
 	public function getVenueByID($id) {
-		$venues = $this->ActiveVenueList();
+		$venues = $this->VenuesList();
 
 		foreach ($venues as $venue) {
 			if (isset($venue)) {
@@ -603,7 +602,7 @@ class UiCalendar extends Page {
 		}
 
 		if (isset($venueFilterID)) {
-			$feedParams .= '&filters[venue]='.$venueFilterID;
+			$feedParams .= '&filters[place]='.$venueFilterID;
 		}
 		if (isset($searchTerm)) {
 			$feedParams .= '&filters[keywords]='.$searchTerm;

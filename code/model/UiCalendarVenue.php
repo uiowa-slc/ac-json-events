@@ -20,13 +20,13 @@ class UiCalendarVenue extends DataObject {
 			$venueDecoded = $venueDecoded['place'];
 			$this->ID = $venueDecoded['id'];
 			$this->Title = $venueDecoded['name'];
-			$this->Content = $venueDecoded['description_text'];
-			$this->ImageURL = $venueDecoded['photo_url'];
-			$this->UiCalendarLink = $venueDecoded['localist_url'];
+			// $this->Content = $venueDecoded['description_text'];
+			//$this->ImageURL = $venueDecoded['photo_url'];
+			// $this->UiCalendarLink = $venueDecoded['localist_url'];
 			$this->WebsiteLink = $venueDecoded['url'];
 			$this->Latitude = $venueDecoded['geo']['latitude'];
 			$this->Longitude = $venueDecoded['geo']['longitude'];
-			$this->Address = $venueDecoded['address'];
+			$this->Address = $venueDecoded['geo']['street'].', '.$venueDecoded['geo']['city'].', '.$venueDecoded['geo']['state'].' '.$venueDecoded['geo']['zip'];
 
 			return $this;
 		}
@@ -39,9 +39,12 @@ class UiCalendarVenue extends DataObject {
 		$eventsAtPlaceList = new ArrayList();
 
 		foreach($events as $event) {
-			if($event->Venue->Title == $this->Title){
-				$eventsAtPlaceList->push($event);
+			if($event->Venue){
+				if($event->Venue->Title == $this->Title){
+					$eventsAtPlaceList->push($event);
+				}				
 			}
+
 		}		
 
 		return $eventsAtPlaceList;   
