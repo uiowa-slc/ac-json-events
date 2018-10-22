@@ -123,19 +123,20 @@ class UiCalendarEvent extends Page {
 			// $dateTime->EndDateTime = new DBDatetime();
 
 			$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['start']);
+            //print_r($dateTime);
 			//print_r('end date: '.$dateTime->EndDateTime);
-			if (isset($eventInstances[$i]['event_instance']['end'])) {
-				$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['end']);
-			}
+			// if (isset($eventInstances[$i]['event_instance']['end'])) {
+			// 	$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['end']);
+			// }
 			//print_r($dateTime->StartDateTime);
-			
+
 			if ((!$dateTime->obj('StartDateTime')->InPast()) || $dateTime->obj('StartDateTime')->IsToday()) {
 				$eventInstancesArray->push($dateTime);
 			}
 
-			
+
 		}
-		
+
 		return $eventInstancesArray;
 	}
 
@@ -190,8 +191,8 @@ class UiCalendarEvent extends Page {
 			$id = $rawEvent['venue_id'];
 			return $this->getVenueFromID($id);
 		} else {
-	
-			
+
+
 			if(isset($rawEvent['location_name'])){
 				$venue = new UiCalendarVenue();
 
@@ -202,7 +203,7 @@ class UiCalendarEvent extends Page {
 				}else{
 					$venue->ID = SiteTree::generateURLSegment($rawEvent['location_name']);
 				}
-				
+
 				//Temporarily replacing link function with a simple venue_url until we get venue ID from the event list.
 				// if(isset($rawEvent['venue_url'])){
 				// 	$venue->Link = $rawEvent['venue_url'];
@@ -215,7 +216,7 @@ class UiCalendarEvent extends Page {
 				}
 				return $venue;
 				}
-			
+
 		}
 	}
 
@@ -251,9 +252,9 @@ class UiCalendarEvent extends Page {
 			$link = $calendar->Link() . 'event/' . $urlSeg;
 			return $link;
 		}
-		
+
 		return $this->AfterClassLink;
-		
+
 	}
 
 	/**
