@@ -62,7 +62,7 @@ class UiCalendarDatetime extends DataObject {
 
 	public function Link() {
 		$calendarLink = UiCalendar::getOrCreate()->Link();
-		$datestring = $this->StartDateTime->Format("Y-m-d");
+		$datestring = $this->StartDateTime->Format("Y-MM-dd");
 		return $calendarLink . 'show/' . $datestring;
 	}
 

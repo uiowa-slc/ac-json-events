@@ -3,7 +3,7 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\LabelField;
 use SilverStripe\ORM\ArrayList;
-
+use SilverStripe\Control\Director;
 class UiCalendar extends Page {
 
 	private static $db = array(
@@ -605,11 +605,13 @@ class UiCalendar extends Page {
 
 		if (isset($startDate)) {
 			$startDateSS->setValue($startDate);
-			$feedParams .= '&filters[startdate][value][date]='.$startDateSS->format('m-d-Y');
+			$feedParams .= '&filters[startdate][value][date]='.$startDateSS->format('MM-dd-Y');
+
+
 		}
 		if (isset($endDate)) {
 			$endDateSS->setValue($endDate);
-			$feedParams .= '&filters[enddate][value][date]='.$endDateSS->format('m-d-Y');
+			$feedParams .= '&filters[enddate][value][date]='.$endDateSS->format('MM-dd-Y');
 		}
 
 		if (isset($venue)) {
@@ -643,7 +645,7 @@ class UiCalendar extends Page {
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-
+		// print_r($feedURL);
 		//$feedURL = urlencode($feedURL);
 
 
@@ -781,6 +783,49 @@ class UiCalendar extends Page {
 		}
 		return false;
 	}
+
+    public function urlsToCache() {
+		$calendar = $this;
+		$abs = Director::absoluteURL();
+	    $calendarLink = Director::absoluteURL($calendar->Link());
+
+	    $urls[$calendarLink] = 0;
+	    $urls[$calendarLink.'show/today'] = 0;
+	    $urls[$calendarLink.'show/weekend'] = 0;
+
+		$previousMonth = new DateTime();
+		$previousMonth->modify('first day of last month');
+		$previousMonthString = $previousMonth->format( 'Ym' );
+
+	    $currentMonth = new DateTime();
+	    $currentMonthString = $currentMonth->format('Ym');
+
+	    $nextMonth = new DateTime();
+		$nextMonth->modify( 'first day of next month' );
+		$nextMonthString = $nextMonth->format( 'Ym' );
+
+	  	$urls[$calendarLink.'monthjson/'.$previousMonthString.'/'] = 0;
+	  	$urls[$calendarLink.'monthjson/'.$currentMonthString.'/'] = 0;
+	  	$urls[$calendarLink.'monthjson/'.$nextMonthString.'/'] = 0;
+
+	  	/* Cache all current events from master event list */
+	  	
+	  	$events = $calendar->EventList();
+
+	  	foreach($events as $event){
+	  		$urls[$event->Link()] = 0;
+	  	}
+
+	  	/* Cache all Trending Tags */
+	  	// $trendingTags = $calendar->TrendingTags();
+
+	  	// foreach($trendingTags as $trendingTag){
+	  	// 	$urls[] = $trendingTag->Link();
+	  	// }
+	  	print_r($urls);
+	    return $urls;
+       //return [Director::absoluteURL($this->getOwner()->Link()) => 0];
+    }
 
 }
 

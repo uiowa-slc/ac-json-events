@@ -249,7 +249,7 @@ class UiCalendarEvent extends Page {
 			$urlSeg = $this->ID;
 		}
 		if($calendar){
-			$link = $calendar->Link() . 'event/' . $urlSeg;
+			$link = $calendar->getAbsoluteLiveLink(false) . 'event/' . $urlSeg;
 			return $link;
 		}
 

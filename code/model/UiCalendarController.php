@@ -137,13 +137,13 @@ class UiCalendar_Controller extends PageController {
 					$endDate = $startDate;
 				}
 				
-				$filterHeader = $startDate->format('l, F j');
+				$filterHeader = $startDate->format('eeee, MMMM d');
 
-				if ($endDate->getValue()) {
-					$filterHeader .= ' to '.$endDate->format('l, F j');
+				if ($endDate->getValue() && ($endDate->getValue() != $startDate->getValue())) {
+					$filterHeader .= ' to '.$endDate->format('eeee, MMMM d');
 				}
 
-				$events = $this->EventList(null, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'));
+				$events = $this->EventList(null, $startDate->format('Y-MM-dd'), $endDate->format('Y-MM-dd'));
 
 		}
 
