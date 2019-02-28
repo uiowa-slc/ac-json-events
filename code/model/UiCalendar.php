@@ -822,7 +822,7 @@ class UiCalendar extends Page {
 	  	// foreach($trendingTags as $trendingTag){
 	  	// 	$urls[] = $trendingTag->Link();
 	  	// }
-	  	print_r($urls);
+	  	//print_r($urls);
 	    return $urls;
        //return [Director::absoluteURL($this->getOwner()->Link()) => 0];
     }
