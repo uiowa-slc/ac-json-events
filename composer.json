@@ -10,7 +10,7 @@
 	    "extra": {
 	        "expose": [
 	          "js",
-                  "css"
+              "css"
 	        ]
 
 	    }

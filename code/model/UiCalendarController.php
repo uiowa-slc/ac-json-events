@@ -247,14 +247,17 @@ class UiCalendar_Controller extends PageController {
 			$counter->tomorrow();
 		}
 		$list = $this->EventList();
+
 		foreach ($list as $e) {
 			//print_r($e->Dates);
-			foreach ($e->Dates as $date) {
-				if (isset($json[$date->StartDateTime->Format('Y-m-d')])) {
-					$json[$date->StartDateTime->Format('Y-m-d')]['events'][] = $e->getTitle();
+			foreach ($e->Dates as $eventDate) {
+				// print_r($eventDate->StartDateTime->Format('YYYY-MM-dd').'<br />');
+				if (isset($json[$eventDate->StartDateTime->Format('YYYY-MM-dd')])) {
+					$json[$eventDate->StartDateTime->Format('YYYY-MM-dd')]['events'][] = $e->getTitle();
 				}
 			}
 		}
+		$this->getResponse()->addHeader('Content-type', 'application/json');
 		return Convert::array2json($json);
 	}
 
