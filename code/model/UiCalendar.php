@@ -94,6 +94,8 @@ class UiCalendar extends Page {
 
 		}
 
+		$this->extend('updateCMSFields', $fields);
+
 		return $fields;
 	}
 
