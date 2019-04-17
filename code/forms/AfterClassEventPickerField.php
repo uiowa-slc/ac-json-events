@@ -26,6 +26,7 @@ class AfterClassEventPickerField extends DropdownField {
 
 		if(!empty($eventsArray)){
 			foreach($eventsArray['events'] as $key => $event){
+				// print_r($event);
 				$source[$event['id']] = $event['name'];
 			}
 		}

@@ -72,7 +72,21 @@ class UiCalendar extends Page {
 		$events = $this->EventList();
 
 		if ($events->First()) {
-			$eventsArray = $events->map();
+			$eventsArray = $events->map()->toArray();
+
+			foreach($eventsArray as $eventKey => $eventVal){
+
+				
+				$eventObj = $events->filter(array('ID' => $eventKey))->First();
+
+				if($eventObj->Dates->First()){
+
+					$eventFirstDateTime = $eventObj->Dates->First()->StartDateTime->Nice();
+					$eventsArray[$eventKey] = $eventVal.' - '.$eventFirstDateTime;
+				}
+
+			}
+
 
 			$fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in UiCalendar will be used.'));
 
