@@ -25,8 +25,7 @@ class UiCalendar extends Page {
 	private static $has_one = array(
 
 	);
-
-	private static $icon = 'ac-json-events/images/calendar-file.png';
+	private static $icon_class = 'font-icon-calendar';
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();

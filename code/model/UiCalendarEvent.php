@@ -13,6 +13,8 @@ class UiCalendarEvent extends Page {
     //Performance issues if you enable this. Only enable on sites that NEED nice URLs.
 	private static $use_nice_links = false;
 
+	private static $hide_ancestor = 'UiCalendarEvent';
+
 	/**
 	 * Convert an event in an array format (from UiCalendar JSON Feed) to a UiCalendarEvent
 	 * @param array $rawEvent
