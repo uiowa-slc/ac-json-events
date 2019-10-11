@@ -3,7 +3,12 @@
 use SilverStripe\ORM\DataObject;
 class UiCalendarImage extends DataObject {
 
-	private static $db = array("Caption" => "Text", "URL" => "Text", "Credit" => "Text", );
+	private static $db = array(
+		"Caption" => "Text", 
+		"URL" => "Text",
+		"ThumbURL" => "Text", 
+		"Credit" => "Text"
+	);
 
 	public function getByID($id) {
 
@@ -38,6 +43,7 @@ class UiCalendarImage extends DataObject {
 	 * @return UiCalendarEvent
 	 */
 	public function parse($rawImage) {
+		print_r($rawImage);
 		$this->ID      = $rawImage['id'];
 		$this->Caption = $rawImage['caption'];
 		$this->URL     = $rawImage['photo_url'];

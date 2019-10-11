@@ -25,9 +25,11 @@ class UiCalendarEvent extends Page {
 		$image = new UiCalendarImage();
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
-		// print_r($rawEvent);
+		 
 		if (isset($rawEvent['media'][0]['original_image'])) {
 			$image->URL = $rawEvent['media'][0]['original_image'];
+			$image->ThumbURL = $rawEvent['media'][0]['large_image'];
+			$image->RectangleURL = $rawEvent['media'][0]['events_site_featured_image'];
 		} else {
 			$themeDir = $this->ThemeDir();
 
@@ -40,7 +42,7 @@ class UiCalendarEvent extends Page {
 
 			}
 		}
-		;
+
 		$this->Dates = new ArrayList();
 
 		$this->ID = $rawEvent['id'];
