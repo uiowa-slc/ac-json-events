@@ -70,7 +70,9 @@ class UiCalendar extends Page {
 
 		$events = $this->EventList();
 
-		if ($events->First()) {
+
+
+		if ($events && $events->First()) {
 			$eventsArray = $events->map()->toArray();
 
 			foreach($eventsArray as $eventKey => $eventVal){
