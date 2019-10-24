@@ -71,6 +71,7 @@ class UiCalendarEvent extends Page {
 		$this->SummaryContent = $rawEvent['description_text'];
 		//$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
+		$this->Interests = $this->getInterestsFromRaw($rawEvent);
 		$this->Image = $image;
 		$this->UiCalendarLink = $rawEvent['events_site_url'];
 		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->ID;
@@ -183,7 +184,26 @@ class UiCalendarEvent extends Page {
 		}
 		return false;
 	}
+	/**
+	 * Generate a list of types from an event array from UiCalendar
+	 * @param array $rawEvent
+	 * @return ArrayList
+	 */
+	private function getInterestsFromRaw($rawEvent) {
 
+		if (isset($rawEvent['filters']['event_general_interest'])) {
+			$typesRaw = $rawEvent['filters']['event_general_interest'];
+			$types = new ArrayList();
+			foreach ($typesRaw as $typeRaw) {
+				$type = new UiCalendarEventType();
+				$type->ID = $typeRaw['id'];
+				$type->Title = $typeRaw['name'];
+				$types->push($type);
+			}
+			return $types;
+		}
+		return false;
+	}
 	/**
 	 * Get a Venue from a raw event array from a JSON feed. If there's a venue id, we get a venue based on that id,
 	 * otherwise we retrieve the geo and location info from the event itself.
@@ -280,18 +300,55 @@ class UiCalendarEvent extends Page {
 
 		if ($this->Types && $this->Types->First()) {
 			$curEventTypes = $this->Types;
+			//print_r($curEventTypes);
 			$randEventType = $curEventTypes[array_rand($curEventTypes->toArray())];
 			//$randEventType = $curEventTypes[array_splice($randEventTypes, 1)];
 			//print_r($randEventType->Title);
 
 			$relatedEvents = $calendar->EventList(
-				$days = '90',
+				$days = 'threemonths',
 				$startDate = null,
 				$endDate = null,
 				$venue = null,
 				$keyword = null,
 				$type = $randEventType->ID
 			);
+
+			// print_r($relatedEvents);
+
+			if (isset($relatedEvents) && $relatedEvents->First()) {
+				$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
+				return $relatedEvents;
+			} else {
+				return false;
+			}
+
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * Generate a list events similar to the current event. Randomly selects based on tags they have in common.
+	 * @param int $limit
+	 * @return int
+	 */
+	public function LocationRelatedEvents() {
+		$calendar = UiCalendar::getOrCreate();
+
+		if ($this->Venue) {
+
+			$venue = $this->Venue;
+
+			$relatedEvents = $calendar->EventList(
+				$days = 'threemonths',
+				$startDate = null,
+				$endDate = null,
+				$venue = $venue->ID,
+				$keyword = null,
+				$type = null
+			);
+
+			// print_r($relatedEvents);
 
 			if (isset($relatedEvents) && $relatedEvents->First()) {
 				$relatedEvents = $relatedEvents->exclude('ID', $this->ID);
@@ -305,6 +362,27 @@ class UiCalendarEvent extends Page {
 		}
 	}
 
+	public function HasType($typeName){
+		$eventTypes = $this->Types;
+		foreach($eventTypes as $type){
+			if($type->Title == $typeName){
+				return true;
+			}
+		}
+
+		return false;
+	}
+	public function HasInterest($typeName){
+		$eventTypes = $this->Interests;
+
+		foreach($eventTypes as $type){
+			if($type->Title == $typeName){
+				return true;
+			}
+		}
+
+		return false;
+	}
 	/**
 	 * Returns a parsed facebook event link based on the event's Facebook Event ID.
 	 * @return string
