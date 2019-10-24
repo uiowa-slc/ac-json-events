@@ -90,6 +90,9 @@ class UiCalendarEvent extends Page {
 
 	}
 
+	public function isLateNight(){
+		return $this->HasInterest("Late Night Programs");
+	}
 	//Weird hack to get around the default DataObject getTitle
 	public function getTitle() {
 		return $this->EventTitle;
