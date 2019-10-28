@@ -49,9 +49,6 @@ class UiCalendarEvent extends Page {
 		$this->Title = $rawEvent['title'];
 		$this->EventTitle = $rawEvent['title'];
 		$this->URLSegment = $rawEvent['urlname'];
-		// $this->Thumbnail = $rawEvent['photo_url'];
-		//$this->Featured = $rawEvent['featured'];
-		//$this->Cost = $rawEvent['ticket_cost'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
@@ -64,12 +61,11 @@ class UiCalendarEvent extends Page {
 			$this->FirstStartDateTime = $firstDateTime;
 		}
 
-		// I recommend changing Content to $rawEvent['descritption_text'];
 		if(isset($rawEvent['description']))
 			$this->Content = $rawEvent['description'];
 		if(isset($rawEvent['description_text']))
 		$this->SummaryContent = $rawEvent['description_text'];
-		//$this->Tags = $this->getTagsFromRaw($rawEvent);
+		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Interests = $this->getInterestsFromRaw($rawEvent);
 		$this->Image = $image;
@@ -154,17 +150,19 @@ class UiCalendarEvent extends Page {
 	 * @return ArrayList
 	 */
 	private function getTagsFromRaw($rawEvent) {
-		$tagsRaw = $rawEvent['tags'];
-		$tags = new ArrayList();
 
-		foreach ($tagsRaw as $tagRaw) {
-			$tag = new UiCalendarTag();
-			$tag->Title = $tagRaw;
-
-			$tags->push($tag);
+		if (isset($rawEvent['keywords'])) {
+			$tagsRaw = $rawEvent['keywords'];
+			$tags = new ArrayList();
+			foreach ($tagsRaw as $tagRaw) {
+				$tag = new UiCalendarTag();
+				$tag->ID = $tagRaw['id'];
+				$tag->Title = $tagRaw['name'];
+				$tags->push($tag);
+			}
+			return $tags;
 		}
-
-		return $tags;
+		return false;
 	}
 
 	/**

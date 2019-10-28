@@ -162,6 +162,7 @@ class UiCalendar_Controller extends PageController {
 	 */
 	public function tag($request) {
 		$tagName      = addslashes($this->urlParams['tag']);
+		$tagName = urldecode($tagName);
 		$events       = $this->EventList('year', null, null, null, $tagName);
 		$filterHeader = 'Events tagged as "'.$tagName.'":';
 
