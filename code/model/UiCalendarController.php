@@ -31,7 +31,7 @@ class UiCalendar_Controller extends PageController {
 		'type',
 		'venue',
 		'search',
-
+		'interest',
 		//legacy feed actions
 		'feed',
 		'prime'
@@ -44,6 +44,7 @@ class UiCalendar_Controller extends PageController {
 		'show/$startDate/$endDate' => 'show',
 		'monthjson/$ID'            => 'monthjson',
 		'tag/$tag'                 => 'tag',
+		'interest/$interest'       => 'interest',
 		'type/$type'               => 'type',
 		'venue/$venue'             => 'venue',
 		'search'                   => 'search',
@@ -174,7 +175,24 @@ class UiCalendar_Controller extends PageController {
 
 		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 	}
+	public function interest($request) {
+		$interestID = addslashes($this->urlParams['interest']);
+		$interest   = $this->getGeneralInterestByID($interestID);
+		//echo "interest: <br />";
+		//print_r($interest->ID);
+		//echo "<br />";
+		$events = $this->EventList('year', null, null, null, null, null, null, null, null, 100, $interest->ID);
 
+		$filterHeader = 'Events categorized as "'.$interest->Title.'":';
+
+		$Data = array(
+			'Title'        => $interest->Title.' | '.$this->Title,
+			'FilterEventList'    => $events,
+			'FilterHeader' => $filterHeader,
+		);
+
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
+	}
 	public function type($request) {
 		$typeID = addslashes($this->urlParams['type']);
 		$type   = $this->getTypeByID($typeID);

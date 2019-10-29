@@ -140,7 +140,7 @@ class UiCalendar extends Page {
 			$venueFilterID = $this->VenueFilterID;
 		}
 		if ($this->GeneralInterestFilterID != 0) {
-			$genInterestFilterID = $this->GeneralInterestFilterID;
+			$primaryGenInterestFilterID = $this->GeneralInterestFilterID;
 		}
 
 		if (isset($primaryFilterTypeID)) {
@@ -156,9 +156,9 @@ class UiCalendar extends Page {
 			$venue = $this->getVenueByID($venueFilterID);
 			return $venue->Link();
 		}
-		if (isset($genInterestFilterID )) {
-			$type = $this->getGeneralInterestByID($genInterestFilterID);
-			//print_r($genInterestFilterID);
+		if (isset($primaryGenInterestFilterID )) {
+			$type = $this->getGeneralInterestByID($primaryGenInterestFilterID);
+			//print_r($primaryGenInterestFilterID);
 			return $type->Link();
 		}
 
@@ -494,7 +494,7 @@ class UiCalendar extends Page {
 	}
 	public function getGeneralInterestByID($id) {
 		$types = $this->GeneralInterestList();
-
+		
 		foreach ($types as $type) {
 			if ($type->ID == $id) {
 				return $type;
@@ -584,7 +584,8 @@ class UiCalendar extends Page {
 		$distinct = 'true',
 		$enableFilter = true,
 		$searchTerm = null,
-		$perPage = 100
+		$perPage = 100,
+		$interest = null
 	) {
 		if ($enableFilter) {
 			if ($this->EventTypeFilterID != 0) {
@@ -597,7 +598,7 @@ class UiCalendar extends Page {
 				$venueFilterID = $this->VenueFilterID;
 			}
 			if ($this->GeneralInterestFilterID != 0) {
-				$genInterestFilterID = $this->GeneralInterestFilterID;
+				$primaryGenInterestFilterID = $this->GeneralInterestFilterID;
 			}
 			if ($this->KeywordFilterID != 0) {
 				$keywordID = $this->KeywordFilterID;
@@ -647,8 +648,13 @@ class UiCalendar extends Page {
 		if (isset($departmentFilterID)) {
 			$feedParams .= '&filters[department]='.$departmentFilterID;
 		}
-		if (isset($genInterestFilterID)) {
-			$feedParams .= '&filters[interests]='.$genInterestFilterID;
+		if (isset($primaryGenInterestFilterID)) {
+			$feedParams .= '&filters[interests]='.$primaryGenInterestFilterID;
+		}
+
+		if(isset($interest)){
+			$feedParams .= '&filters[interests]='.$interest;
+
 		}
 
 		if (isset($venueFilterID)) {
@@ -662,7 +668,7 @@ class UiCalendar extends Page {
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-		 // print_r($feedURL);
+		  // print_r($feedURL);
 		//$feedURL = urlencode($feedURL);
 
 
@@ -696,6 +702,7 @@ class UiCalendar extends Page {
 			$perPage = $number
 		);
 	}
+
 	public function EventListByDate($date) {
 		$start  = sfDate::getInstance($date);
 		$events = $this->EventList(null, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
