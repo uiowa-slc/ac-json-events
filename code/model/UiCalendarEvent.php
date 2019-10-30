@@ -287,7 +287,7 @@ class UiCalendarEvent extends Page {
 	 * @return string
 	 */
 	public function CalendarLink() {
-		$link = $this->UiCalendarLink . '.ics';
+		$link = 'https://events.uiowa.edu/singleEvent/'.$this->ID;
 		return $link;
 	} //test
 

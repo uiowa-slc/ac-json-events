@@ -183,7 +183,7 @@ class UiCalendar_Controller extends PageController {
 		//echo "<br />";
 		$events = $this->EventList('year', null, null, null, null, null, null, null, null, 100, $interest->ID);
 
-		$filterHeader = 'Events categorized as "'.$interest->Title.'":';
+		$filterHeader = 'Events tagged as "'.$interest->Title.'":';
 
 		$Data = array(
 			'Title'        => $interest->Title.' | '.$this->Title,
@@ -201,7 +201,7 @@ class UiCalendar_Controller extends PageController {
 		//echo "<br />";
 		$events = $this->EventList('year', null, null, null, null, $type->ID);
 
-		$filterHeader = 'Events categorized as "'.$type->Title.'":';
+		$filterHeader = 'Events tagged as "'.$type->Title.'":';
 
 		$Data = array(
 			'Title'        => $type->Title.' | '.$this->Title,
