@@ -1,5 +1,5 @@
 <?php
-
+use SilverStripe\Core\Environment;
 use SilverStripe\Control\Director;
 /*
  * SimpleCache v1.3.0
@@ -39,13 +39,10 @@ class SimpleCache {
 	//Length of time to cache a file in seconds
 	
 	function getCacheTime(){
-		if(Director::isLive()) {
-			if(Director::is_cli()){
-				return 3600;
-			}
-			return 7200;
-		}else{
-			return 2592000;
+		if(Environment::getEnv('UI_CALENDAR_CACHE_TIME')){
+			return Environment::getEnv('UI_CALENDAR_CACHE_TIME');
+		} else{
+			return 3600;
 		}
 	}
 

@@ -1,5 +1,3 @@
 Page:
   extensions:
     - UiCalendarPageExtension
-LocalistEvent:
-  use_nice_links: false
