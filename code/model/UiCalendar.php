@@ -338,9 +338,6 @@ class UiCalendar extends Page {
 				$venuesList->push($parsedEvent->Venue);
 			}
 		}
-
-
-
 		$venuesList->removeDuplicates('Title');
 
 		//print_r($venuesList);
@@ -475,6 +472,7 @@ class UiCalendar extends Page {
 
 	}
 	/**
+	
 	 * Finds a specific event type by checking the master TypeList() and matching the ID against
 	 * all types.
 	 * TODO: More effecient way to do this? Through the API?
@@ -494,7 +492,7 @@ class UiCalendar extends Page {
 	}
 	public function getGeneralInterestByID($id) {
 		$types = $this->GeneralInterestList();
-		
+
 		foreach ($types as $type) {
 			if ($type->ID == $id) {
 				return $type;
@@ -503,8 +501,8 @@ class UiCalendar extends Page {
 
 		return false;
 	}
-	public function getTagByID($id) {
-		$types = $this->TagList();
+	public function getKeywordByID($id) {
+		$types = $this->KeywordList();
 
 		foreach ($types as $type) {
 			if ($type->ID == $id) {
@@ -601,7 +599,7 @@ class UiCalendar extends Page {
 				$primaryGenInterestFilterID = $this->GeneralInterestFilterID;
 			}
 			if ($this->KeywordFilterID != 0) {
-				$keywordID = $this->KeywordFilterID;
+				$primaryKeywordID = $this->KeywordFilterID;
 			}
 		}
 
@@ -641,6 +639,10 @@ class UiCalendar extends Page {
 			$feedParams .= '&filters[types]='.$type;
 		}
 
+		if (isset($keyword)) {
+			$feedParams .= '&filters[keywords]='.$keyword;
+		}
+
 		if (isset($primaryFilterTypeID)) {
 			$feedParams .= '&filters[types]='.$primaryFilterTypeID;
 		}
@@ -660,7 +662,7 @@ class UiCalendar extends Page {
 		if (isset($venueFilterID)) {
 			$feedParams .= '&filters[place]='.$venueFilterID;
 		}
-		if (isset($keywordID)) {
+		if (isset($primaryKeywordID)) {
 			$feedParams .= '&filters[keywords]='.$keywordID;
 		}
 		if (isset($perPage)) {
@@ -668,7 +670,7 @@ class UiCalendar extends Page {
 		}
 		// $feedParams .= '&match=all&distinct='.$distinct;
 		$feedURL = UICALENDAR_FEED_URL.$feedParams;
-		  // print_r($feedURL);
+		 //  print_r($feedURL);
 		//$feedURL = urlencode($feedURL);
 
 

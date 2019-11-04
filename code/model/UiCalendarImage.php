@@ -43,7 +43,7 @@ class UiCalendarImage extends DataObject {
 	 * @return UiCalendarEvent
 	 */
 	public function parse($rawImage) {
-		print_r($rawImage);
+		//print_r($rawImage);
 		$this->ID      = $rawImage['id'];
 		$this->Caption = $rawImage['caption'];
 		$this->URL     = $rawImage['photo_url'];

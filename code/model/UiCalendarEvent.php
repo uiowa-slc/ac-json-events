@@ -404,8 +404,3 @@ class UiCalendarEvent extends Page {
 	}
 
 }
-
-class UiCalendarEvent_Controller extends PageController {
-
-
-}

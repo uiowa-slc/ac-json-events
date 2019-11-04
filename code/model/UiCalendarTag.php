@@ -7,27 +7,19 @@ class UiCalendarTag extends DataObject {
 		"Title"		=> "Varchar(255)"
 	);
 
-	/*public function parseTag($venueDecoded){
-		if(isset($venueDecoded['place'])){
-			$venueDecoded = $venueDecoded['place'];
-			$this->ID = $venueDecoded['id'];
-			$this->Title = $venueDecoded['name'];
-			$this->Content = $venueDecoded['description_text'];
-			$this->PageList = Page::get();
-			$this->ImageURL = $venueDecoded['photo_url'];
-			$this->UiCalendarLink = $venueDecoded['localist_url'];
-			$this->WebsiteLink = $venueDecoded['url'];
-			$this->Latitude = $venueDecoded['geo']['latitude'];
-			$this->Longitude = $venueDecoded['geo']['longitude'];
-			$this->Address = $venueDecoded['address'];
+	public function parseTag($rawType){
+		$localistType = new UiCalendarEventType();
+		$localistType->ID = $rawType['id'];
+		$localistType->Title = $rawType['name'];
+		//$localistType->UiCalendarLink = $rawType['localist_url'];
+		// $localistType->UiCalendarLink = UICALENDAR_BASE.'search/events/?keywords='.$localistType->ID;
+		return $localistType;
 
-			return $this;
-		}
-	}*/
+	}
 
 	public function Link(){
 		$calendar = UiCalendar::getOrCreate();
-		return $calendar->Link().'tag/'.$this->Title;
+		return $calendar->Link().'tag/'.$this->ID;
 	}
 
 	
