@@ -84,7 +84,7 @@ class UiCalendarEvent extends Page {
 		$this->Image = $image;
 		$this->UiCalendarLink = $rawEvent['events_site_url'];
 		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->ID;
-		$this->MoreInfoLink = $rawEvent['url'];
+		$this->MoreInfoLink = $this->validateLink($rawEvent['url']);
 		//$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['contact_name']) ? $rawEvent['contact_name'] : '');
 		$this->ContactEmail = (isset($rawEvent['contact_email']) ? $rawEvent['contact_email'] : '');
@@ -414,6 +414,16 @@ class UiCalendarEvent extends Page {
 	 */
 	public function UsesGoogleMaps() {
 		return true;
+	}
+
+	private function validateLink($url){
+		if($ret = parse_url($url) ) {
+			if(!isset($ret["scheme"])){
+		       $url = "http://{$url}";
+		    }
+		}
+
+		return $url;
 	}
 
 }

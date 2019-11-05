@@ -78,11 +78,15 @@ class UiCalendarImage extends DataObject {
 	public function getOrientation() {
 		$width  = $this->Width;
 		$height = $this->Height;
-		if ($width > $height) {
+		$ratio = $this->Ratio;
+
+		if ($ratio > 1.5){
+			return "Wide";
+		}elseif($width > $height){
 			return "Landscape";
-		} elseif ($height > $width) {
+		}elseif($height > $width) {
 			return "Portrait";
-		} else {
+		}else {
 			return "Square";
 		}
 	}
