@@ -22,16 +22,29 @@ class UiCalendarEvent extends Page {
 	 */
 	public function parseEvent($rawEvent) {
 
-		$image = new UiCalendarImage();
+		
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
 		 
 		if (isset($rawEvent['media'][0]['original_image'])) {
-			$image->URL = $rawEvent['media'][0]['original_image'];
-			$image->ThumbURL = $rawEvent['media'][0]['large_image'];
-			$image->RectangleURL = $rawEvent['media'][0]['events_site_featured_image'];
+
+			$cacheCheck = Config::inst()->get('UiCalendarImage', 'cache');
+
+			if($cacheCheck){
+				$imageTest = UiCalendarImage::get()->filter(array('URL' => $rawEvent['media'][0]['original_image'] ))->First();
+			}else{
+				$imageTest = false;
+			}
+			
+			if($imageTest){
+				$image = $imageTest;
+			}else{
+				$image = new UiCalendarImage();
+				$image->parse($rawEvent['media'][0]);
+			}
+
 		} else {
-			$themeDir = $this->ThemeDir();
+			$image = new UiCalendarImage();
 
 			if ($this->Venue && $this->Venue->ImageURL != '') {
 
