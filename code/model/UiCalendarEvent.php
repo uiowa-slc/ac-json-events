@@ -27,21 +27,8 @@ class UiCalendarEvent extends Page {
 		//print_r($rawEvent['photo_url']);
 		 
 		if (isset($rawEvent['media'][0]['original_image'])) {
-
-			$cacheCheck = Config::inst()->get('UiCalendarImage', 'cache');
-
-			if($cacheCheck){
-				$imageTest = UiCalendarImage::get()->filter(array('URL' => $rawEvent['media'][0]['original_image'] ))->First();
-			}else{
-				$imageTest = false;
-			}
-			
-			if($imageTest){
-				$image = $imageTest;
-			}else{
-				$image = new UiCalendarImage();
-				$image->parse($rawEvent['media'][0]);
-			}
+			$image = new UiCalendarImage();
+			$image->parse($rawEvent['media'][0]);
 
 		} else {
 			$image = new UiCalendarImage();

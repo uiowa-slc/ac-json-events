@@ -11,8 +11,6 @@ class UiCalendarImage extends DataObject {
 		"Height" => "Int",
 		"Ratio" => "Float"
 	);
-	//Experimentally cache images and get ratio/width:
-	private static $cache = false;
 
 	public function getByID($id) {
 
@@ -52,20 +50,11 @@ class UiCalendarImage extends DataObject {
 		$this->ThumbURL = $rawImage['large_image'];
 		$this->RectangleURL = $rawImage['events_site_featured_image'];
 
-
-		$cacheCheck = $this->config()->get('cache');
-
-		if($cacheCheck){
-		
-			$size = $this->getimgsize($rawImage['original_image']);
-
-			if($size){
-			 $this->Width   = $size[0];
-			 $this->Height  = $size[1];
-			 $this->Ratio = $size[0] / $size[1];
-			}
-
-			$this->write();
+		// print_r($rawImage);
+		if($rawImage['original_height'] && $rawImage['original_width']){
+		 	$this->Width   = $rawImage['original_width'];
+			$this->Height  =  $rawImage['original_height'];
+			$this->Ratio = $rawImage['original_width'] /  $rawImage['original_height'];
 		}
 
 		return $this;
