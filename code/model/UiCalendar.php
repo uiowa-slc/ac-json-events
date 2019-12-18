@@ -95,7 +95,7 @@ class UiCalendar extends Page {
 		return UiCalendar::create();
 	}
 
-	public function Link(){
+	public function Link($action = null){
 		if($this->isInDB()){
 			//return full calendar link if it exists in db
 			return parent::Link();

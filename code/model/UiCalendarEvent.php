@@ -234,7 +234,7 @@ class UiCalendarEvent extends Page {
 	 * Generate a link to the event using the event's URL segment
 	 * @return string
 	 */
-	public function Link() {
+	public function Link($action = null) {
 		$calendar = UiCalendar::get()->First();
 		$niceLinks = Config::inst()->get('UiCalendarEvent', 'use_nice_links');
 		if($niceLinks){
