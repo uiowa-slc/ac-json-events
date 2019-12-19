@@ -812,7 +812,7 @@ class UiCalendar extends Page {
 
     public function urlsToCache() {
 		$calendar = $this;
-		$abs = Director::absoluteURL();
+		$abs = Director::absoluteBaseURL();
 	    $calendarLink = Director::absoluteURL($calendar->Link());
 
 	    $urls[$calendarLink] = 0;
