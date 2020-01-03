@@ -25,6 +25,8 @@ class UiCalendar extends Page {
 	private static $has_one = array(
 
 	);
+	private static $default_future_limit = 'threemonths';
+
 	private static $icon_class = 'font-icon-calendar';
 
 	public function getCMSFields() {
@@ -573,7 +575,7 @@ class UiCalendar extends Page {
 	 */
 
 	public function EventList(
-		$days = 'threemonths',
+		$days = null,
 		$startDate = null,
 		$endDate = null,
 		$venue = null,
@@ -585,6 +587,11 @@ class UiCalendar extends Page {
 		$perPage = 100,
 		$interest = null
 	) {
+
+		if(!$days){
+			$days = $this->config()->get('default_future_limit');
+		}
+
 		if ($enableFilter) {
 			if ($this->EventTypeFilterID != 0) {
 				$primaryFilterTypeID = $this->EventTypeFilterID;
@@ -691,8 +698,11 @@ class UiCalendar extends Page {
 
 	}
 	public function EventListLimited($number = 3){
-		return $this->EventList(
-			$days = 'threemonths',
+	
+		$days = $this->config()->get('default_future_limit');
+
+		$list = $this->EventList(
+			$days = $days,
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
@@ -703,6 +713,7 @@ class UiCalendar extends Page {
 			$searchTerm = null,
 			$perPage = $number
 		);
+		return $list;
 	}
 
 	public function EventListByDate($date) {
