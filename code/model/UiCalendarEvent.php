@@ -4,6 +4,7 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\ORM\FieldType\DBBoolean;
 
 class UiCalendarEvent extends Page {
     /**
@@ -52,6 +53,9 @@ class UiCalendarEvent extends Page {
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
+		$this->Canceled = new DBBoolean();
+		$this->Canceled = $rawEvent['canceled'];
+
 		$firstDateTime = new DBDatetime();
 		$firstDateTimeObj = $this->Dates->First();
 
@@ -89,8 +93,12 @@ class UiCalendarEvent extends Page {
 	public function isLateNight(){
 		return $this->HasInterest("Late Night Programs");
 	}
-	//Weird hack to get around the default DataObject getTitle
+
 	public function getTitle() {
+		$eventTitle = $this->EventTitle;
+		if($this->Canceled){
+			return 'Canceled: '.$this->EventTitle;
+		}
 		return $this->EventTitle;
 	}
 
