@@ -120,6 +120,10 @@ class UiCalendarEvent extends Page {
 
 		$eventInstancesArray = new ArrayList();
 
+		if(!$eventInstances){
+			return false;
+		}
+
 		foreach ($eventInstances as $i => $eventInstance) {
 			$dateTime = new UiCalendarDatetime();
 
