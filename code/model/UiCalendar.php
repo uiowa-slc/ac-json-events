@@ -2,6 +2,7 @@
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Control\Director;
 class UiCalendar extends Page {
@@ -19,6 +20,8 @@ class UiCalendar extends Page {
 		'FeaturedEvent2ID' => 'Int',
 		'FeaturedEvent3ID' => 'Int',
 		'FeaturedEvent4ID' => 'Int',
+
+		'HideCanceledEvents' => 'Boolean'
 
 	);
 
@@ -89,7 +92,7 @@ class UiCalendar extends Page {
 			}
 
 
-			$fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in UiCalendar will be used.'));
+			// $fields->addFieldToTab(' Root.Main', new LabelField('FeaturedEventFieldLabel', 'If no featured events are selected below, events marked at "Featured" in UiCalendar will be used.'));
 
 			$featuredEvent1Field = new DropdownField("FeaturedEvent1ID", "Featured Event 1", $eventsArray);
 			$featuredEvent1Field->setEmptyString('(No Event)');
@@ -106,6 +109,8 @@ class UiCalendar extends Page {
 			$featuredEvent4Field = new DropdownField("FeaturedEvent4ID", "Featured Event 4", $eventsArray);
 			$featuredEvent4Field->setEmptyString('(No Event)');
 			$fields->addFieldToTab('Root.Main', $featuredEvent4Field);
+
+			$fields->addFieldToTab('Root.Main', new CheckboxField('HideCanceledEvents'));
 
 		}
 
@@ -583,7 +588,10 @@ class UiCalendar extends Page {
 		$enableFilter = true,
 		$searchTerm = null,
 		$perPage = 100,
-		$interest = null
+		$interest = null,
+		//Show canceled events even if calendar has them disabled, used in UiCalendarController for the canceled route
+		$forceShowCanceled = false,
+		$canceledOnly = false
 	) {
 		if ($enableFilter) {
 			if ($this->EventTypeFilterID != 0) {
@@ -676,14 +684,35 @@ class UiCalendar extends Page {
 
 		$eventsList    = new ArrayList();
 		$eventsDecoded = $this->getJson($feedURL);
+		$eventsArray = array();
 
 		if (isset($eventsDecoded['events'])) {
 			$eventsArray = $eventsDecoded['events'];
 			foreach ($eventsArray as $event) {
+				reset($event);
 				if (isset($event)) {
-					$localistEvent = new UiCalendarEvent();
+					
+					//If we are showing only canceled events, only parse + push events with the canceled flag in the feed.
+					if($canceledOnly){
 
-					$eventsList->push($localistEvent->parseEvent($event['event']));
+						if($event['event']['canceled'] == '1'){
+							$localistEvent = new UiCalendarEvent();
+							$parsedEvent = $localistEvent->parseEvent($event['event']);
+							$eventsList->push($parsedEvent);
+						}
+	
+					}else{
+					//Else: If we are showing events like usual, not hitting the canceled filter.
+						
+						//Check for Calendar settings, if canceled events are hidden, skip them.
+						if((($event['event']['canceled']) == '1') && ($this->HideCanceledEvents == 1)){
+							continue;
+						}else{
+							$localistEvent = new UiCalendarEvent();
+							$parsedEvent = $localistEvent->parseEvent($event['event']);
+							$eventsList->push($parsedEvent);
+						}
+					}
 				}
 			}
 			return $eventsList;
@@ -732,6 +761,26 @@ class UiCalendar extends Page {
 		return $events;
 
 	}
+
+	public function EventListCanceled(){
+		$events = $this->EventList(
+			$days = 'threemonths',
+			$startDate = null,
+			$endDate = null,
+			$venue = null,
+			$keyword = null,
+			$type = null,
+			$distinct = 'true',
+			$enableFilter = true,
+			$searchTerm = null,
+			$perPage = 100,
+			$interest = null,
+			$forceShowCanceled = true
+		);
+
+		return $events;
+		
+	}
 	/**
 	 * Returns an ArrayList of randomized events
 	 * @param none
@@ -777,6 +826,8 @@ class UiCalendar extends Page {
 		return $events;
 
 	}
+
+
 	/**
 	 * Gets a single event from the UiCalendar Feed based on ID.
 	 * @param int $id

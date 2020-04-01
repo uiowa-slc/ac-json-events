@@ -15,7 +15,8 @@ class UiCalendar_Controller extends PageController {
 		'type',
 		'venue',
 		'search',
-		'interest'
+		'interest',
+		'canceled'
 	);
 
 	/** URL handlers / routes
@@ -28,7 +29,8 @@ class UiCalendar_Controller extends PageController {
 		'interest/$interest'       => 'interest',
 		'type/$type'               => 'type',
 		'venue/$venue'             => 'venue',
-		'search'                   => 'search'
+		'search'                   => 'search',
+		'canceled'                 => 'canceled'
 	);
 
 	public function index(HTTPRequest $r) {
@@ -211,7 +213,33 @@ class UiCalendar_Controller extends PageController {
 			return $this->httpError(404, 'The requested venue can\'t be found in the events.uiowa.edu upcoming events list.');
 		}
 	}
+	public function canceled(){
+		$events = $this->EventList(
 
+			$days = 'threemonths',
+			$startDate = null,
+			$endDate = null,
+			$venue = null,
+			$keyword = null,
+			$type = null,
+			$distinct = 'true',
+			$enableFilter = true,
+			$searchTerm = null,
+			$perPage = 100,
+			$interest = null,
+			//Show canceled events even if calendar has them disabled, used in UiCalendarController for the canceled route
+			$forceShowCanceled = true,
+			$canceledOnly = true
+		);
+
+		$filterHeader = 'Events currently marked as canceled or rescheduled';
+			$Data = array(
+				'Title'        => 'Canceled or rescheduled events',
+				'FilterEventList'    => $events,
+				'FilterHeader' => $filterHeader,
+			);
+		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
+	}
 	public function search($request) {
 		$term = $request->getVar('term');
 		//print_r('term: '.$term);
@@ -223,7 +251,6 @@ class UiCalendar_Controller extends PageController {
 		);
 
 		return $this->customise($data)->renderWith(array('UiCalendar_search', 'Page'));
-
 	}
 
 	public function monthjson($r) {
@@ -257,6 +284,9 @@ class UiCalendar_Controller extends PageController {
 		$this->getResponse()->addHeader('Content-type', 'application/json');
 		return Convert::array2json($json);
 	}
+
+
+
 
 
 }
