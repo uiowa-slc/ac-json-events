@@ -1,15 +1,16 @@
 {
-        "name": "md/ac-json-events",
-        "description": "After Class JSON Display Module",
-        "type": "silverstripe-vendormodule",
-        "require": {
-                "php": ">=5.3.2",
-                "silverstripe/cms": "4.*",
-                "silverstripe/framework": "4.*"
-        },
-        "extra": {
-	        "expose": [
-	            "images/"
-	        ]
-        }
+    "name": "md/ac-json-events",
+    "description": "After Class JSON Display Module",
+    "type": "silverstripe-vendormodule",
+    "require": {
+        "php": ">=5.3.2",
+        "silverstripe/cms": "4.*",
+        "silverstripe/framework": "4.*",
+        "quamsta/silverstripe-api-cacher" : "*"
+    },
+    "extra": {
+        "expose": [
+            "images/"
+        ]
+    }
 }
