@@ -23,10 +23,10 @@ class UiCalendarEvent extends Page {
 	 */
 	public function parseEvent($rawEvent) {
 
-		
+
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
-		 
+
 		if (isset($rawEvent['media'][0]['original_image'])) {
 			$image = new UiCalendarImage();
 			$image->parse($rawEvent['media'][0]);
@@ -57,13 +57,18 @@ class UiCalendarEvent extends Page {
 		$this->Canceled = $rawEvent['canceled'];
 
 		$firstDateTime = new DBDatetime();
-		$firstDateTimeObj = $this->Dates->First();
 
-		if (isset($firstDateTimeObj->StartDateTime)) {
-			$firstDateTime->setValue($firstDateTimeObj->obj('StartDateTime')->getValue());
+        if($this->Dates){
+            $firstDateTimeObj = $this->Dates->First();
 
-			$this->FirstStartDateTime = $firstDateTime;
-		}
+            if (isset($firstDateTimeObj->StartDateTime)) {
+                $firstDateTime->setValue($firstDateTimeObj->obj('StartDateTime')->getValue());
+
+                $this->FirstStartDateTime = $firstDateTime;
+            }
+
+        }
+
 
 		if(isset($rawEvent['description']))
 			$this->Content = $rawEvent['description'];
