@@ -60,7 +60,7 @@ class UiCalendar_Controller extends PageController {
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
 			if($this->isInDB() && $event){
-				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));	
+				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));
 			}
 		} else {
 
@@ -106,24 +106,29 @@ class UiCalendar_Controller extends PageController {
 				$filterHeader = 'This month:';
 				break;
 			default:
-				$startDate = new DBDatetime();
-				$startDate->setValue(addslashes($this->urlParams['startDate']));
 
-				$endDate = new DBDatetime();
+                if(!(isset($this->urlParams['startDate']) && $this->isDate($this->urlParams['startDate']))){
+                    return $this->httpError(404);
+                }
 
-				if(isset($this->urlParams['endDate'])){
-					$endDate->setValue(addslashes($this->urlParams['endDate']));
-				}elseif(isset($this->urlParams['startDate'])){
-					$endDate = $startDate;
-				}
-				
-				$filterHeader = $startDate->format('eeee, MMMM d');
+                $startDate = new DBDatetime();
+                $startDate->setValue(addslashes($this->urlParams['startDate']));
 
-				if ($endDate->getValue() && ($endDate->getValue() != $startDate->getValue())) {
-					$filterHeader .= ' to '.$endDate->format('eeee, MMMM d');
-				}
+                $endDate = new DBDatetime();
 
-				$events = $this->EventList(null, $startDate->format('Y-MM-dd'), $endDate->format('Y-MM-dd'));
+                if(isset($this->urlParams['endDate'])){
+                    $endDate->setValue(addslashes($this->urlParams['endDate']));
+                }elseif(isset($this->urlParams['startDate'])){
+                    $endDate = $startDate;
+                }
+
+                $filterHeader = $startDate->format('eeee, MMMM d');
+
+                if ($endDate->getValue() && ($endDate->getValue() != $startDate->getValue())) {
+                    $filterHeader .= ' to '.$endDate->format('eeee, MMMM d');
+                }
+
+                $events = $this->EventList(null, $startDate->format('Y-MM-dd'), $endDate->format('Y-MM-dd'));
 
 		}
 
@@ -134,7 +139,19 @@ class UiCalendar_Controller extends PageController {
 		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 
 	}
+    private function isDate($value)
+    {
+        if (!$value) {
+            return false;
+        }
 
+        try {
+            new \DateTime($value);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 	/**
 	 * Controller Function that renders a filtered Event List by a UiCalendar tag or keyword.
 	 * @param SS_HTTPRequest $request
