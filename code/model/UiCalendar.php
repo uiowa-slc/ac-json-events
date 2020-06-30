@@ -80,7 +80,7 @@ class UiCalendar extends Page {
 
 			foreach($eventsArray as $eventKey => $eventVal){
 
-				
+
 				$eventObj = $events->filter(array('ID' => $eventKey))->First();
 
 				if($eventObj->Dates->First()){
@@ -477,7 +477,7 @@ class UiCalendar extends Page {
 
 	}
 	/**
-	
+
 	 * Finds a specific event type by checking the master TypeList() and matching the ID against
 	 * all types.
 	 * TODO: More effecient way to do this? Through the API?
@@ -534,7 +534,7 @@ class UiCalendar extends Page {
 	public function getTodayEvents() {
 		$start = sfDate::getInstance();
 
-		$events = $this->EventList(null, $start->format('Y-m-d'), $start->add(1)->format('Y-m-d'));
+		$events = $this->EventList(null, $start->format('Y-m-d'), $start->format('Y-m-d'));
 		return $events;
 	}
 
@@ -691,7 +691,7 @@ class UiCalendar extends Page {
 			foreach ($eventsArray as $event) {
 				reset($event);
 				if (isset($event)) {
-					
+
 					//If we are showing only canceled events, only parse + push events with the canceled flag in the feed.
 					if($canceledOnly){
 
@@ -700,10 +700,10 @@ class UiCalendar extends Page {
 							$parsedEvent = $localistEvent->parseEvent($event['event']);
 							$eventsList->push($parsedEvent);
 						}
-	
+
 					}else{
 					//Else: If we are showing events like usual, not hitting the canceled filter.
-						
+
 						//Check for Calendar settings, if canceled events are hidden, skip them.
 						if((($event['event']['canceled']) == '1') && ($this->HideCanceledEvents == 1)){
 							continue;
@@ -779,7 +779,7 @@ class UiCalendar extends Page {
 		);
 
 		return $events;
-		
+
 	}
 	/**
 	 * Returns an ArrayList of randomized events
@@ -886,7 +886,7 @@ class UiCalendar extends Page {
 	  	$urls[$calendarLink.'monthjson/'.$nextMonthString.'/'] = 0;
 
 	  	/* Cache all current events from master event list */
-	  	
+
 	  	$events = $calendar->EventList();
 
 	  	foreach($events as $event){
