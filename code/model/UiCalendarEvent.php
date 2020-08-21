@@ -23,7 +23,7 @@ class UiCalendarEvent extends Page {
 	 */
 	public function parseEvent($rawEvent) {
 
-
+        //print_r($rawEvent);
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
 
@@ -52,6 +52,11 @@ class UiCalendarEvent extends Page {
 		$this->URLSegment = $rawEvent['urlname'];
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
+
+        $this->IsOnline = new DBBoolean();
+        $this->IsOnline = $rawEvent['virtual'];
+
+        $this->OnlineLocationUrl = $rawEvent['virtual_url'];
 
 		$this->Canceled = new DBBoolean();
 		$this->Canceled = $rawEvent['canceled'];
@@ -91,6 +96,7 @@ class UiCalendarEvent extends Page {
 		}
 
 		// Debug::show($this->Image);
+        // print_r($this);
 		return $this;
 
 	}
