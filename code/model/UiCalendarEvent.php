@@ -53,10 +53,15 @@ class UiCalendarEvent extends Page {
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
-        $this->IsOnline = new DBBoolean();
-        $this->IsOnline = $rawEvent['virtual'];
+        $this->isOnline = $rawEvent['virtual'];
 
         $this->OnlineLocationUrl = $rawEvent['virtual_url'];
+
+        if($this->OnlineLocationUrl){
+           $this->OnlineLocationButtonText = $this->parseOnlineButtonText($this->OnlineLocationUrl);
+        }
+
+
 
 		$this->Canceled = new DBBoolean();
 		$this->Canceled = $rawEvent['canceled'];
@@ -96,7 +101,7 @@ class UiCalendarEvent extends Page {
 		}
 
 		// Debug::show($this->Image);
-        // print_r($this);
+         //print_r($this);
 		return $this;
 
 	}
@@ -436,4 +441,22 @@ class UiCalendarEvent extends Page {
 		return $url;
 	}
 
+    private function parseDomain($url){
+        $parsedUrl = parse_url($url);
+        if(isset($parsedUrl["host"])){
+           $host = $parsedUrl["host"];
+           return $host;
+        }
+    }
+    private function parseOnlineButtonText($url){
+        $buttonText = 'Online Meeting Link';
+        if($url){
+            $domain = $this->parseDomain($url);
+            if($domain){
+               if(strpos($domain, 'zoom.us'))
+                $buttonText = 'Zoom Meeting Link';
+            }
+        }
+        return $buttonText;
+    }
 }
