@@ -58,7 +58,7 @@ class UiCalendarEvent extends Page {
         $this->OnlineLocationUrl = $rawEvent['virtual_url'];
 
         if($this->OnlineLocationUrl){
-           $this->OnlineLocationButtonText = $this->parseOnlineButtonText($this->OnlineLocationUrl);
+           $this->OnlineLocationType = $this->parseOnlineLocationType($this->OnlineLocationUrl);
         }
 
 
@@ -448,15 +448,15 @@ class UiCalendarEvent extends Page {
            return $host;
         }
     }
-    private function parseOnlineButtonText($url){
-        $buttonText = 'Online Meeting Link';
+    private function parseOnlineLocationType($url){
+        $locationType = 'Other';
         if($url){
             $domain = $this->parseDomain($url);
             if($domain){
                if(strpos($domain, 'zoom.us'))
-                $buttonText = 'Zoom Meeting Link';
+                $locationType = 'Zoom';
             }
         }
-        return $buttonText;
+        return $locationType;
     }
 }
