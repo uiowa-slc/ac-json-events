@@ -238,29 +238,29 @@ class UiCalendar extends Page {
 		// $localistTags = new ArrayList();
 
 		// if (isset($events) && $events->First()) {
-		// 	foreach ($events as $event) {
+		//  foreach ($events as $event) {
 
-		// 		foreach ($event->Tags as $eventTag) {
-		// 			if (isset($tags[$eventTag->Title])) {
-		// 				$tags[$eventTag->Title] = $tags[$eventTag->Title]+1;
-		// 			} else {
-		// 				$tags[$eventTag->Title] = 0;
-		// 			}
-		// 		}
-		// 	}
+		//      foreach ($event->Tags as $eventTag) {
+		//          if (isset($tags[$eventTag->Title])) {
+		//              $tags[$eventTag->Title] = $tags[$eventTag->Title]+1;
+		//          } else {
+		//              $tags[$eventTag->Title] = 0;
+		//          }
+		//      }
+		//  }
 
-		// 	arsort($tags);
+		//  arsort($tags);
 
-		// 	foreach ($tags as $key => $tag) {
-		// 		$localistTag        = new UiCalendarTag();
-		// 		$localistTag->Title = $key;
-		// 		$localistTags->push($localistTag);
+		//  foreach ($tags as $key => $tag) {
+		//      $localistTag        = new UiCalendarTag();
+		//      $localistTag->Title = $key;
+		//      $localistTags->push($localistTag);
 
-		// 	}
+		//  }
 
-		// 	return $localistTags;
+		//  return $localistTags;
 		// } else {
-		// 	return false;
+		//  return false;
 		// }
 
 	}
@@ -392,13 +392,12 @@ class UiCalendar extends Page {
 	}
 
 	public function DepartmentList() {
-		$cache = new SimpleCache();
+
 		$feedURL = UICALENDAR_FEED_URL . '/views/filters_api.json?display_id=filters';
 
 		$departmentsList = new ArrayList();
 
-		$rawFeed = $cache->get_data($feedURL, $feedURL);
-		$departmentsDecoded = json_decode($rawFeed, TRUE);
+		$departmentsDecoded = $this->getJson($feedURL);
 
 		if (isset($departmentsDecoded['departments'])) {
 			$departmentsArray = $departmentsDecoded['departments'];
@@ -418,13 +417,11 @@ class UiCalendar extends Page {
 
 	public function GeneralInterestList() {
 
-		$cache = new SimpleCache();
 		$feedURL = UICALENDAR_FEED_URL . '/views/filters_api.json?display_id=filters';
 
 		$genInterestsList = new ArrayList();
 
-		$rawFeed = $cache->get_data($feedURL, $feedURL);
-		$genInterestsDecoded = json_decode($rawFeed, TRUE);
+		$genInterestsDecoded = $this->getJson($feedURL);
 
 		if (isset($genInterestsDecoded['event_general_interest'])) {
 			$genInterestsArray = $genInterestsDecoded['event_general_interest'];
@@ -446,13 +443,11 @@ class UiCalendar extends Page {
 	}
 	public function KeywordList() {
 
-		$cache = new SimpleCache();
 		$feedURL = UICALENDAR_FEED_URL . '/views/filters_api.json?display_id=keywords';
 
 		$keywordList = new ArrayList();
 
-		$rawFeed = $cache->get_data($feedURL, $feedURL);
-		$keywordsDecoded = json_decode($rawFeed, TRUE);
+		$keywordsDecoded = $this->getJson($feedURL);
 
 		if (isset($keywordsDecoded['keywords'])) {
 			$keywordsArray = $keywordsDecoded['keywords'];
@@ -610,7 +605,7 @@ class UiCalendar extends Page {
 		$feedParams = '';
 
 		// if (isset($searchTerm)) {
-		// 	$feedParams = '/search';
+		//  $feedParams = '/search';
 		// }
 
 		if (isset($days) && !(isset($startDate) || isset($endDate))) {
@@ -888,7 +883,7 @@ class UiCalendar extends Page {
 		// $trendingTags = $calendar->TrendingTags();
 
 		// foreach($trendingTags as $trendingTag){
-		// 	$urls[] = $trendingTag->Link();
+		//  $urls[] = $trendingTag->Link();
 		// }
 		//print_r($urls);
 		return $urls;
