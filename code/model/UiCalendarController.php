@@ -131,6 +131,7 @@ class UiCalendar_Controller extends PageController {
 		}
 
 		$Data = array(
+			'FilterDate' => $dateFilter,
 			'FilterEventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
