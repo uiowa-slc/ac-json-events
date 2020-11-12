@@ -1,9 +1,7 @@
 <?php
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\ORM\FieldType\DBVarchar;
 use SilverStripe\Core\Convert;
-
+use SilverStripe\ORM\FieldType\DBDatetime;
 
 class UiCalendar_Controller extends PageController {
 
@@ -16,29 +14,29 @@ class UiCalendar_Controller extends PageController {
 		'venue',
 		'search',
 		'interest',
-		'canceled'
+		'canceled',
 	);
 
 	/** URL handlers / routes
 	 */
 	private static $url_handlers = array(
-		'event/$eventID'           => 'event',
+		'event/$eventID' => 'event',
 		'show/$startDate/$endDate' => 'show',
-		'monthjson/$ID'            => 'monthjson',
-		'tag/$tag'                 => 'tag',
-		'interest/$interest'       => 'interest',
-		'type/$type'               => 'type',
-		'venue/$venue'             => 'venue',
-		'search'                   => 'search',
-		'canceled'                 => 'canceled'
+		'monthjson/$ID' => 'monthjson',
+		'tag/$tag' => 'tag',
+		'interest/$interest' => 'interest',
+		'type/$type' => 'type',
+		'venue/$venue' => 'venue',
+		'search' => 'search',
+		'canceled' => 'canceled',
 	);
 
 	public function index(HTTPRequest $r) {
 		$startDate = new DBDatetime();
-		$endDate   = new DBDatetime();
+		$endDate = new DBDatetime();
 
 		$startDate->setValue(date('Y-m-d'));
-		$endDate->setValue(strtotime($startDate." +200 days"));
+		$endDate->setValue(strtotime($startDate . " +200 days"));
 
 		$Data = array(
 
@@ -59,7 +57,7 @@ class UiCalendar_Controller extends PageController {
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
-			if($this->isInDB() && $event){
+			if ($this->isInDB() && $event) {
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));
 			}
 		} else {
@@ -80,7 +78,7 @@ class UiCalendar_Controller extends PageController {
 		//echo "hello";
 		//$this->Redirect(UICALENDAR_BASE.'event/'.$eventID);
 		//return $this->httpError( 404, 'The requested event can\'t be found in the events.uiowa.edu upcoming events list.');
-		return $this->httpError( 404);
+		return $this->httpError(404);
 	}
 
 	/**
@@ -93,80 +91,80 @@ class UiCalendar_Controller extends PageController {
 		$dateFilter = addslashes($this->urlParams['startDate']);
 
 		switch ($dateFilter) {
-			case 'weekend':
-				$events       = $this->getWeekendEvents();
-				$filterHeader = 'This weekend:';
-				break;
-			case 'today':
-				$events       = $this->getTodayEvents();
-				$filterHeader = 'Today:';
-				break;
-			case 'month':
-				$events       = $this->getMonthEvents();
-				$filterHeader = 'This month:';
-				break;
-			default:
+		case 'weekend':
+			$events = $this->getWeekendEvents();
+			$filterHeader = 'This weekend:';
+			break;
+		case 'today':
+			$events = $this->getTodayEvents();
+			$filterHeader = 'Today:';
+			break;
+		case 'month':
+			$events = $this->getMonthEvents();
+			$filterHeader = 'This month:';
+			break;
+		default:
 
-                if(!(isset($this->urlParams['startDate']) && $this->isDate($this->urlParams['startDate']))){
-                    return $this->httpError(404);
-                }
+			if (!(isset($this->urlParams['startDate']) && $this->isDate($this->urlParams['startDate']))) {
+				return $this->httpError(404);
+			}
 
-                $startDate = new DBDatetime();
-                $startDate->setValue(addslashes($this->urlParams['startDate']));
+			$startDate = new DBDatetime();
+			$startDate->setValue(addslashes($this->urlParams['startDate']));
 
-                $endDate = new DBDatetime();
+			$endDate = new DBDatetime();
 
-                if(isset($this->urlParams['endDate'])){
-                    $endDate->setValue(addslashes($this->urlParams['endDate']));
-                }elseif(isset($this->urlParams['startDate'])){
-                    $endDate = $startDate;
-                }
+			if (isset($this->urlParams['endDate'])) {
+				$endDate->setValue(addslashes($this->urlParams['endDate']));
+			} elseif (isset($this->urlParams['startDate'])) {
+				$endDate = $startDate;
+			}
 
-                $filterHeader = $startDate->format('eeee, MMMM d');
+			$filterHeader = $startDate->format('eeee, MMMM d');
 
-                if ($endDate->getValue() && ($endDate->getValue() != $startDate->getValue())) {
-                    $filterHeader .= ' to '.$endDate->format('eeee, MMMM d');
-                }
+			if ($endDate->getValue() && ($endDate->getValue() != $startDate->getValue())) {
+				$filterHeader .= ' to ' . $endDate->format('eeee, MMMM d');
+			}
 
-                $events = $this->EventList(null, $startDate->format('Y-MM-dd'), $endDate->format('Y-MM-dd'));
+			$events = $this->EventList(null, $startDate->format('Y-MM-dd'), $endDate->format('Y-MM-dd'));
 
 		}
 
 		$Data = array(
-			'FilterEventList'    => $events,
+			'FilterEventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
 		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 
 	}
-    private function isDate($value)
-    {
-        if (!$value) {
-            return false;
-        }
+	private function isDate($value) {
+		if (!$value) {
+			return false;
+		}
 
-        try {
-            new \DateTime($value);
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
+		try {
+			new \DateTime($value);
+			return true;
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
 	/**
 	 * Controller Function that renders a filtered Event List by a UiCalendar tag or keyword.
 	 * @param SS_HTTPRequest $request
 	 * @return Controller
 	 */
 	public function tag($request) {
-		$tagID      = addslashes($this->urlParams['tag']);
+		$tagID = addslashes($this->urlParams['tag']);
 		$tag = $this->getKeywordByID($tagID);
 
-		$events       = $this->EventList('year', null, null, null, $tagID);
-		$filterHeader = 'Events tagged as "'.$tag->Title.'":';
+		$events = $this->EventList('year', null, null, null, $tagID);
+		$filterHeader = 'Events tagged as "' . $tag->Title . '":';
 
 		$Data = array(
-			'Title'        => $tag->Title.' | '.$this->Title,
-			'FilterEventList'    => $events,
+			'Title' => $tag->Title . ' | ' . $this->Title,
+			'FilterID' => $tag->ID,
+			'FilterEventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -174,17 +172,18 @@ class UiCalendar_Controller extends PageController {
 	}
 	public function interest($request) {
 		$interestID = addslashes($this->urlParams['interest']);
-		$interest   = $this->getGeneralInterestByID($interestID);
+		$interest = $this->getGeneralInterestByID($interestID);
 		//echo "interest: <br />";
 		//print_r($interest->ID);
 		//echo "<br />";
 		$events = $this->EventList('year', null, null, null, null, null, null, null, null, 100, $interest->ID);
 
-		$filterHeader = 'Events tagged as "'.$interest->Title.'":';
+		$filterHeader = 'Events tagged as "' . $interest->Title . '":';
 
 		$Data = array(
-			'Title'        => $interest->Title.' | '.$this->Title,
-			'FilterEventList'    => $events,
+			'Title' => $interest->Title . ' | ' . $this->Title,
+			'FilterID' => $interest->ID,
+			'FilterEventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -192,17 +191,18 @@ class UiCalendar_Controller extends PageController {
 	}
 	public function type($request) {
 		$typeID = addslashes($this->urlParams['type']);
-		$type   = $this->getTypeByID($typeID);
+		$type = $this->getTypeByID($typeID);
 		//echo "type: <br />";
 		//print_r($type->ID);
 		//echo "<br />";
 		$events = $this->EventList('year', null, null, null, null, $type->ID);
 
-		$filterHeader = 'Events tagged as "'.$type->Title.'":';
+		$filterHeader = 'Events tagged as "' . $type->Title . '":';
 
 		$Data = array(
-			'Title'        => $type->Title.' | '.$this->Title,
-			'FilterEventList'    => $events,
+			'Title' => $type->Title . ' | ' . $this->Title,
+			'FilterID' => $type->ID,
+			'FilterEventList' => $events,
 			'FilterHeader' => $filterHeader,
 		);
 
@@ -211,17 +211,17 @@ class UiCalendar_Controller extends PageController {
 
 	public function venue($request) {
 		$venueID = addslashes($this->urlParams['venue']);
-		$venue   = $this->getVenueByID($venueID);
+		$venue = $this->getVenueByID($venueID);
 
 		if (isset($venue)) {
 			$events = $this->EventList('year', null, null, $venue->ID);
 
-			$filterHeader = 'Events listed at '.$venue->Title.':';
+			$filterHeader = 'Events listed at ' . $venue->Title . ':';
 
 			$Data = array(
-				'Title'        => $venue->Title.' | '.$this->Title,
-				'Venue'        => $venue,
-				'FilterEventList'    => $events,
+				'Title' => $venue->Title . ' | ' . $this->Title,
+				'Venue' => $venue,
+				'FilterEventList' => $events,
 				'FilterHeader' => $filterHeader,
 			);
 
@@ -230,7 +230,7 @@ class UiCalendar_Controller extends PageController {
 			return $this->httpError(404, 'The requested venue can\'t be found in the events.uiowa.edu upcoming events list.');
 		}
 	}
-	public function canceled(){
+	public function canceled() {
 		$events = $this->EventList(
 
 			$days = 'threemonths',
@@ -250,11 +250,11 @@ class UiCalendar_Controller extends PageController {
 		);
 
 		$filterHeader = 'Events currently marked as canceled or rescheduled';
-			$Data = array(
-				'Title'        => 'Canceled or rescheduled events',
-				'FilterEventList'    => $events,
-				'FilterHeader' => $filterHeader,
-			);
+		$Data = array(
+			'Title' => 'Canceled or rescheduled events',
+			'FilterEventList' => $events,
+			'FilterHeader' => $filterHeader,
+		);
 		return $this->customise($Data)->renderWith(array('UiCalendar', 'Page'));
 	}
 	public function search($request) {
@@ -264,7 +264,7 @@ class UiCalendar_Controller extends PageController {
 
 		$data = array(
 			"Results" => $events,
-			"Term"    => $term,
+			"Term" => $term,
 		);
 
 		return $this->customise($data)->renderWith(array('UiCalendar_search', 'Page'));
@@ -276,12 +276,12 @@ class UiCalendar_Controller extends PageController {
 		}
 
 		$this->startDate = sfDate::getInstance(CalendarUtil::get_date_from_string($r->param('ID')));
-		$this->endDate   = sfDate::getInstance($this->startDate)->finalDayOfMonth();
+		$this->endDate = sfDate::getInstance($this->startDate)->finalDayOfMonth();
 
-		$json    = array();
-		$counter = clone$this->startDate;
+		$json = array();
+		$counter = clone $this->startDate;
 		while ($counter->get() <= $this->endDate->get()) {
-			$d        = $counter->format('Y-m-d');
+			$d = $counter->format('Y-m-d');
 			$json[$d] = array(
 				'events' => array(),
 			);
@@ -301,9 +301,5 @@ class UiCalendar_Controller extends PageController {
 		$this->getResponse()->addHeader('Content-type', 'application/json');
 		return Convert::array2json($json);
 	}
-
-
-
-
 
 }
