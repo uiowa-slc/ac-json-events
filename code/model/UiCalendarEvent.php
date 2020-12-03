@@ -1,17 +1,17 @@
 <?php
 
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\ORM\FieldType\DBDatetime;
 
 class UiCalendarEvent extends Page {
-    /**
-     * @config
-     */
+	/**
+	 * @config
+	 */
 
-    //Performance issues if you enable this. Only enable on sites that NEED nice URLs.
+	//Performance issues if you enable this. Only enable on sites that NEED nice URLs.
 	private static $use_nice_links = false;
 
 	private static $hide_ancestor = 'UiCalendarEvent';
@@ -23,7 +23,7 @@ class UiCalendarEvent extends Page {
 	 */
 	public function parseEvent($rawEvent) {
 
-        //print_r($rawEvent);
+		//print_r($rawEvent);
 		$this->Venue = $this->getVenueFromRaw($rawEvent);
 		//print_r($rawEvent['photo_url']);
 
@@ -53,37 +53,38 @@ class UiCalendarEvent extends Page {
 		$this->Location = $this->ParseLocation($rawEvent['room_number']);
 		$this->Dates = $this->getUpcomingDatesFromRaw($rawEvent);
 
-        $this->isOnline = $rawEvent['virtual'];
+		$this->isOnline = $rawEvent['virtual'];
 
-        $this->OnlineLocationUrl = $rawEvent['virtual_url'];
+		$this->OnlineLocationUrl = $rawEvent['virtual_url'];
 
-        if($this->OnlineLocationUrl){
-           $this->OnlineLocationType = $this->parseOnlineLocationType($this->OnlineLocationUrl);
-        }
-
-
+		if ($this->OnlineLocationUrl) {
+			$this->OnlineLocationType = $this->parseOnlineLocationType($this->OnlineLocationUrl);
+		}
 
 		$this->Canceled = new DBBoolean();
 		$this->Canceled = $rawEvent['canceled'];
 
 		$firstDateTime = new DBDatetime();
 
-        if($this->Dates){
-            $firstDateTimeObj = $this->Dates->First();
+		if ($this->Dates) {
+			$firstDateTimeObj = $this->Dates->First();
 
-            if (isset($firstDateTimeObj->StartDateTime)) {
-                $firstDateTime->setValue($firstDateTimeObj->obj('StartDateTime')->getValue());
+			if (isset($firstDateTimeObj->StartDateTime)) {
+				$firstDateTime->setValue($firstDateTimeObj->obj('StartDateTime')->getValue());
 
-                $this->FirstStartDateTime = $firstDateTime;
-            }
+				$this->FirstStartDateTime = $firstDateTime;
+			}
 
-        }
+		}
 
-
-		if(isset($rawEvent['description']))
+		if (isset($rawEvent['description'])) {
 			$this->Content = $rawEvent['description'];
-		if(isset($rawEvent['description_text']))
-		$this->SummaryContent = $rawEvent['description_text'];
+		}
+
+		if (isset($rawEvent['description_text'])) {
+			$this->SummaryContent = $rawEvent['description_text'];
+		}
+
 		$this->Tags = $this->getTagsFromRaw($rawEvent);
 		$this->Types = $this->getTypesFromRaw($rawEvent);
 		$this->Interests = $this->getInterestsFromRaw($rawEvent);
@@ -101,19 +102,19 @@ class UiCalendarEvent extends Page {
 		}
 
 		// Debug::show($this->Image);
-         //print_r($this);
+		//print_r($this);
 		return $this;
 
 	}
 
-	public function isLateNight(){
+	public function isLateNight() {
 		return $this->HasInterest("Late Night Programs");
 	}
 
 	public function getTitle() {
 		$eventTitle = $this->EventTitle;
-		if($this->Canceled){
-			return 'Canceled: '.$this->EventTitle;
+		if ($this->Canceled) {
+			return 'Canceled: ' . $this->EventTitle;
 		}
 		return $this->EventTitle;
 	}
@@ -136,7 +137,7 @@ class UiCalendarEvent extends Page {
 
 		$eventInstancesArray = new ArrayList();
 
-		if(!$eventInstances){
+		if (!$eventInstances) {
 			return false;
 		}
 
@@ -145,9 +146,9 @@ class UiCalendarEvent extends Page {
 
 			//$allDayBoolean = new Boolean();
 
-			if($eventInstances[$i]['event_instance']['all_day'] == 1){
+			if ($eventInstances[$i]['event_instance']['all_day'] == 1) {
 				$dateTime->AllDay = 1;
-			}else{
+			} else {
 				$dateTime->AllDay = 0;
 			}
 
@@ -155,7 +156,7 @@ class UiCalendarEvent extends Page {
 			// $dateTime->EndDateTime = new DBDatetime();
 
 			$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['start']);
-            //print_r($dateTime);
+			//print_r($dateTime);
 			//print_r('end date: '.$dateTime->EndDateTime);
 			// if (isset($eventInstances[$i]['event_instance']['end'])) {
 			// 	$dateTime->setStartDateTime($eventInstances[$i]['event_instance']['end']);
@@ -165,7 +166,6 @@ class UiCalendarEvent extends Page {
 			if ((!$dateTime->obj('StartDateTime')->InPast()) || $dateTime->obj('StartDateTime')->IsToday()) {
 				$eventInstancesArray->push($dateTime);
 			}
-
 
 		}
 
@@ -245,15 +245,14 @@ class UiCalendarEvent extends Page {
 			return $this->getVenueFromID($id);
 		} else {
 
-
-			if(isset($rawEvent['location_name'])){
+			if (isset($rawEvent['location_name'])) {
 				$venue = new UiCalendarVenue();
 
 				//Temporararily use the title as a unique ID until we get venue ID from event list:
 
-				if(isset($rawEvent['location_id'])){
+				if (isset($rawEvent['location_id'])) {
 					$venue->ID = $rawEvent['location_id'];
-				}else{
+				} else {
 					$venue->ID = SiteTree::generateURLSegment($rawEvent['location_name']);
 				}
 
@@ -268,7 +267,7 @@ class UiCalendarEvent extends Page {
 					$venue->Address = $rawEvent['geo']['street'] . ', ' . $rawEvent['geo']['city'] . ', ' . $rawEvent['geo']['state'] . ' ' . $rawEvent['geo']['zip'];
 				}
 				return $venue;
-				}
+			}
 
 		}
 	}
@@ -296,12 +295,12 @@ class UiCalendarEvent extends Page {
 	public function Link($action = null) {
 		$calendar = UiCalendar::get()->First();
 		$niceLinks = Config::inst()->get('UiCalendarEvent', 'use_nice_links');
-		if($niceLinks){
+		if ($niceLinks) {
 			$urlSeg = $this->URLSegment;
-		}else{
+		} else {
 			$urlSeg = $this->ID;
 		}
-		if($calendar){
+		if ($calendar) {
 			$link = $calendar->getAbsoluteLiveLink(false) . 'event/' . $urlSeg;
 			return $link;
 		}
@@ -315,7 +314,7 @@ class UiCalendarEvent extends Page {
 	 * @return string
 	 */
 	public function CalendarLink() {
-		$link = 'https://events.uiowa.edu/singleEvent/'.$this->ID;
+		$link = 'https://events.uiowa.edu/singleEvent/' . $this->ID;
 		return $link;
 	} //test
 
@@ -335,7 +334,7 @@ class UiCalendarEvent extends Page {
 			//print_r($randEventType->Title);
 
 			$relatedEvents = $calendar->EventList(
-				$days = 'threemonths',
+				$days = 'year',
 				$startDate = null,
 				$endDate = null,
 				$venue = null,
@@ -369,7 +368,7 @@ class UiCalendarEvent extends Page {
 			$venue = $this->Venue;
 
 			$relatedEvents = $calendar->EventList(
-				$days = 'threemonths',
+				$days = 'year',
 				$startDate = null,
 				$endDate = null,
 				$venue = $venue->ID,
@@ -391,21 +390,21 @@ class UiCalendarEvent extends Page {
 		}
 	}
 
-	public function HasType($typeName){
+	public function HasType($typeName) {
 		$eventTypes = $this->Types;
-		foreach($eventTypes as $type){
-			if($type->Title == $typeName){
+		foreach ($eventTypes as $type) {
+			if ($type->Title == $typeName) {
 				return true;
 			}
 		}
 
 		return false;
 	}
-	public function HasInterest($typeName){
+	public function HasInterest($typeName) {
 		$eventTypes = $this->Interests;
 
-		foreach($eventTypes as $type){
-			if($type->Title == $typeName){
+		foreach ($eventTypes as $type) {
+			if ($type->Title == $typeName) {
 				return true;
 			}
 		}
@@ -431,32 +430,34 @@ class UiCalendarEvent extends Page {
 		return true;
 	}
 
-	private function validateLink($url){
-		if($ret = parse_url($url) ) {
-			if(!isset($ret["scheme"])){
-		       $url = "http://{$url}";
-		    }
+	private function validateLink($url) {
+		if ($ret = parse_url($url)) {
+			if (!isset($ret["scheme"])) {
+				$url = "http://{$url}";
+			}
 		}
 
 		return $url;
 	}
 
-    private function parseDomain($url){
-        $parsedUrl = parse_url($url);
-        if(isset($parsedUrl["host"])){
-           $host = $parsedUrl["host"];
-           return $host;
-        }
-    }
-    private function parseOnlineLocationType($url){
-        $locationType = 'Other';
-        if($url){
-            $domain = $this->parseDomain($url);
-            if($domain){
-               if(strpos($domain, 'zoom.us'))
-                $locationType = 'Zoom';
-            }
-        }
-        return $locationType;
-    }
+	private function parseDomain($url) {
+		$parsedUrl = parse_url($url);
+		if (isset($parsedUrl["host"])) {
+			$host = $parsedUrl["host"];
+			return $host;
+		}
+	}
+	private function parseOnlineLocationType($url) {
+		$locationType = 'Other';
+		if ($url) {
+			$domain = $this->parseDomain($url);
+			if ($domain) {
+				if (strpos($domain, 'zoom.us')) {
+					$locationType = 'Zoom';
+				}
+
+			}
+		}
+		return $locationType;
+	}
 }

@@ -569,7 +569,7 @@ class UiCalendar extends Page {
 	 */
 
 	public function EventList(
-		$days = 'threemonths',
+		$days = 'year',
 		$startDate = null,
 		$endDate = null,
 		$venue = null,
@@ -708,7 +708,7 @@ class UiCalendar extends Page {
 	}
 	public function EventListLimited($number = 3) {
 		return $this->EventList(
-			$days = 'threemonths',
+			$days = 'year',
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
@@ -751,7 +751,7 @@ class UiCalendar extends Page {
 
 	public function EventListCanceled() {
 		$events = $this->EventList(
-			$days = 'threemonths',
+			$days = 'year',
 			$startDate = null,
 			$endDate = null,
 			$venue = null,

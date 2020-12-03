@@ -234,7 +234,7 @@ class UiCalendar_Controller extends PageController {
 	public function canceled() {
 		$events = $this->EventList(
 
-			$days = 'threemonths',
+			$days = 'year',
 			$startDate = null,
 			$endDate = null,
 			$venue = null,
