@@ -1,6 +1,7 @@
 <?php
 
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -431,10 +432,23 @@ class UiCalendarEvent extends Page {
 	}
 
 	private function validateLink($url) {
-		if ($ret = parse_url($url)) {
-			if (!isset($ret["scheme"])) {
+		$url = rtrim($url, '/');
+
+		//Check to see if the calendar event's more info link is pointing to the current site.
+		//We don't want to show "Website ->" links to the same site.
+		$currentBase = Director::AbsoluteBaseURL();
+		$currentBase = rtrim($currentBase, '/');
+
+		if ($url == $currentBase) {
+			return false;
+		}
+
+		if ($urlParsed = parse_url($url)) {
+
+			if (!isset($urlParsed["scheme"])) {
 				$url = "http://{$url}";
 			}
+
 		}
 
 		return $url;
