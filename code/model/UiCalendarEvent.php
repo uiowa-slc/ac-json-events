@@ -92,7 +92,11 @@ class UiCalendarEvent extends Page {
 		$this->Image = $image;
 		$this->UiCalendarLink = $rawEvent['events_site_url'];
 		$this->AfterClassLink = AFTERCLASS_BASE . 'event/' . $this->ID;
-		$this->MoreInfoLink = $this->validateLink($rawEvent['url']);
+
+		if ($rawEvent['url'] != null) {
+			$this->MoreInfoLink = $this->validateLink($rawEvent['url']);
+		}
+
 		//$this->FacebookEventLink = $rawEvent['facebook_id'];
 		$this->ContactName = (isset($rawEvent['contact_name']) ? $rawEvent['contact_name'] : '');
 		$this->ContactEmail = (isset($rawEvent['contact_email']) ? $rawEvent['contact_email'] : '');
@@ -432,6 +436,9 @@ class UiCalendarEvent extends Page {
 	}
 
 	private function validateLink($url) {
+
+		$url = trim($url);
+
 		$url = rtrim($url, '/');
 
 		//Check to see if the calendar event's more info link is pointing to the current site.
@@ -448,7 +455,9 @@ class UiCalendarEvent extends Page {
 			if (!isset($urlParsed["scheme"])) {
 				$url = "http://{$url}";
 			}
-
+			//url is really malformed and shouldn't be displayed if $urlParsed = parse_url($url) returns false:
+		} else {
+			return false;
 		}
 
 		return $url;
