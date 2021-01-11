@@ -32,6 +32,8 @@ class UiCalendarEvent extends Page {
 			$image = new UiCalendarImage();
 			$image->parse($rawEvent['media'][0]);
 
+			//print_r($image);
+
 		} else {
 			$image = new UiCalendarImage();
 
