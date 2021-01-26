@@ -856,6 +856,9 @@ class UiCalendar extends Page {
 		$urls[$calendarLink . 'show/today'] = 0;
 		$urls[$calendarLink . 'show/weekend'] = 0;
 
+		//Cache Late Night Programs tagged events if possible
+		$urls[$calendarLink . 'interest/7491/'] = 0;
+
 		$previousMonth = new DateTime();
 		$previousMonth->modify('first day of last month');
 		$previousMonthString = $previousMonth->format('Ym');
