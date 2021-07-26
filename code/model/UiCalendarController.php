@@ -57,6 +57,13 @@ class UiCalendar_Controller extends PageController {
 		/* If we're using an event ID as a key. */
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
+
+            if(!$event->Dates->First()){
+                //no upcoming dates, throw 404
+                return $this->httpError(404);
+
+            }
+
 			if ($this->isInDB() && $event) {
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));
 			}
