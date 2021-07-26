@@ -23,6 +23,8 @@ class UiCalendar extends Page {
 
 		'HideCanceledEvents' => 'Boolean',
 
+        'RedirectExpiredEventsToWebsite' => 'Boolean'
+
 	);
 
 	private static $has_one = array(
@@ -106,7 +108,6 @@ class UiCalendar extends Page {
 			$featuredEvent4Field->setEmptyString('(No Event)');
 			$fields->addFieldToTab('Root.Main', $featuredEvent4Field);
 
-			$fields->addFieldToTab('Root.Main', new CheckboxField('HideCanceledEvents'));
 
 		}
 
@@ -114,6 +115,18 @@ class UiCalendar extends Page {
 
 		return $fields;
 	}
+
+    public function getSettingsFields(){
+
+        $fields = parent::getSettingsFields();
+
+
+            $fields->addFieldToTab('Root.Settings', new CheckboxField('HideCanceledEvents'));
+            $fields->addFieldToTab('Root.Settings', new CheckboxField('RedirectExpiredEventsToWebsite'));
+
+            return $fields;
+
+    }
 
 	public static function getOrCreate() {
 		$calendar = UiCalendar::get()->First();
