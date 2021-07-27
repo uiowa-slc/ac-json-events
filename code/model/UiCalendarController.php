@@ -58,6 +58,10 @@ class UiCalendar_Controller extends PageController {
 		if (is_numeric($eventID)) {
 			$event = $this->SingleEvent($eventID);
 
+            if(!isset($event)){
+                 return $this->httpError(404);
+            }
+
             if(!$event->Dates->First()){
                 //no upcoming dates, throw 404
                 if($this->RedirectExpiredEventsToWebsite && $event->MoreInfoLink){
@@ -74,18 +78,8 @@ class UiCalendar_Controller extends PageController {
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));
 			}
 		} else {
-
-			/* Getting an event based on the url slug **EXPERIMENTAL ** */
-			$events = $this->EventList();
-			foreach ($events as $key => $e) {
-				if ($e->URLSegment == $eventID) {
-					//print_r($e->URLSegment);
-					$singleEvent = $this->SingleEvent($e->ID);
-					if ($singleEvent) {
-						return $this->customise($singleEvent)->renderWith(array('UiCalendarEvent', 'Page'));
-					}
-				}
-			}
+            // event id is not numeric, throw 404
+            return $this->httpError(404);
 
 		}
 		//echo "hello";
