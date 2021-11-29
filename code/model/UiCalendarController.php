@@ -62,18 +62,20 @@ class UiCalendar_Controller extends PageController {
                  return $this->httpError(404);
             }
 
-            if(!$event->Dates->First()){
-                //no upcoming dates, throw 404
-                if($this->RedirectExpiredEventsToWebsite && $event->MoreInfoLink){
-                    $this->redirect($event->MoreInfoLink);
-                }else{
-                    return $this->httpError(404);
+            if(isset($event->Dates)){
+
+                if(!$event->Dates->First()){
+                    //no upcoming dates, throw 404
+                    if($this->RedirectExpiredEventsToWebsite && $event->MoreInfoLink){
+                        $this->redirect($event->MoreInfoLink);
+                    }else{
+                        return $this->httpError(404);
+                    }
+
+                    //
+
                 }
-
-                //
-
             }
-
 			if ($this->isInDB() && $event) {
 				return $this->customise($event)->renderWith(array('UiCalendarEvent', 'Page'));
 			}
