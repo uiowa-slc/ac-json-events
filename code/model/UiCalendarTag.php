@@ -8,9 +8,15 @@ class UiCalendarTag extends DataObject {
 	);
 
 	public function parseTag($rawType){
-		$localistType = new UiCalendarEventType();
+		$localistType = new UiCalendarTag();
 		$localistType->ID = $rawType['id'];
-		$localistType->Title = $rawType['name'];
+
+        if($rawType['name'] == 'IP'){
+            $localistType->Title = 'International Programs';
+        }else{
+            $localistType->Title = $rawType['name'];
+        }
+
 		//$localistType->UiCalendarLink = $rawType['localist_url'];
 		// $localistType->UiCalendarLink = UICALENDAR_BASE.'search/events/?keywords='.$localistType->ID;
 		return $localistType;

@@ -245,38 +245,36 @@ class UiCalendar extends Page {
 	 * Returns an ArrayList of Trending Tags sorted by popularity.
 	 * @return ArrayList
 	 */
-	public function TrendingTags() {
-		// $events       = $this->EventList();
-		// $tags         = array();
-		// $localistTags = new ArrayList();
+    public function TrendingTags() {
+        $events = $this->EventList();
+        $tags = array();
 
-		// if (isset($events) && $events->First()) {
-		//  foreach ($events as $event) {
+        if (isset($events) && $events->First()) {
+            $localistEventTags = new ArrayList();
+            foreach ($events as $event) {
+                if ($event->Tags && $event->Tags->First()) {
+                    foreach ($event->Tags as $eventTag) {
+                        if (isset($tags[$eventTag->ID])) {
+                            $tags[$eventTag->ID] = $tags[$eventTag->ID] + 1;
+                        } else {
+                            $tags[$eventTag->ID] = 0;
+                        }
+                    }
+                }
+            }
 
-		//      foreach ($event->Tags as $eventTag) {
-		//          if (isset($tags[$eventTag->Title])) {
-		//              $tags[$eventTag->Title] = $tags[$eventTag->Title]+1;
-		//          } else {
-		//              $tags[$eventTag->Title] = 0;
-		//          }
-		//      }
-		//  }
+            arsort($tags);
+            foreach ($tags as $key => $tag) {
 
-		//  arsort($tags);
+                $localistEventTag = $this->getKeywordByID($key);
+                $localistEventTags->push($localistEventTag);
+            }
 
-		//  foreach ($tags as $key => $tag) {
-		//      $localistTag        = new UiCalendarTag();
-		//      $localistTag->Title = $key;
-		//      $localistTags->push($localistTag);
-
-		//  }
-
-		//  return $localistTags;
-		// } else {
-		//  return false;
-		// }
-
-	}
+            return $localistEventTags;
+        } else {
+            return false;
+        }
+    }
 
 	/**
 	 * Returns an ArrayList of Trending Types sorted by popularity.
@@ -312,6 +310,18 @@ class UiCalendar extends Page {
 			return false;
 		}
 	}
+
+
+    public function TrendingTagsAndTypes(){
+        $types = $this->TrendingTypes()->Limit(5);
+        $tags = $this->TrendingTags()->Limit(5);
+        $typesTags = new ArrayList();
+
+        $typesTags->merge($types);
+        $typesTags->merge($tags);
+
+        return $typesTags;
+    }
 
 	public function requestAllPages($feedURL, $resourceName) {
 		$page = 1;
@@ -458,7 +468,7 @@ class UiCalendar extends Page {
 
 		$feedURL = UICALENDAR_FEED_URL . '/views/filters_api.json?display_id=keywords';
 
-		$keywordList = new ArrayList();
+		$tagList = new ArrayList();
 
 		$keywordsDecoded = $this->getJson($feedURL);
 
@@ -468,16 +478,17 @@ class UiCalendar extends Page {
 
 		//print_r($keywordsArray);
 		if (isset($keywordsArray)) {
-			foreach ($keywordsArray as $genInterest) {
-				$localistGenInterest = new UiCalendarEventType();
-				$localistGenInterest = $localistGenInterest->parseType($genInterest);
-				$keywordList->push($localistGenInterest);
+			foreach ($keywordsArray as $keyword) {
+				$tag = new UiCalendarTag();
+				$tag = $tag->parseTag($keyword);
+				$tagList->push($tag);
+
 			}
 		}
 
 		//print_r($keywordsList);
 
-		return $keywordList;
+		return $tagList;
 
 	}
 	/**
