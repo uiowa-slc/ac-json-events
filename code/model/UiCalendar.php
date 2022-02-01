@@ -313,8 +313,8 @@ class UiCalendar extends Page {
 
 
     public function TrendingTagsAndTypes(){
-        $types = $this->TrendingTypes()->Limit(7);
-        $tags = $this->TrendingTags()->Limit(7);
+        $types = $this->TrendingTypes()->Limit(6);
+        $tags = $this->TrendingTags()->Limit(6);
         $typesTags = new ArrayList();
 
         $typesTags->merge($types);
