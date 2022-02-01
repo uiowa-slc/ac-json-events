@@ -63,7 +63,7 @@ class UiCalendarVenue extends DataObject {
 			$calendar = UiCalendar::getOrCreate();
 
 			if($calendar->IsInDB()){
-				$link = $calendar->Link().'venue/'.$this->ID;
+				$link = $calendar->getAbsoluteLiveLink(false).'venue/'.$this->ID;
 			}else{
 				$link = $this->UiCalendarLink;
 			}
@@ -82,6 +82,6 @@ class UiCalendarVenue extends DataObject {
 	 * @return type
 	 */
 	public function DirectionsLink(){
-		return "http://maps.apple.com/?q=".$this->Address;
+		return "http://maps.google.com/?q=".$this->Address;
 	}
 }

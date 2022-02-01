@@ -12,20 +12,24 @@ class UiCalendarEventType extends DataObject {
 		$localistType = new UiCalendarEventType();
 		$localistType->ID = $rawType['id'];
 		$localistType->Title = $rawType['name'];
-		//$localistType->UiCalendarLink = $rawType['localist_url'];
 		$localistType->UiCalendarLink = UICALENDAR_BASE.'search/events/?event_types='.$localistType->ID;
 		return $localistType;
 	}
 
-	public function Link(){
-		$calendar = UiCalendar::getOrCreate();
-		if($calendar->IsInDB()){
-			return $calendar->Link().'type/'.$this->ID;
-		}
-		return $this->UiCalendarLink;
+	public function Link($action = null) {
+        $calendar = UiCalendar::getOrCreate();
 
-	}
-	
+        $urlSeg = $this->ID;
+
+        if($calendar->IsInDB()){
+            $link = $calendar->getAbsoluteLiveLink(false) . 'type/' . $urlSeg;
+            return $link;
+        }
+
+        return 'https://events.uiowa.edu';
+
+    }
+
 	public function EventList() {
 		//echo "type: <br />";
 		//print_r($this->ID);

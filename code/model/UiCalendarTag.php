@@ -23,10 +23,19 @@ class UiCalendarTag extends DataObject {
 
 	}
 
-	public function Link(){
-		$calendar = UiCalendar::getOrCreate();
-		return $calendar->Link().'tag/'.$this->ID;
-	}
+    public function Link($action = null) {
+        $calendar = UiCalendar::getOrCreate();
+
+        $urlSeg = $this->ID;
+
+        if($calendar->IsInDB()){
+            $link = $calendar->getAbsoluteLiveLink(false) . 'tag/' . $urlSeg;
+            return $link;
+        }
+
+        return 'https://events.uiowa.edu';
+
+    }
 
 	
 /*public function Events() {
