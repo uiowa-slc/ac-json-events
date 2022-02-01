@@ -907,11 +907,11 @@ class UiCalendar extends Page {
 		}
 
 		/* Cache all Trending Tags */
-		// $trendingTags = $calendar->TrendingTags()->Limit(5);
+		$trendingTags = $calendar->TrendingTagsAndTypes();
 
-		// foreach($trendingTags as $trendingTag){
-		//  $urls[] = $trendingTag->Link();
-		// }
+		foreach($trendingTags as $trendingTag){
+		 $urls[$trendingTag->Link()] = 0;
+		}
 		//print_r($urls);
 		return $urls;
 		//return [Director::absoluteURL($this->getOwner()->Link()) => 0];
