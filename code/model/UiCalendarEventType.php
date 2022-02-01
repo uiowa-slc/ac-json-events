@@ -43,7 +43,6 @@ class UiCalendarEventType extends DataObject {
 			return false;
 		}
 
-
 		foreach($events as $event) {
 			$eventsAtTypeList->push($event);
 		}		

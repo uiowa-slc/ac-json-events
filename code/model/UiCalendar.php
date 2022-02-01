@@ -313,8 +313,8 @@ class UiCalendar extends Page {
 
 
     public function TrendingTagsAndTypes(){
-        $types = $this->TrendingTypes()->Limit(5);
-        $tags = $this->TrendingTags()->Limit(5);
+        $types = $this->TrendingTypes()->Limit(7);
+        $tags = $this->TrendingTags()->Limit(7);
         $typesTags = new ArrayList();
 
         $typesTags->merge($types);
@@ -907,11 +907,11 @@ class UiCalendar extends Page {
 		}
 
 		/* Cache all Trending Tags */
-		// $trendingTags = $calendar->TrendingTags();
+		$trendingTags = $calendar->TrendingTags()->Limit(5);
 
-		// foreach($trendingTags as $trendingTag){
-		//  $urls[] = $trendingTag->Link();
-		// }
+		foreach($trendingTags as $trendingTag){
+		 $urls[] = $trendingTag->Link();
+		}
 		//print_r($urls);
 		return $urls;
 		//return [Director::absoluteURL($this->getOwner()->Link()) => 0];
